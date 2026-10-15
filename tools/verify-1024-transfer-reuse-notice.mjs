@@ -1,45 +1,44 @@
-// verify-1024-transfer-reuse-notice.mjs — #1024 开屏第一页新增「网站公告 · 关于转载与二次创作」
-// 用户直派（2026-09-22）：「开屏第一页要写：网站公告 / 关于转载与二次创作 + 四条要求 + 侵权声明」，
-// 原文逐字落库，一字未改（四条要求保留原句与句末「；」）。
-// 落点：开屏第一页公告（#splash-notice）的**首个章节**（顶部最显眼的一章）＋ 必读摘要新增一条高亮；
-//   两份同步——联网用户看 src/pwa/notice.json 的 sections[0]/summary（在线权威源），
-//   断网/弱网用户看 src/template.html 的静态兜底 DOM（renderNotice 用在线列表整段替换静态段）。
-// v8.44 #1216（2026-09-25 用户直派「必读摘要删掉，这些内容在开屏最顶已经有了」）：摘要块在两份源同批撤除，
-//   本脚本原判「摘要里有转载高亮条 / 首条未被顶掉」的三条断言随之改口为「summary 已空 ＋ 静态无 .splash-summary 块 ＋
-//   转载内容仍落在首章」；「为什么必须是首个章节」的理由（不点章节就看不到）在摘要撤除后更成立——章节是唯一落点。
-// 不进 build.mjs 哨兵：内容型批次（同 #1022 口径），行为断言由本脚本承担。
-// 用法：node tools/verify-1024-transfer-reuse-notice.mjs
-//   MOCHI_SERVE_ROOT=<仓外隔离副本目录> 可指向隔离产物（默认 = 本仓根）
-import { createServer } from 'node:http';
+// verify-1024-transfer-reuse-notice.mjs — #1024 开屏第一页「网站公告 · 关于转载与二次创作」章
+// —— 2026-10-15「开屏精简批」退役改口：作者直派「开屏内容大规模删减」，并把「在线 notice.json 里的
+//    远程公告一起清掉」。转载章原先有两份落点（在线权威源 sections[0] ＋ 离线兜底 template.html §1），
+//    本批两处同批变化：①在线源 sections 整段清空（＋summary 已空、hide:true＝clock.js 见 sections 空
+//    即整块隐藏公告区，联网用户不再看到开屏说明）；②离线兜底保留 §1 目录章标题（#1500c 活动哨兵守着），
+//    但该章「首句完整版 + 四条要求 + 侵权声明」正文已不在（首句仅剩「开放二传二改」那一截）。
+//    按仓库惯例，本脚本由「断言首章七段原文在位」改写为**删除型断言**：断言四条要求与侵权声明在两份源
+//    都不得再出现（回流＝开屏精简被架空），断言在线公告区已整体清空/隐藏；同时守住幸存口径零回归——
+//    §1 目录章仍在、其余目录章仍在、防未成年锁卡与 18 周岁红线仍在、品牌卡许可块仍在。
+// 判据全部为静态（读 src + 产物 + build.mjs），无需浏览器（原 playwright 段随判据面收窄一并撤除，
+// 本环境无 playwright 也能跑），任何环境都能跑。
+// 用法：node tools/verify-1024-transfer-reuse-notice.mjs（需先 node build.mjs，本脚本同时核对产物 index.html + notice.json）
 import { readFileSync } from 'node:fs';
-import { join, normalize, extname, dirname } from 'node:path';
+import { join, normalize, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { chromium } from 'playwright';
 
-const here = normalize(dirname(fileURLToPath(import.meta.url)) + '/..');
-const root = normalize(process.env.MOCHI_SERVE_ROOT || here);
-const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png', '.json': 'application/json', '.svg': 'image/svg+xml', '.webmanifest': 'application/manifest+json' };
-const srv = createServer((req, res) => {
-  try {
-    const p = normalize(join(root, decodeURIComponent(req.url.split('?')[0])));
-    if (!p.startsWith(root)) { res.writeHead(403); res.end(); return; }
-    const body = readFileSync(p);
-    res.writeHead(200, { 'Content-Type': types[extname(p)] || 'application/octet-stream' });
-    res.end(body);
-  } catch { res.writeHead(404); res.end('nf'); }
-});
-await new Promise((r) => srv.listen(0, '127.0.0.1', r));
-const base = 'http://127.0.0.1:' + srv.address().port;
-console.log('serve root = ' + root);
+const root = normalize(dirname(fileURLToPath(import.meta.url)) + '/..');
+const read = (p) => { try { return readFileSync(join(root, p), 'utf8'); } catch (e) { return ''; } };
+const count = (h, n) => (h && n ? h.split(n).length - 1 : 0);
 
 let pass = 0, fail = 0;
 const ok = (c, n, x) => { if (c) { pass++; console.log('  ✓ ' + n); } else { fail++; console.log('  ✗ ' + n + (x !== undefined ? '  [' + x + ']' : '')); } };
 
-// ===== 用户原文（逐字；改文案必须连本脚本一起改）=====
-const TITLE = '网站公告 · 关于转载与二次创作';
-// #1500（2026-09-30 作者直派「公告目录里的中文数字都删掉换阿拉伯数字，格式要统一」）：两源章标题统一编号
-const NUM = '1、';
-const LEAD = '本网站所有字卡内容遵循「开放二传二改」原则，欢迎分享与再创作。但请遵守以下要求：';
+const tpl = read('src/template.html');
+const idx = read('index.html');
+const build = read('build.mjs');
+let notice = null, rootNotice = null;
+try { notice = JSON.parse(read('src/pwa/notice.json')); } catch (e) {}
+try { rootNotice = JSON.parse(read('notice.json')); } catch (e) {}
+
+const lines = build.split('\n');
+const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const retired = (id) => ({
+  found: lines.some((l) => l.includes("'" + id + " ") && /^\s*\/\//.test(l)),
+  active: lines.some((l) => new RegExp("^\\s*\\{\\s*name:\\s*'" + esc(id) + " ").test(l))
+});
+const reg = (id) => lines.find((l) => l.includes("'" + id + " ") && /^\s*\{\s*name:/.test(l));
+
+// #1024 原文（逐字；原本只落在线源 sections[0]，离线兜底已先行精简到只剩首句前半段）
+const TITLE = '1、网站公告 · 关于转载与二次创作';
+const LEAD_FULL = '本网站所有字卡内容遵循「开放二传二改」原则，欢迎分享与再创作。但请遵守以下要求：';
 const RULES = [
   '转载或二传链接，必须保留作者署名（言序）；',
   '二次创作作品请注明「基于言序作品修改」；',
@@ -48,84 +47,35 @@ const RULES = [
 ];
 const TAIL = '未经署名转载视为侵权，作者保留追究权利。';
 
-console.log('\n== A 在线权威源 src/pwa/notice.json ==');
-let j = null;
-try { j = JSON.parse(readFileSync(join(root, 'src/pwa/notice.json'), 'utf8')); } catch (e) {}
-ok(!!j, 'notice.json 可解析');
-const s0 = j && Array.isArray(j.sections) ? j.sections[0] : null;
-ok(!!s0 && s0.h === NUM + TITLE, '首章标题＝1、网站公告 · 关于转载与二次创作', s0 && s0.h);
-const flat = s0 && Array.isArray(s0.p) ? s0.p.map((x) => (x && typeof x === 'object' ? (x.b !== undefined ? x.b : x.hl) : x)) : [];
-ok(flat[0] === LEAD, '首句＝开放二传二改原则 + 请遵守以下要求（逐字）', flat[0]);
-RULES.forEach((r, i) => ok(flat[i + 1] === r, '第 ' + (i + 1) + ' 条要求逐字在位', flat[i + 1]));
-ok(flat[5] === TAIL, '收尾＝未署名视为侵权（逐字在位）', flat[5]);
-ok(!!s0 && Array.isArray(s0.p) && s0.p[5] && s0.p[5].hl === TAIL, '侵权声明走 hl 高亮条目（与页面红线口径一致）');
-// v8.44 #1216（2026-09-25 用户直派「必读摘要删掉，这些内容在开屏最顶已经有了」）：summary 整段清空，
-//   原「摘要新增转载高亮条 / 第一条未被顶掉」两条判据改口为「summary 已空」＋「转载章仍在首位」（本章即落点）。
-ok(!!j && Array.isArray(j.summary) && j.summary.length === 0, '在线 summary 已随 #1216 整段清空（残留一条＝联网用户仍看到半块摘要，与静态兜底两份分叉）', JSON.stringify(j.summary || null).slice(0, 40));
-ok(!!j && j.sections.length >= 12 && j.sections[0].h === NUM + TITLE, '转载公告落在线首章（摘要撤除后它才是唯一落点）', j && j.sections.length + ' 章');
-// #1503（2026-09-30 作者直派「许可 署名 灵感来源应该也放在显眼的地方啊，和 mochi 名字解释的一起」）：该章整章
-//   从公告下架、要点搬到品牌卡（与「Mochi」名字澄清同处）——原「章仍在」判据改口为「不得回流」。
-ok(!!j && j.sections.every((x) => String(x.h).indexOf('许可 · 署名 · 灵感来源') < 0), '#1503 起在线源不再有「许可 · 署名 · 灵感来源」章（要点已移到品牌卡；回流＝公告与品牌卡两份口径并存）', j && j.sections.map((x) => String(x.h)).join(' / ').slice(0, 60));
+console.log('\n== A 删除型：转载章正文（四条要求 + 侵权声明）两份源都不得再出现 ==');
+const online = notice ? JSON.stringify(notice) : '';
+ok(!!notice && Array.isArray(notice.sections) && notice.sections.length === 0, 'A1 在线源 sections 已整段清空（0 章）', ((notice && notice.sections) || []).length + ' 章');
+ok(!!notice && Array.isArray(notice.summary) && notice.summary.length === 0, 'A2 在线源 summary 仍为空（#1216 起整段撤除，本批未复活）', JSON.stringify((notice && notice.summary) || null).slice(0, 40));
+ok(!!notice && notice.hide === true, 'A3 在线源 hide:true（clock.js 见 sections 空/hide 即整块隐藏公告区＝联网用户不再看到开屏说明）');
+ok(online.indexOf('关于转载与二次创作') < 0 && online.indexOf('但请遵守以下要求') < 0 && RULES.every((r) => online.indexOf(r) < 0) && online.indexOf(TAIL) < 0, 'A4 在线源不得含转载章任何文案（标题/首句/四条/侵权声明，回流＝远程公告清空被架空）');
+ok(!!rootNotice && Array.isArray(rootNotice.sections) && rootNotice.sections.length === 0 && JSON.stringify(rootNotice).indexOf(TAIL) < 0, 'A5 产物根 notice.json 同口径（sections 空且无侵权声明，改 src 未重建＝产物仍带旧章）');
+ok(count(tpl, LEAD_FULL) === 0, 'A6 离线兜底不再有完整首句（「…欢迎分享与再创作。但请遵守以下要求：」）');
+RULES.forEach((r, i) => ok(count(tpl, '<p class="splash-bullet">' + r + '</p>') === 0 && count(tpl, r) === 0, 'A7.' + (i + 1) + ' 离线兜底不再有转载要求第 ' + (i + 1) + ' 条'));
+ok(count(tpl, '<p class="splash-item splash-hl">' + TAIL + '</p>') === 0 && count(tpl, TAIL) === 0, 'A8 离线兜底不再有侵权声明（未经署名转载视为侵权）');
+ok(count(idx, LEAD_FULL) === 0 && RULES.every((r) => count(idx, r) === 0) && count(idx, TAIL) === 0, 'A9 构建产物 index.html 同样无转载章正文（改 src 未重建＝产物仍带旧章）');
+ok(retired('#1500a').found && !retired('#1500a').active, 'A10 哨兵 #1500a（在线源首章＝1、网站公告 · 关于转载与二次创作）已退役（登记注释、无活动登记）');
+ok(retired('#1449b').found && !retired('#1449b').active, 'A11 哨兵 #1449b（二传二改说明升为四点·在线权威源）已退役');
 
-console.log('\n== B 离线兜底 src/template.html ==');
-const tpl = readFileSync(join(root, 'src/template.html'), 'utf8');
-ok(tpl.indexOf('<p class="splash-sec">' + NUM + TITLE + '</p>') >= 0, '兜底章节标题在位');
-ok(tpl.indexOf('<p class="splash-item">' + LEAD + '</p>') >= 0, '兜底首句在位');
-RULES.forEach((r, i) => ok(tpl.indexOf('<p class="splash-bullet">' + r + '</p>') >= 0, '兜底第 ' + (i + 1) + ' 条要求在位'));
-ok(tpl.indexOf('<p class="splash-item splash-hl">' + TAIL + '</p>') >= 0, '兜底侵权声明（高亮）在位');
-ok(tpl.indexOf('<div class="splash-summary"') < 0, '静态兜底的「必读摘要」块已随 #1216 整块撤除（复活＝与开屏最顶必读卡组两份口径各说各话；哨兵 #1216a/#613 同判）');
-ok((tpl.match(/<p class="splash-sec">1、网站公告 · 关于转载与二次创作<\/p>/g) || []).length === 1, '转载章标题在静态兜底里恰好一处（.splash-sec 唯一，摘要撤除后不存在第二份复述）');
-// #1498（2026-09-30 作者直派「把公告里的【互助群公告】相关内容删掉」）：该章两源整块下线，本行由「章仍在」改口为
-//   「章不得回流」——原先它证的是「只插入、未替换」，那层意思现由上方第 64 行（四、许可章仍在）＋第 73 行（转载章唯一）承担。
-ok(tpl.indexOf('<p class="splash-sec">互助群公告</p>') < 0, '#1498 起「互助群公告」章保持删除（回流＝把整章带回开屏，与线上 notice.json 分叉）');
-const o = (tpl.match(/<!--/g) || []).length, c = (tpl.match(/-->/g) || []).length;
-ok(o === c, 'HTML 注释配平（未闭合注释会连锁打碎 .phone 结构，#301）', o + '/' + c);
+console.log('\n== B 幸存口径零回归（删转载章正文不许碰坏剩下的开屏）==');
+ok(count(tpl, '<p class="splash-sec">' + TITLE + '</p>') === 1, 'B1 §1 目录章标题仍在离线兜底且恰好一处（目录仍可逐章翻＝#1500c 活动哨兵守卫）');
+ok(count(idx, '<p class="splash-sec">' + TITLE + '</p>') === 1, 'B2 构建产物 index.html 的 §1 目录章标题同样在位');
+['2、停更公告 · 2026年9月底后永久停更', '3、公告已精简 · 大量使用说明已移到「设置 → 关于」', '4、浏览器兼容提醒（安卓用户必读）', '5、iPhone 用户必读：把本站「添加到主屏幕」再用（数据会一直被清）', '14、关于后台通知相关设置（怎么开、收不到怎么办）'].forEach((t) => {
+  ok(tpl.indexOf(t + '</p>') >= 0, 'B3 目录章仍在静态兜底：' + t.slice(0, 20));
+});
+ok(count(tpl, 'id="splash-cardlock"') === 1 && count(idx, 'id="splash-cardlock"') === 1, 'B4 防未成年人·系统内置字卡锁卡仍在（「保留防未成年人以及下面的部分」的口径落点）');
+ok(count(tpl, 'id="splash-age-check"') === 1 && count(tpl, '本站禁止未满 18 周岁的未成年人使用') > 0, 'B5 18 周岁红线仍在（年龄勾选行 + 进入前公告副标题）');
+ok(count(tpl, 'Mochi字卡为原创独立作品（即原版）') === 1, 'B6 #1503 起「原创独立作品（即原版）」口径仍在品牌卡许可块');
+ok(count(tpl, 'class="splash-summary"') === 0 && count(idx, 'class="splash-summary"') === 0, 'B7 必读摘要块仍不存在（#1216 起整块撤除，不因本批复活）');
+ok(count(tpl, '互助群公告') === 0, 'B8 #1498 起「互助群公告」章保持删除（回流＝把整章带回开屏）');
+const o = count(tpl, '<!--'), c = count(tpl, '-->');
+ok(o === c, 'B9 HTML 注释配平（未闭合注释会连锁打碎 .phone 结构，#301）', o + '/' + c);
+ok(!!reg('#1500c'), 'B10 哨兵 #1500c（离线兜底 §1 目录章标题）仍为活动登记（未随精简退役）');
+ok(!!reg('#1500d'), 'B11 哨兵 #1500d（删除型：离线兜底不得再有中文序号章标题）仍为活动登记');
 
-console.log('\n== C 产物实测：真实进入流程渲染第一页 ==');
-const browser = await chromium.launch();
-const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
-const errs = [];
-page.on('pageerror', (e) => errs.push(String(e && e.message || e)));
-await page.goto(base + '/index.html', { waitUntil: 'domcontentloaded' });
-await page.waitForSelector('#splash-notice .splash-toc', { timeout: 15000 }).catch(() => {});
-await page.waitForTimeout(1000);
-const r = await page.evaluate((title) => {
-  const wraps = Array.from(document.querySelectorAll('#splash-notice .splash-sec-wrap'));
-  const head = (w) => { const e = w.querySelector(':scope > .splash-sec'); return e ? e.textContent.trim() : ''; };
-  const first = wraps[0] || null;
-  const notice = document.getElementById('splash-notice');
-  const toc = Array.from(document.querySelectorAll('.splash-toc-chip')).map((x) => x.textContent);
-  const nchars = (s) => (s || '').replace(/\s/g, '').length;
-  const norm = (s) => (s || '').replace(/\s/g, '');
-  return {
-    chapterCount: wraps.length,
-    firstTitle: head(first),
-    firstText: norm(first ? first.textContent : ''),
-    tocHasIt: toc.some((x) => x.indexOf(title) >= 0),
-    tocCount: toc.length,
-    hasSummaryEl: !!document.querySelector('.splash-summary'),
-    noticeHasTail: norm(notice.textContent).indexOf(norm('未经署名转载视为侵权，作者保留追究权利。')) >= 0,
-    keepDisclaimer: norm(document.querySelector('.splash-disclaimer') ? document.querySelector('.splash-disclaimer').textContent : '').indexOf(norm('本站禁止未满 18 周岁的未成年人使用')) >= 0,
-    // #1503 起该口径随许可章搬到品牌卡（.splash-brandcard，不在 #splash-notice 内）→ 判据改看整页文本
-    keepPermit: norm(document.body.textContent).indexOf(norm('Mochi字卡为原创独立作品（即原版）')) >= 0,
-    firstHasAll: ['网站公告·关于转载与二次创作', '本网站所有字卡内容遵循「开放二传二改」原则，欢迎分享与再创作。但请遵守以下要求：',
-      '转载或二传链接，必须保留作者署名（言序）；', '二次创作作品请注明「基于言序作品修改」；',
-      '禁止抹除署名、伪装原创、或将内容用于恶意引流；', '仅分享网站聊天记录、不涉及搬运字卡的，只需标注mochi字卡tag即可。',
-      '未经署名转载视为侵权，作者保留追究权利。'].every((s) => norm(first ? first.textContent : '').indexOf(s) >= 0),
-    ncharsFirst: nchars(first ? first.textContent : ''),
-  };
-}, TITLE);
-ok(r.chapterCount >= 14, '第一页公告章节数 ≥ 14（#1503 起许可章与 Bug 章下架＝在线源 14 章）', r.chapterCount);
-ok(r.firstTitle === NUM + TITLE, '渲染后首章就是该公告（第一眼可见）', r.firstTitle);
-ok(r.firstHasAll, '首章七段原文（首句 + 四条 + 侵权声明）全部渲染到位');
-ok(r.tocHasIt, '目录里能跳转到该章', r.tocCount + ' 章');
-ok(!r.hasSummaryEl, '必读摘要块已整块撤除（#1216 用户直派；渲染侧也不该再出现 .splash-summary）');
-ok(r.noticeHasTail, '侵权声明在页面上可见');
-ok(r.keepDisclaimer, '免责声明卡的 18 周岁红线未被覆盖（摘要撤除后它的权威落点＝开屏必读卡组 .splash-disclaimer，只增不改）');
-ok(r.keepPermit, '#1503 起「原创独立作品（即原版）」口径仍在（落点＝品牌卡许可块）');
-ok(errs.length === 0, '全程无未捕获 JS 异常', errs.slice(0, 3));
-await browser.close();
-srv.close();
-
-console.log('\n结果：' + pass + ' 通过 / ' + fail + ' 失败');
-process.exit(fail ? 1 : 0);
+console.log('\n' + (fail === 0 ? '✅' : '❌') + ' verify-1024-transfer-reuse-notice: ' + pass + ' 通过 / ' + fail + ' 失败');
+process.exit(fail === 0 ? 0 : 1);

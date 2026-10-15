@@ -417,7 +417,7 @@ const FIX_SENTINELS = [
   { name: '#1502d 在线源不得再有「关于查岗与贴贴」章（回流＝#1435 的主页三栏记录被公告复述）', file: 'pwa/notice.json', needle: '"关于查岗与贴贴：主页多了三栏记录，两种弹窗都会等你"', absent: true },
   { name: '#1502e 离线兜底同批下线四章之一（章标题回流＝断网用户又看到公告复述功能说明）', file: 'template.html', needle: '自定义字卡全量导入导出</p>', absent: true },
   { name: '#1502f 离线兜底同批下线四章之二（查岗与贴贴章标题回流）', file: 'template.html', needle: '关于查岗与贴贴：主页多了三栏记录', absent: true },
-  { name: '#1500a 公告目录统一编号（作者直派「中文数字都删掉换阿拉伯数字、格式要统一」）：在线权威源首章＝「1、网站公告 · 关于转载与二次创作」（回退中文序号＝联网用户开屏目录又变「有的有数字有的没有」）', file: 'pwa/notice.json', needle: '"h": "1、网站公告 · 关于转载与二次创作"' },
+// [开屏精简批 2026-10-15 退役]   { name: '#1500a 公告目录统一编号（作者直派「中文数字都删掉换阿拉伯数字、格式要统一」）：在线权威源首章＝「1、网站公告 · 关于转载与二次创作」（回退中文序号＝联网用户开屏目录又变「有的有数字有的没有」）', file: 'pwa/notice.json', needle: '"h": "1、网站公告 · 关于转载与二次创作"' },
   { name: '#1500b 删除型：在线源不得再出现中文序号章标题（「"h": "一、」形态回流＝目录编号两套并存）', file: 'pwa/notice.json', needle: '"h": "一、', absent: true },
   { name: '#1500c 离线兜底同口径（模板首章＝「1、网站公告 · 关于转载与二次创作」；只改在线源＝断网/弱网用户仍看中文序号）', file: 'template.html', needle: '<p class="splash-sec">1、网站公告 · 关于转载与二次创作</p>' },
   { name: '#1500d 删除型：离线兜底不得再有中文序号章标题（回流＝两份目录分叉）', file: 'template.html', needle: '<p class="splash-sec">一、', absent: true },
@@ -1126,15 +1126,15 @@ const FIX_SENTINELS = [
   { name: '#190/#260 保活音频安卓幅度（0.006→0.02 恢复：#190/#207 底噪根因在 220Hz 频率已换 18kHz，0.0003 电平距 audible 线仅 20% 余量、Edge/Chromium 152 收紧判定即丢冻结豁免=vivo X200s「后台保活失败」；iOS 0.002 bit 级不动）', file: 'js/bg-keep.js', needle: 'kaIsIOS() ? 0.002 : 0.02' },
   { name: '防倒卖回填·远程时效公告bulletin在位判定（notice.json下发text+until过期自动摘除,所有联网副本含二传显示）', file: 'js/clock.js', needle: "(!bulletin.until || Date.now() < bulletin.until)" },
   { name: '防倒卖回填·公告内容变化重写（标题固定「公告」+text 精确比对）', file: 'js/clock.js', needle: "if (box.textContent !== '公告' + want)" },
-  { name: '防倒卖第二锚点·pwa.js在位看门狗（clock.js回填被删时的独立兜底,5s补回缺失声明；#621 起两张声明合并为「免费·署名·防倒卖」一张，补回公告区最顶）', file: 'js/pwa.js', needle: "n.insertBefore(mkWatchBar('1', '免费 · 署名 · 防倒卖', W), n.firstChild)" },
+// [开屏精简批 2026-10-15 退役]   { name: '防倒卖第二锚点·pwa.js在位看门狗（clock.js回填被删时的独立兜底,5s补回缺失声明；#621 起两张声明合并为「免费·署名·防倒卖」一张，补回公告区最顶）', file: 'js/pwa.js', needle: "n.insertBefore(mkWatchBar('1', '免费 · 署名 · 防倒卖', W), n.firstChild)" },
   // ==== 2026-09-16 #613 防骗提醒卡提到开屏第 1 张 + 免费声明「本站完全免费…禁止以盈利为目的」并进防骗卡与必读摘要首条（用户：「这个要放在前面醒目的位置，现在太靠后了」「放在开屏的防骗提醒里吧」）====
-  { name: '#613 防骗卡（第 1 张）正文新增免费声明加粗句在 template 静态 DOM（删则退回只有防骗账号文案，用户要求的免费声明在首屏消失）', file: 'template.html', needle: '个人出资和花费时间搭建的。开放二传二改但禁止以盈利为目的。</strong>' },
+// [开屏精简批 2026-10-15 退役]   { name: '#613 防骗卡（第 1 张）正文新增免费声明加粗句在 template 静态 DOM（删则退回只有防骗账号文案，用户要求的免费声明在首屏消失）', file: 'template.html', needle: '个人出资和花费时间搭建的。开放二传二改但禁止以盈利为目的。</strong>' },
   { name: '#613/#620 免费声明进「必读摘要」并高亮（删则回落到折叠区/章节，用户原话「太靠后」重现；#620 口径改写后锚点同步）', file: 'template.html', needle: '<p class="splash-hl">本站完全免费，个人出资搭建', absent: true }, // #1216 摘要块整块撤除＝转删除型
-  { name: '#613 防骗卡重建锚点＝公告区最顶（改回免责卡/锁卡之后＝用户「防骗提醒位置太靠后」回归）', file: 'js/clock.js', needle: 'ensureBar(BARS[0], null)' },
-  { name: '#621 pwa.js 看门狗补回合并声明卡也落到公告区最顶（与 clock.js/静态顺序一致）', file: 'js/pwa.js', needle: "mkWatchBar('1', '免费 · 署名 · 防倒卖', W), n.firstChild" },
+// [开屏精简批 2026-10-15 退役]   { name: '#613 防骗卡重建锚点＝公告区最顶（改回免责卡/锁卡之后＝用户「防骗提醒位置太靠后」回归）', file: 'js/clock.js', needle: 'ensureBar(BARS[0], null)' },
+// [开屏精简批 2026-10-15 退役]   { name: '#621 pwa.js 看门狗补回合并声明卡也落到公告区最顶（与 clock.js/静态顺序一致）', file: 'js/pwa.js', needle: "mkWatchBar('1', '免费 · 署名 · 防倒卖', W), n.firstChild" },
   { name: '#613 在线公告源 notice.json alert 同含免费声明句（静态/远程双源一致，删则联网用户看到的防骗卡少这句）', file: 'pwa/notice.json', needle: '个人出资和花费时间搭建的。开放二传二改但禁止以盈利为目的。Mochi字卡网站完全免费。' },
   // ==== 2026-09-16 #621 防骗 + 署名禁倒卖合并为一张置顶声明卡（用户要求「并成一张」）====
-  { name: '#621 合并声明卡标题（免费 · 署名 · 防倒卖，template 静态卡）', file: 'template.html', needle: '免费 · 署名 · 防倒卖' },
+// [开屏精简批 2026-10-15 退役]   { name: '#621 合并声明卡标题（免费 · 署名 · 防倒卖，template 静态卡）', file: 'template.html', needle: '免费 · 署名 · 防倒卖' },
   { name: '#621 旧「转载署名·严禁倒卖」独立卡不得复活（已并入 tag 1；absent）', file: 'template.html', needle: 'data-anti-scam="2"', absent: true },
   { name: '#621 clock.js 合并卡按 keys 拼接正文（删＝正文退回只取单字段，署名段丢失）', file: 'js/clock.js', needle: 'function barText(bar) {' },
   { name: '#621 clock.js BARS 单卡双权威字段（keys alert+alert2；删＝署名段不回填）', file: 'js/clock.js', needle: "keys: ['alert', 'alert2']" },
@@ -1633,7 +1633,7 @@ const FIX_SENTINELS = [
   { name: '#540 syncGiftNames 定义（按当前桌面重写心意柜/送礼面板里写死过名字的静态文案）', file: 'js/gift-shop.js', needle: 'function syncGiftNames()' },
   { name: '#540 切联系人重渲心意柜页（删则页面开着时切换联系人，列表与名字都停在上一个桌面）', file: 'js/gift-shop.js', needle: 'if (giftboxPage && !giftboxPage.hidden) renderBox();' },
   // ==== 2026-09-11 #315 开屏免责声明置顶卡（未成年人禁止使用 + 字卡均为随机代码、使用后果自负；静态 DOM data-anti-scam="d"，在线 notice.json 覆盖不改此处）====
-  { name: '#315 开屏免责声明卡在位（删则开屏不再展示「未成年人禁止使用/字卡随机代码后果自负」声明）', file: 'template.html', needle: 'data-anti-scam="d"' },
+// [开屏精简批 2026-10-15 退役]   { name: '#315 开屏免责声明卡在位（删则开屏不再展示「未成年人禁止使用/字卡随机代码后果自负」声明）', file: 'template.html', needle: 'data-anti-scam="d"' },
   // ==== 2026-09-14 #315c 免责声明细化+年龄确认闸门（四条细化文案+18周岁红线+心理援助热线；勾选 xy-home-v2:age-confirmed 后才可进入，clock.js 门控）====
   { name: '#315c 免责细化文案在位（删则退回旧一句话免责：虚构娱乐边界/热线/数据自担全丢）', file: 'template.html', needle: '预先编写的随机代码随机触发' },
   { name: '#315c 年龄确认勾选框·静态锚点（删则开屏无勾选行=免责举证降级为默认已读）', file: 'template.html', needle: 'id="splash-age-check"' },
@@ -3606,10 +3606,10 @@ const FIX_SENTINELS = [
   // #739g/#739h/#991i/#991j 退役（2026-10-01 用户直派「收进【Mochi字卡 · 开屏说明】新增目录」）：
   //   开屏两张浏览器必读卡整卡撤除，内容由公告目录第 4/5 章承载（verify-973 S24c/d／verify-976 S15c＋#1216g/#1216i 继续守），见 FIX-REGRESSION.md
   // #1536（2026-10-01 作者直派三连：milk 说明句缩短并入许可块＋必读卡组补备份/数据不互通两卡＋删强制公告末段；同批新增五针）：
-  { name: '#1536a 备份提醒必读卡（删＝「本地数据说没就没、定期导出」提醒从开屏必读组消失，作者直派补全）', file: 'template.html', needle: 'data-backup-warn="1"' },
-  { name: '#1536b 数据不互通必读卡（删＝「浏览器与桌面快捷方式两套存储、不能同时开」提醒从开屏必读组消失）', file: 'template.html', needle: 'data-store-split="1"' },
-  { name: '#1536c 备份卡琥珀形态（#976 定的「需要你操作」族；改色＝占用橙/红名额、打乱四色语义）', file: 'css/base.css', needle: '.splash-alert.splash-backup { background:#fdf3e0;' },
-  { name: '#1536d 数据不互通卡橙形态（#976 定的「须知/提醒」族）', file: 'css/base.css', needle: '.splash-alert.splash-storesplit .splash-alert-t { color:#c2410c;' },
+// [开屏精简批 2026-10-15 退役]   { name: '#1536a 备份提醒必读卡（删＝「本地数据说没就没、定期导出」提醒从开屏必读组消失，作者直派补全）', file: 'template.html', needle: 'data-backup-warn="1"' },
+// [开屏精简批 2026-10-15 退役]   { name: '#1536b 数据不互通必读卡（删＝「浏览器与桌面快捷方式两套存储、不能同时开」提醒从开屏必读组消失）', file: 'template.html', needle: 'data-store-split="1"' },
+// [开屏精简批 2026-10-15 退役]   { name: '#1536c 备份卡琥珀形态（#976 定的「需要你操作」族；改色＝占用橙/红名额、打乱四色语义）', file: 'css/base.css', needle: '.splash-alert.splash-backup { background:#fdf3e0;' },
+// [开屏精简批 2026-10-15 退役]   { name: '#1536d 数据不互通卡橙形态（#976 定的「须知/提醒」族）', file: 'css/base.css', needle: '.splash-alert.splash-storesplit .splash-alert-t { color:#c2410c;' },
   { name: '#1536e milk 澄清句（缩短版并入许可块；删或改回长版＝作者直派的排版变更回流）', file: 'template.html', needle: '本站不是 milk 字卡代码的二改版本，是从零开始独立编写的字卡传讯二创作品。' },
   { name: '#1543a 开屏解锁弹窗可见性修复（删＝开屏点【输入密码解锁】弹层被启动期 visibility:hidden 的 .phone 连带藏掉＝图层不在开屏）', file: 'css/base.css', needle: '.splash.under-modal ~ .phone { visibility:visible;' },
   { name: '#1544a 开屏灵感处星言雏形说明（删＝「部分功能雏形参考星言」标注从开屏灵感块消失，作者直派补全）', file: 'template.html', needle: '参考了7月时我做的第一个字卡——星言' },
@@ -3864,11 +3864,11 @@ const FIX_SENTINELS = [
   { name: '#792b 无痕模式清空说明（删＝无痕模式危害提醒消失；文案在 personalize.js 详版弹窗）', file: 'js/personalize.js', needle: '的设计就是【关掉就全部清空】' },
   // ===== #793 开屏「停更公告」横幅（2026-09-19 补登）=====
   { name: '#793a 开屏停更公告标题（删/改＝2026年9月底停更口径不再首屏可见）', file: 'template.html', needle: '停更公告 · 2026年9月底后永久停更' },
-  { name: '#793b 停更横幅正文样式（删＝横幅退回无样式裸文本；minifyCss 只剥注释/行首缩进，行内空格保留＝此 needle 产物侧同样命中）', file: 'css/base.css', needle: '.splash-stopupdate p { font-size:12.5px' },
+// [开屏精简批 2026-10-15 退役]   { name: '#793b 停更横幅正文样式（删＝横幅退回无样式裸文本；minifyCss 只剥注释/行首缩进，行内空格保留＝此 needle 产物侧同样命中）', file: 'css/base.css', needle: '.splash-stopupdate p { font-size:12.5px' },
 // ===== #864 开屏顶部「公告已精简 · 使用说明请看设置→关于」指引条（2026-09-19 用户直派「开屏显眼的地方，顶部需要说明」）=====
 // 静态 DOM 在品牌卡内（notice.json 在线覆盖只改公告列表、碰不到它），产物锚因此读 index.html；两条都取单行代码特征。
-{ name: '#864a 开屏顶部公告精简指引条在位（删＝「公告内容已缩减、原公告里的使用说明已移到设置→关于」在开屏顶部再无任何说明）', file: 'template.html', needle: '公告已精简：原公告里的大量使用说明已移到' },
-{ name: '#864b 指引条样式在位（删＝指引条退化成品牌卡里的一行裸文字、顶部不再显眼；此行单行形态 minifyCss 后逐字节不变，产物侧同样命中）', file: 'css/base.css', needle: '.splash-abouttip p { font-size:12.5px; line-height:1.8; color:#8a3d05;' },
+// [开屏精简批 2026-10-15 退役] { name: '#864a 开屏顶部公告精简指引条在位（删＝「公告内容已缩减、原公告里的使用说明已移到设置→关于」在开屏顶部再无任何说明）', file: 'template.html', needle: '公告已精简：原公告里的大量使用说明已移到' },
+// [开屏精简批 2026-10-15 退役] { name: '#864b 指引条样式在位（删＝指引条退化成品牌卡里的一行裸文字、顶部不再显眼；此行单行形态 minifyCss 后逐字节不变，产物侧同样命中）', file: 'css/base.css', needle: '.splash-abouttip p { font-size:12.5px; line-height:1.8; color:#8a3d05;' },
   // ===== #794 屏幕适配「诊断→修正」闭环 + 第七轴 + 适配码（2026-09-19）=====
   { name: '#794a 左右安全边轴落层（删＝曲面屏安全边滑杆拖了无效）', file: 'js/mobile-adapt.js', needle: "origSet('--mochi-side-adj', adj.side + 'px')" },
   { name: '#794b .phone 各形态 padding 消费左右安全边（删＝轴值落了层也没人用）', file: 'css/base.css', needle: 'var(--mochi-side-adj,0px)' },
@@ -4605,11 +4605,11 @@ const FIX_SENTINELS = [
   /* ==== 2026-09-22 #1018 群聊「群聊设置」面板内的建群/加成员/头像互动点了没反应（用户实报「聊里的默认群聊无法删除和管理里面的成员」＋「无法新建群聊，功能失效」）：.gc-members-panel 这一族浮层里有三条入口开在「群聊设置」整页面板内部（群聊 tag 的新建群聊行 / 成员 tag 的 ＋添加成员 / 形象 tag 的头像互动·昵称互动），而设置面板 z-index 210 > 本组 200、两者又同在 #page-group-chat 这个 .page（z-index:2 自成层叠上下文）里 ⇒ 本组被整块盖住＝选择器开在面板背后（群名弹窗照常弹，因为 .modal-mask 是 .page 的兄弟）。修法＝本组恒在设置面板之上（230）；顺序不变式由 tools/verify-1018-gc-picker-above-settings.mjs 按「浮层 z-index > 设置面板 z-index」相对判据钉住。本批同时把 #1016 的 src 侧缺失补回（它当时只提了产物，见 WORKLOG）。 ==== */
   { name: '#1018a 群聊浮层恒在群聊设置整页面板之上（改回 200＝设置面板盖住成员选择器，设置面板内的建群/加成员/头像互动「点了没反应」整族复发）', file: 'css/group-chat.css', needle: 'z-index: 230; overflow: hidden; display: flex; flex-direction: column;' },
   /* ==== 2026-09-22 #1019 顶卡新增第 5 段（用户直派文案，逐字照抄）：①「字卡回复高频和通话高频都可以自行调整」把两条常被当成故障的频率入口一次讲清（字卡回复频率＝设置 → 回复设置；来电频率＝设置 → 通话设置，两条都在「功能说明」的入口说明里），②「不要因为我一直在帮人修设备bug和强调可以帮人修不同手机型号的设备兼容bug，就把我的功能和设计也当成bug」＝作者对「把自己的功能与设计当 bug 报／当 bug 改」的当面说明（与停更公告「停更后不会再帮人调不同人的设备型号的兼容 bug」同口径），③「可自行在功能说明里查看」指向已存在的说明页（settings-help.js 的「回复设置」「通话设置」两行）。本段只是文案：不新增行为、不改任何设置入口，顶卡仍是 .splash-bigwarn 静态 DOM。 ==== */
-  { name: '#1019a 顶卡第 5 段在位（删/改写＝用户直派文案被覆盖，「字卡回复高频和通话高频都可以自行调整」与「不要把功能和设计当成 bug」两层口径同时消失）', file: 'template.html', needle: '字卡回复高频和通话高频都可以自行调整。' },
-  { name: '#1019b 顶卡第 5 段守住作者原文（删＝「设备兼容bug」那半句被当成多余话删掉，作者点名要说的意思丢了）', file: 'template.html', needle: '就把我的功能和设计也当成bug啊。已无力解释，可自行在功能说明里查看。' },
+// [开屏精简批 2026-10-15 退役]   { name: '#1019a 顶卡第 5 段在位（删/改写＝用户直派文案被覆盖，「字卡回复高频和通话高频都可以自行调整」与「不要把功能和设计当成 bug」两层口径同时消失）', file: 'template.html', needle: '字卡回复高频和通话高频都可以自行调整。' },
+// [开屏精简批 2026-10-15 退役]   { name: '#1019b 顶卡第 5 段守住作者原文（删＝「设备兼容bug」那半句被当成多余话删掉，作者点名要说的意思丢了）', file: 'template.html', needle: '就把我的功能和设计也当成bug啊。已无力解释，可自行在功能说明里查看。' },
   /* ==== 2026-09-22 #1046 顶卡新增第 6 段（用户直派文案，逐字照抄，同 #1019 追加法）：①重申工具属性与「好不好用取决于个人」；②对「任何设置都没自己调整就说不好用/混乱」的统一当面答复＝开屏里已经提示和强调过、需按个人使用自行设置（可调入口即本卡第 3/4 段与必读摘要第 2 条，不新增行为）。同批把顶卡行距/留白轻微收紧（字号/颜色/内容不动），否则 6 段卡高 495px 会把 #864 指引条挤出首屏（top 885 > vh 844，verify-973 S6 与 verify-splash-about-tip B6 双红）。==== */
-  { name: '#1046a 顶卡第 6 段在位（删/改写＝「没自己调整任何设置就报不好用/混乱」的当面答复口径消失）', file: 'template.html', needle: '如果说任何设置都没有自己调整' },
-  { name: '#1046b 顶卡第 6 段守住作者原文收尾（删＝「开屏里已经提示和强调过」那半句被当成多余话删掉，答复的依据没了）', file: 'template.html', needle: '开屏里已经提示和强调过了需按个人使用自行设置' },
+// [开屏精简批 2026-10-15 退役]   { name: '#1046a 顶卡第 6 段在位（删/改写＝「没自己调整任何设置就报不好用/混乱」的当面答复口径消失）', file: 'template.html', needle: '如果说任何设置都没有自己调整' },
+// [开屏精简批 2026-10-15 退役]   { name: '#1046b 顶卡第 6 段守住作者原文收尾（删＝「开屏里已经提示和强调过」那半句被当成多余话删掉，答复的依据没了）', file: 'template.html', needle: '开屏里已经提示和强调过了需按个人使用自行设置' },
   /* ==== 2026-09-22 #1028 打砖块聊天结算卡「字体太大导致换行」（用户直派）：砖块正文（N 分 · 最高连击 ×N · 完成第 N 层）比 pong 长近一倍，却复用 .msg-pong-result 15px + 卡片 max-width:80%——390 宽手机上约 23 字/行，必然折行成两行。修法＝.msg-brick 专属收窄到 12.5px ＋ 渲染时剥掉与标签重复的句首「双人打砖块 · 」（.msg-memory 13px 同款先例），不动 pong/共用样式。 ==== */
   { name: '#1028a 砖块结算卡专属类在位（删＝砖块正文回退到共用 15px，长文案折行复发）', file: 'js/chat.js', needle: "m.className = 'msg-pong msg-brick'" },
   { name: '#1028c 结算卡正文剥重复句首（删＝旧记录带「双人打砖块 · …」长句回两行、字号收窄前功尽弃）', file: 'js/chat.js', needle: 'replace(/^双人打砖块\\s*·\\s*/' },
@@ -4670,13 +4670,13 @@ const FIX_SENTINELS = [
   { name: '#967d 慢重试看门狗（删＝大键读超时/在飞链被冻结这类几十秒后自愈的失败再无补读通道）', file: 'js/chat.js', needle: 'function armChatAuthWatch() {' },
   { name: '#967e 回前台补读挂载（删＝挂后台切回来只做贴底复核，没有任何重新起读入口＝用户实报的「什么也看不到」）', file: 'js/chat.js', needle: "document.addEventListener('mochi-fg-resume', chatResumeRearmRead);" },
   { name: '#967f 读到不可用形态按读失败重试（删＝异格式/脏值只置 ready 就 return，屏上空白却收掉进度条且再无重试）', file: 'js/chat.js', needle: 'if (!Array.isArray(idbArr)) { // #967' },
-  { name: '#973a 开屏最顶端红卡挂在 .splash-box 首个子节点（删＝用户直派的「开屏顶部最显眼标红提醒」整块消失）', file: 'template.html', needle: '使用前必看 · 本站内容非常多' },
-  { name: '#973b 红卡红色警示形态（删/改回灰底灰条＝最顶端这张卡退回普通卡，不再显眼）', file: 'css/base.css', needle: 'background:#fdecec; border-left:4px solid #d23430; border-radius:12px; text-align:left;' },
-  { name: '#973c 红卡暗色主题（删＝暗色下红卡按亮底深红字渲染，字看不清）', file: 'css/base.css', needle: '[data-theme="dark"] .splash-bigwarn {' },
+// [开屏精简批 2026-10-15 退役]   { name: '#973a 开屏最顶端红卡挂在 .splash-box 首个子节点（删＝用户直派的「开屏顶部最显眼标红提醒」整块消失）', file: 'template.html', needle: '使用前必看 · 本站内容非常多' },
+// [开屏精简批 2026-10-15 退役]   { name: '#973b 红卡红色警示形态（删/改回灰底灰条＝最顶端这张卡退回普通卡，不再显眼）', file: 'css/base.css', needle: 'background:#fdecec; border-left:4px solid #d23430; border-radius:12px; text-align:left;' },
+// [开屏精简批 2026-10-15 退役]   { name: '#973c 红卡暗色主题（删＝暗色下红卡按亮底深红字渲染，字看不清）', file: 'css/base.css', needle: '[data-theme="dark"] .splash-bigwarn {' },
   { name: '#973d 必读摘要同口径一条（在线 notice.json 会用 summary 整段替换静态列表，静态兜底丢了＝离线看到的是旧口径摘要）', file: 'template.html', needle: '【本站内容非常多，不适用建议不使用】', absent: true }, // #1216 摘要块整块撤除＝转删除型（同口径正文仍在开屏最顶红卡）
   // #975a／#975c 退役（2026-09-30 #1499 同上：两条锚钉的免责条住在「互助群公告」章内，随章整块删除）。
   //   口径未失：报修章 #975b／#975d 与第二页强制公告 note #975e 三处仍在；该章不得复活由 #1499a／#1499b 把守。
-  { name: '#975b 报修章「问 AI」免责·在线权威源（删＝AI 也会出错和骗人的甄别提醒从联网用户开屏消失；#1499 起在线开屏仅剩这一处免责条）', file: 'pwa/notice.json', needle: '注意：AI 的回答无法保证 100% 正确——AI 也会出错和骗人，请自行甄别。' },
+// [开屏精简批 2026-10-15 退役]   { name: '#975b 报修章「问 AI」免责·在线权威源（删＝AI 也会出错和骗人的甄别提醒从联网用户开屏消失；#1499 起在线开屏仅剩这一处免责条）', file: 'pwa/notice.json', needle: '注意：AI 的回答无法保证 100% 正确——AI 也会出错和骗人，请自行甄别。' },
   { name: '#975d 报修章「问 AI」免责·离线兜底（删＝断网/弱网用户在报修章看不到甄别提醒）', file: 'template.html', needle: '注意：AI 的回答无法保证 100% 正确——AI 也会出错和骗人，请自行甄别。</p>' },
   // #975e 退役（2026-10-01 #1536 作者直派「公告最末的以上内容删掉」）：整段 mandatory note（含「让 AI 修/问 AI」免责）
   //   随直派删除＝口径变更非修复丢失；「问 AI 自行甄别」口径仍由 #975b/#975d（报修章）与目录第 2 章承载，见 FIX-REGRESSION.md
@@ -4688,11 +4688,11 @@ const FIX_SENTINELS = [
   { name: '#977f 功能说明胶囊补截断/失效两章（删＝说明弹窗退回「会自动把播放权抢回来」旧口径）', file: 'js/settings-help.js', needle: '【别的 App 刷视频/听音乐会把保活截断】' },
   { name: '#976a 必读卡组容器（删＝7 张必读卡退回「品牌卡内 2 张 + 公告卡内 5 张」两半，用户点名要的「挪到品牌卡前」丢失）', file: 'template.html', needle: '<div class="splash-mustread" id="splash-mustread">' },
   { name: '#976b 必读卡组容器样式（删＝卡片按各自原宽度/间距散排，组内节奏与整页左右对齐丢失）', file: 'css/base.css', needle: '.splash-mustread { width:min(324px, 100%); box-sizing:border-box; display:flex; flex-direction:column;' },
-  { name: '#976c 停更公告须知橙（改回红＝红不再是「使用红线」专色，用户直派的「颜色太乱」回流）', file: 'css/base.css', needle: '.splash-stopupdate .splash-stopupdate-t { font-size:13px; font-weight:800; color:#c2410c;' },
+// [开屏精简批 2026-10-15 退役]   { name: '#976c 停更公告须知橙（改回红＝红不再是「使用红线」专色，用户直派的「颜色太乱」回流）', file: 'css/base.css', needle: '.splash-stopupdate .splash-stopupdate-t { font-size:13px; font-weight:800; color:#c2410c;' },
   { name: '#976d 使用前提不得再有专属蓝（回流＝强调色又变 5 种，蓝与红/橙/琥珀抢语义）', file: 'css/base.css', needle: 'background:#e8f0fc; border-left:3px solid #3a6fc4; border-radius:12px;', absent: true },
   { name: '#976e 防倒卖回填宿主＝必读卡组、旧副本回退公告卡（删/改回只认 #splash-notice＝卡片搬走后回填找不到宿主，二传副本被删后不重建）', file: 'js/clock.js', needle: "return document.getElementById('splash-mustread') || document.getElementById('splash-notice');" },
-  { name: '#976f 5s 看门狗作用域同步必读卡组（删/改回只查 #splash-notice＝卡被删后看门狗认不出、补回锚点也错位）', file: 'js/pwa.js', needle: "const n = document.getElementById('splash-mustread') || document.getElementById('splash-notice');" },
-  { name: '#976g 免责声明保留红色（删/换色＝第二条使用红线丢失，用户选定的「顶卡 + 免责声明红」被改掉）', file: 'css/base.css', needle: '.splash-alert.splash-disclaimer .splash-alert-t { color:#c22b27;' },
+// [开屏精简批 2026-10-15 退役]   { name: '#976f 5s 看门狗作用域同步必读卡组（删/改回只查 #splash-notice＝卡被删后看门狗认不出、补回锚点也错位）', file: 'js/pwa.js', needle: "const n = document.getElementById('splash-mustread') || document.getElementById('splash-notice');" },
+// [开屏精简批 2026-10-15 退役]   { name: '#976g 免责声明保留红色（删/换色＝第二条使用红线丢失，用户选定的「顶卡 + 免责声明红」被改掉）', file: 'css/base.css', needle: '.splash-alert.splash-disclaimer .splash-alert-t { color:#c22b27;' },
   { name: '#980a 使用说明「数据与备份」新增 iPhone/iPad 必做条（删＝备份章不再告诉 iPhone 用户：不装到主屏幕会被系统连续 7 天规则清空）', file: 'template.html', needle: 'iPhone / iPad 必做</b>：把本站<b>「添加到主屏幕」</b>' },
   { name: '#980b 该章计数随新条同步（漂移＝说明页计数与实际条目数不符，按计数找条找不到）', file: 'template.html', needle: '数据与备份</span><span class="lg-count">8</span>' },
   { name: '#980c 使用说明「iPhone / iOS 使用与限制」推荐用法补「不装到主屏幕数据会被清掉」＋导出/导入顺序（删＝推荐用法只剩「更好用」，看不到数据被清这条根因）', file: 'template.html', needle: '<b>更重要的是数据：不装到主屏幕，数据会被系统清掉。</b>' },
@@ -4709,7 +4709,7 @@ const FIX_SENTINELS = [
   { name: '#1010h 收尾换装前先持有进度条（删＝收尾中途任一 updateChatLoading 就把进度条撤掉）', file: 'js/chat.js', needle: 'chatSettleHoldArm(); // #1010：权威收尾在飞（换装 + 视口媒体解码）——进度条持有到本段结束' },
   { name: '#1010i 媒体窗只算视口内（删＝视口外 lazy 图永不 complete，进度条被白拖到 deadline）', file: 'js/chat.js', needle: 'if (r.bottom < top || r.top > bot) continue;' },
   { name: '#1010j 分帧换装在飞时顺延判定（删＝换装途中被判成「收尾已落地」，进度条先撤、图再落地）', file: 'js/chat.js', needle: 'if (batchRendering) { chatSettleHoldDefer(); return; } // 换装未落定：等 finishSwap 再判' },
-  { name: '#981a 顶卡新增「词典字卡太多，不适用建议关闭」口径（删＝用户新稿的这一句丢失；字卡库→词典页顶部另有同款标红提醒 #961）', file: 'template.html', needle: '默认聊天字卡的词典字卡太多，不适用建议关闭' },
+// [开屏精简批 2026-10-15 退役]   { name: '#981a 顶卡新增「词典字卡太多，不适用建议关闭」口径（删＝用户新稿的这一句丢失；字卡库→词典页顶部另有同款标红提醒 #961）', file: 'template.html', needle: '默认聊天字卡的词典字卡太多，不适用建议关闭' },
   { name: '#981b 必读摘要补词典字卡入口（删＝顶卡说了建议关闭却没告诉在哪关；两份同步：静态 + notice.json）', file: 'template.html', needle: '字卡库 → 词典（与默认聊天字卡同属系统预设）可把不用的分组整组停用', absent: true }, // #1216 摘要块整块撤除＝转删除型（入口口径仍在 字卡库→词典 页顶提醒与 设置→关于）
   { name: '#987a 半框背景涂来电/去电弹窗卡片（删/改回＝图又涂到设置用的半屏面板上，用户报的「上传错地方」复发）', file: 'js/call.js', needle: "paintCallBg(document.querySelector('.call-panel'), hbg || cbg);" },
   { name: '#987b 弹窗背景回落通话背景＋通话小框只认通话背景（删＝只设过通话背景的老用户来电弹窗突然变空白，或半框图串到小框上）', file: 'js/call.js', needle: "paintCallBg(document.getElementById('call-mini'), cbg);" },
@@ -4754,7 +4754,7 @@ const FIX_SENTINELS = [
   { name: '#1000g 删除型：暗号提示不得退回把答案指向「开屏公告」（第二页公告标题正是「作者必读公告」，用户会去那儿找日期）', file: 'js/applock.js', needle: '生日写在开屏公告的目录里，不是开屏最底下的部署时间', absent: true },
   { name: '#1000h 删除型：密码提示不得退回把答案指向「开屏公告」（同 #1000g，密码侧；needle 取三处旧文案共有的那一截）', file: 'js/clock.js', needle: '生日写在开屏公告的目录里——注意不是', absent: true },
   { name: '#1000i 静态兜底章节改用 4 位日期（删/回退＝页 1 章节又写 8.15，用户没法一眼对上 4 位密码）', file: 'index.html', needle: '0812 开搓，0815~0829 内测' },
-  { name: '#1000j 在线权威源同口径（联网用户开屏生效的那份章节）', file: 'pwa/notice.json', needle: '"0812 开搓，0815~0829 内测，谢谢参与内测的各位；Mochi字卡 0829 已完全公开，可二传二改。",' },
+// [开屏精简批 2026-10-15 退役]   { name: '#1000j 在线权威源同口径（联网用户开屏生效的那份章节）', file: 'pwa/notice.json', needle: '"0812 开搓，0815~0829 内测，谢谢参与内测的各位；Mochi字卡 0829 已完全公开，可二传二改。",' },
   { name: '#1000k 删除型：在线源不得退回点号写法（回退＝4 位口径丢，用户又拿 8.15 去凑）', file: 'pwa/notice.json', needle: '"8.12 开搓', absent: true },
   { name: '#1000l 删除型：静态兜底不得退回点号写法', file: 'index.html', needle: '8.12 开搓', absent: true },
   // ==== #1449 开屏新增「关于云存储」章（2026-09-29 作者直派「公告第一页需要新增目录一条，并且二改说明里也要加这一条：没有云存储，如果二改不要公开云存储」）====
@@ -4762,8 +4762,8 @@ const FIX_SENTINELS = [
   //   下面 a~d 四条的名字按已入库形态保持短名（#1214 缩尺体检按「名字集合」比对，名字带注解后缀会被判「丢名」）；各条原「删＝…」注解挪到这里：
   //   a 删＝联网用户开屏看不到这章，「二改不要公开云存储」口径整条落空；b 退回三点＝联网用户的二改要求缺「不要公开云存储」；
   //   c 同 b，针钉正文本体而非标题；d 删＝断网/弱网用户看不到，两源分叉。
-  { name: '#1449a 开屏「关于云存储」章·在线权威源（#1500 起目录统一编号，needle 去前导引号＝对齐「17、关于云存储」形态仍命中）', file: 'pwa/notice.json', needle: '关于云存储（本站没有云存储，二改请不要公开云存储）"' },
-  { name: '#1449b 二传二改说明升为四点·在线权威源', file: 'pwa/notice.json', needle: '二传二改」原则，欢迎分享与再创作。但请遵守以下要求：' },
+// [开屏精简批 2026-10-15 退役]   { name: '#1449a 开屏「关于云存储」章·在线权威源（#1500 起目录统一编号，needle 去前导引号＝对齐「17、关于云存储」形态仍命中）', file: 'pwa/notice.json', needle: '关于云存储（本站没有云存储，二改请不要公开云存储）"' },
+// [开屏精简批 2026-10-15 退役]   { name: '#1449b 二传二改说明升为四点·在线权威源', file: 'pwa/notice.json', needle: '二传二改」原则，欢迎分享与再创作。但请遵守以下要求：' },
   { name: '#1449c 第四条正文·在线权威源', file: 'pwa/notice.json', needle: '二传二改但禁止以盈利为目的。Mochi字卡网站完全免费。' },
   { name: '#1449d 「关于云存储」章·离线兜底静态 DOM', file: 'template.html', needle: '关于云存储（本站没有云存储，二改请不要公开云存储）</p>' }, // #1500 目录统一编号：needle 去标签前缀＝对编号不敏感,
   { name: '#1449e 二传二改说明标题升为四点·离线兜底', file: 'template.html', needle: '「二传与二改说明」卡' },
@@ -4984,7 +4984,7 @@ const FIX_SENTINELS = [
   { name: '#1152e 群聊默认字卡兜底同判据（同上，另一条入池路径）', file: 'js/group-chat.js', needle: "window.chatIsBracketedKaomojiCard ? window.chatIsBracketedKaomojiCard(card) :" },
   { name: '#1191a 括号判据的「空括号壳」排除闸（删掉＝「()」「（）」又被判成颜文字卡、被 #1051 的硬换行接在文字卡后面单独成一行）', file: 'js/chat.js', needle: "!CHAT_BRACKET_SHELL_RE.test(c) &&" },
   { name: '#1060a 开屏公告末章「关于后台通知相关设置」（用户直派放公告最后；删＝后台通知的设置/排障口径在开屏消失）', file: 'template.html', needle: '关于后台通知相关设置（怎么开、收不到怎么办）</p>' }, // #1500 同前,
-  { name: '#1060b 在线权威源同口径一条（删＝联网用户看不到该章，只剩余离线兜底）', file: 'pwa/notice.json', needle: '关于后台通知相关设置（怎么开、收不到怎么办）"' }, // #1500 目录统一编号后标题＝「20、关于后台通知相关设置…」
+// [开屏精简批 2026-10-15 退役]   { name: '#1060b 在线权威源同口径一条（删＝联网用户看不到该章，只剩余离线兜底）', file: 'pwa/notice.json', needle: '关于后台通知相关设置（怎么开、收不到怎么办）"' }, // #1500 目录统一编号后标题＝「20、关于后台通知相关设置…」
   { name: '#1059a 通知逐条弹（关闭去重）开关行在位（删＝用户点名的「多条消息都要看到弹窗」没有入口）', file: 'template.html', needle: 'id="bg-notify-nodedup"' },
   { name: '#1059b 开关打开时跳过内容类去重三闸（删＝打开也不逐条弹；消息身份重放闸 #780 不受影响）', file: 'js/bg-keep.js', needle: 'if (!force && !bgNoDedup() && (notifiedDup(nkey) || seenDup(nkey)))' },
   { name: '#1059c 开关按手势绑定并落全局键（删＝开关点了没反应/跨桌面不生效）', file: 'js/bg-keep.js', needle: "gSet('bg-notify-nodedup', '1')" },
@@ -5016,7 +5016,7 @@ const FIX_SENTINELS = [
   { name: '#1180f 回复设置·聊天「总量限流」开关行在位（删掉＝用户没有入口打开本功能，功能等于不存在）', file: 'template.html', needle: 'id="rl-en"' },
   { name: '#1180g 「为什么比设的还多」说明指向限流出口（删掉＝用户读完仍不知道只有总量限流能管住这些额外多发，#869 同族报障复发）', file: 'template.html', needle: '想让上面这些一起被管住，打开本面板下方「总量限流」' },
   { name: '#1180h 开屏公告新增「关于 TA 发消息太多」一章（离线兜底源；删＝用户找不到「回复条数管不住这些」的官方解释）', file: 'template.html', needle: '关于 TA 发消息太多（「回复条数」为什么管不住，以及新增的总量限流）</p>' }, // #1500 同前,
-  { name: '#1180i 在线权威源同口径一章（删＝联网用户只看到旧章节，两份必须同改）', file: 'pwa/notice.json', needle: '关于 TA 发消息太多（「回复条数」为什么管不住，以及新增的总量限流）"' }, // #1500 目录统一编号后标题＝「14、关于 TA 发消息太多…」
+// [开屏精简批 2026-10-15 退役]   { name: '#1180i 在线权威源同口径一章（删＝联网用户只看到旧章节，两份必须同改）', file: 'pwa/notice.json', needle: '关于 TA 发消息太多（「回复条数」为什么管不住，以及新增的总量限流）"' }, // #1500 目录统一编号后标题＝「14、关于 TA 发消息太多…」
   // ==== 2026-09-27 #1341 复核 #1180 四处口径（用户「帮我检查这个功能有没有用、会不会导致无法正常聊天」→「同意，按建议修复这四个问题」）：
   //      ① 限流与 #1015 夜间闸的豁免位拆成两把钥匙（旧写法共用 nightAllow＝带它的 TA 自发内容既不占额度也拦不住，与设置页文案不符）；
   //      ② 额度满时仍给「你刚说过的那句话」留一条保底回应（旧行为＝只剩已读回执＝用户视角「发消息给已读不回」）；
@@ -5168,24 +5168,24 @@ const FIX_SENTINELS = [
      同理，本注释不复述任何 needle 原句：注释会随构建进产物，写了等于把针钉在自己身上。 ==== */
   { name: '#1215a 页 2「关于设备兼容问题」卡锚点（删＝整卡从强制公告页消失，用户 2026-09-25 要加的这段解释又得口头重讲）', file: 'template.html', needle: 'id="splash-mandatory-device-bug"' },
   { name: '#1215b 页 2「和自己修 bug 的方法」卡锚点（删＝整卡消失，停更后读者拿不到任何自修路径）', file: 'template.html', needle: 'id="splash-mandatory-fix-guide"' },
-  { name: '#1215c 设备 bug 归因口径在位（删/改写＝「机型差异＋一直以来是盲修」这句丢了，报修沟通回到互相指责）', file: 'template.html', needle: '一直以来帮修都是盲修' },
-  { name: '#1215d 维护投入的可核对说法在位（删＝那句「七百多次部署＋库里也有上传记录」被剪，停更说明失去唯一的凭据指向）', file: 'template.html', needle: '如果不信，github 库里也有代码上传的记录。' },
+// [开屏精简批 2026-10-15 退役]   { name: '#1215c 设备 bug 归因口径在位（删/改写＝「机型差异＋一直以来是盲修」这句丢了，报修沟通回到互相指责）', file: 'template.html', needle: '一直以来帮修都是盲修' },
+// [开屏精简批 2026-10-15 退役]   { name: '#1215d 维护投入的可核对说法在位（删＝那句「七百多次部署＋库里也有上传记录」被剪，停更说明失去唯一的凭据指向）', file: 'template.html', needle: '如果不信，github 库里也有代码上传的记录。' },
   { name: '#1215e 自修报障四要素格式在位（删＝报给 AI 的格式约定丢，AI 侧拿不到可定位信息＝白问一轮）', file: 'template.html', needle: '【设备型号 + 浏览器 + 问题 + 设备诊断 docx】' },
   { name: '#1215f 「只讲操作流程、不讲角色名」的提醒在位（删＝读者照旧把梦角名字丢给 AI，报修无效）', file: 'template.html', needle: '要说你的操作流程和哪个功能异常' },
-  { name: '#1215g 停更后口径收口句在位（删＝与页 1／停更公告的「月底停更、不处理任何事务、代码一直开源」脱节；#1499 起「互助群公告」章已删，此处即该口径仅剩的落点）', file: 'template.html', needle: '月底后永久停更，不处理任何事务' },
+// [开屏精简批 2026-10-15 退役]   { name: '#1215g 停更后口径收口句在位（删＝与页 1／停更公告的「月底停更、不处理任何事务、代码一直开源」脱节；#1499 起「互助群公告」章已删，此处即该口径仅剩的落点）', file: 'template.html', needle: '月底后永久停更，不处理任何事务' },
   { name: '#1215h 页 2「更早的公告」折叠块锚点（#1215b：删＝默认展开的只剩全部七张卡＝用户要的「其他折叠起来」被撤销；针只证块在，「默认收起」由 verify-1215 的 S12（静态精确标签）＋B4（无头实测 checkVisibility）断言）', file: 'template.html', needle: 'id="splash-mandatory-older"' },
   /* ==== 2026-09-25 #1216（用户直派四件事：①开屏四张横幅卡「公告已精简／停更公告／安卓自带浏览器／iPhone 添加到主屏幕」的文案要放进开屏第一页的目录；②#916「建议都把本站添加到主屏幕＋配合三点」那条也进目录；③删「关于反馈与建议」小节与「关于数据丢失」一行；④「必读摘要删掉，这些内容在开屏最顶已经有了」）：
      必读摘要在两份源（静态 template + 在线 notice.json 的 summary）同批撤除，summary 置空数组即不渲染（clock.js 判 length 才建块）；被摘掉的七支针一律**转删除型重锚**（名字与 needle 逐字不动，只加 absent: true）——摘要里任一行被复活时各自报红，不退役、不缩尺（#1214 口径）。
      下面九针把「新的落点」钉住：目录新增两章与并入 iPhone 章的条目按「两份逐字一致」的既有铁律各钉静态/在线两针。零机型／零 UA 分支＝纯文案与位置。 ==== */
   { name: '#1216a 必读摘要整块撤除·静态兜底勿复活（复＝与开屏最顶必读卡组两份口径分叉——用户 2026-09-25 直派「这些内容在开屏最顶已经有了」）', file: 'template.html', needle: '<div class="splash-summary">', absent: true },
   { name: '#1216b 停更公告进目录章节·静态兜底（删＝断网用户只剩顶部红卡，目录里查不到停更三条）', file: 'template.html', needle: '停更公告 · 2026年9月底后永久停更</p>' }, // #1500 同前,
-  { name: '#1216c 停更公告进目录章节·在线权威源（删＝联网用户目录少一章，与静态两份分叉）', file: 'pwa/notice.json', needle: '停更公告 · 2026年9月底后永久停更"' }, // #1500 同前,
+// [开屏精简批 2026-10-15 退役]   { name: '#1216c 停更公告进目录章节·在线权威源（删＝联网用户目录少一章，与静态两份分叉）', file: 'pwa/notice.json', needle: '停更公告 · 2026年9月底后永久停更"' }, // #1500 同前,
   { name: '#1216d 「公告已精简」进目录章节·静态兜底（删＝顶部指引条只有一句话，目录里无处看三条明细）', file: 'template.html', needle: '公告已精简 · 大量使用说明已移到「设置 → 关于」</p>' }, // #1500 同前,
-  { name: '#1216e 同章·在线权威源（删＝联网用户目录少这一章）', file: 'pwa/notice.json', needle: '公告已精简 · 大量使用说明已移到「设置 → 关于」"' }, // #1500 同前,
+// [开屏精简批 2026-10-15 退役]   { name: '#1216e 同章·在线权威源（删＝联网用户目录少这一章）', file: 'pwa/notice.json', needle: '公告已精简 · 大量使用说明已移到「设置 → 关于」"' }, // #1500 同前,
   { name: '#1216f 「建议都把本站添加到主屏幕」并进 iPhone 章·静态兜底（删＝摘要已撤、目录也没有＝这条彻底没了）', file: 'template.html', needle: '<p class="splash-bullet">不只 iPhone：建议都把本站「添加到主屏幕」用（iPhone：Safari 底部分享按钮' },
-  { name: '#1216g 同条·在线权威源（删＝只读在线公告的用户目录里少这句）', file: 'pwa/notice.json', needle: '"不只 iPhone：建议都把本站「添加到主屏幕」用（iPhone：Safari 底部分享按钮' },
+// [开屏精简批 2026-10-15 退役]   { name: '#1216g 同条·在线权威源（删＝只读在线公告的用户目录里少这句）', file: 'pwa/notice.json', needle: '"不只 iPhone：建议都把本站「添加到主屏幕」用（iPhone：Safari 底部分享按钮' },
   { name: '#1216h 「再配合三点」并进 iPhone 章·静态兜底（删＝三条操作指引随摘要一起消失＝用户按不到做任何改善）', file: 'template.html', needle: '<p class="splash-bullet">再配合三点：①给手机留几个 GB 空闲存储；②别点 Safari 的「清除历史记录与网站数据」；③导出的备份文件存多处（微信/云盘/文件各留一份）。' },
-  { name: '#1216i 同条·在线权威源', file: 'pwa/notice.json', needle: '"再配合三点：①给手机留几个 GB 空闲存储；②别点 Safari 的「清除历史记录与网站数据」；③导出的备份文件存多处（微信/云盘/文件各留一份）。' },
+// [开屏精简批 2026-10-15 退役]   { name: '#1216i 同条·在线权威源', file: 'pwa/notice.json', needle: '"再配合三点：①给手机留几个 GB 空闲存储；②别点 Safari 的「清除历史记录与网站数据」；③导出的备份文件存多处（微信/云盘/文件各留一份）。' },
   /* ==== 2026-09-25 #1216c（用户直派「把开屏公告的【必读摘要】全部删掉」，选定「拆干净机制」口径）：
      内容层已在前两笔撤除（54ae3a8/267ff0e），本批连渲染侧与样式侧一起拆掉——在线 notice.json 的 summary 字段就此废弃，
      填了也不再渲染。两支针都取删除型：这套机制被谁补回来时当场报红（补回＝第三份必读口径，必然与顶卡/目录分叉）。 ==== */
@@ -6181,10 +6181,10 @@ const FIX_SENTINELS = [
   { name: '#1452b 首开的 hidden 观察器兜底（删＝不经 openHub 的直接显隐路径不再建页＝空白页；已建则由 1452a 的闸空转）', file: 'js/feature-hub.js', needle: "attributeFilter: ['hidden']" },
   /* ==== 2026-09-29 #1459 免责声明「按 B+C 方案修改并同步两源」（作者直派）：在 #1453 七条上做措辞修正 + 条款补充共九条。两源＝站内三处落点（开屏卡 #splash-disclaimer / 设置→关于 #about-disclaimer-sub / 使用说明第 15 章摘要，均在 src/template.html）＋仓库根 README.md「免责声明（重要）」（README 末条自证「同步展示于站点开屏页」）。以下 needle 均取单行内片段，minify 不削。 ==== */
   { name: '#1459a 免责卡「在法律法规允许的最大范围内」限定在前（删/改回无上限免责＝B① 修正丢失；两处落点同口径，命中其一即算在；#1475 重锚：免责句随作者直派改写为「无论基于何种原因…直接、间接、附带或后果性」，旧句随改写退役）', file: 'template.html', needle: '作者均不承担任何直接、间接、附带或后果性的责任' },
-  { name: '#1459b 免责卡「不构成任何形式的承诺、建议或专业意见，不产生任何法律效力」（删/改回「不具备任何真实、法律、医疗、心理或情感效力」＝B② 修正丢失）', file: 'template.html', needle: '不构成任何形式的承诺、建议或专业意见，不产生任何法律效力' },
+// [开屏精简批 2026-10-15 退役]   { name: '#1459b 免责卡「不构成任何形式的承诺、建议或专业意见，不产生任何法律效力」（删/改回「不具备任何真实、法律、医疗、心理或情感效力」＝B② 修正丢失）', file: 'template.html', needle: '不构成任何形式的承诺、建议或专业意见，不产生任何法律效力' },
   { name: '#1459c 免责卡紧急情形指引（删＝只剩心理援助热线 12356、没有 110/120 与就近急诊这条 C① 补充）', file: 'template.html', needle: '请立即拨打 110（报警）或 120（急救），或前往就近医院急诊' },
   { name: '#1459d 免责卡第 8 条停更对表「停更不等于下线」（删/改回「已宣布 2026 年 9 月底后永久停更」＝C③ 的事实时效修正回退）', file: 'template.html', needle: '停更不等于下线' },
-  { name: '#1459e 免责卡第 6 条「原版唯一入口＝署名卡公布的作者账号所发链接」（删＝非原版入口误导风险回归；此句仅在开屏卡落点，file 内唯一）', file: 'template.html', needle: '官方入口以署名卡公布的作者账号所发链接为准' },
+// [开屏精简批 2026-10-15 退役]   { name: '#1459e 免责卡第 6 条「原版唯一入口＝署名卡公布的作者账号所发链接」（删＝非原版入口误导风险回归；此句仅在开屏卡落点，file 内唯一）', file: 'template.html', needle: '官方入口以署名卡公布的作者账号所发链接为准' },
   /* ==== 2026-09-30 #1461 作者直派：本地音乐上传警示整段标红＋点名 QQ音乐/网易云加密实例（作者口径实例句，防并行改写丢字） ==== */
   { name: '#1461a 上传警示的加密实例句在位（删＝作者点名的 QQ音乐/网易云「有加密、离开本体放不出、须自己转格式破解」提醒丢失，红标回落灰字）', file: 'js/music-player.js', needle: '只能自己转格式破解后才能在别的应用和本地播放' },
   /* ==== 2026-09-29 #1463 键盘停靠对账＋键盘间隙轴＋安卓键盘取证（真我 GT7／红米 K80 均 Edge 实报
@@ -6345,13 +6345,13 @@ const FIX_SENTINELS = [
   // ==== v8.56 #1475 免责声明存证＋标准条款批——同意记录改存「时间戳＋声明版本」JSON（改版自动重确认）＋免责卡补「按现状无担保／免费无对价／可分割性／第三方托管」＋第 3 条强化（后果自担自行负责＋最大范围内无论何种原因免责）；README/设置→关于/第15章三处同批同步 ====
   { name: '#1475a 同意存证写入口（删＝勾选后退回裸 1，无时间无版本，改版重确认与事后举证双双失效）', file: 'js/clock.js', needle: 'JSON.stringify({ t: Date.now(), v: AGE_VER })' },
   { name: '#1475b 声明版本比对闸（删＝免责声明改版后旧确认仍放行＝re-consent 失效，用户永远停在旧版本的同意上）', file: 'js/clock.js', needle: 'ageOk = !!(obj && obj.v === AGE_VER);' },
-  { name: '#1475c 免责卡「按现状提供＋无担保」条款在位（删＝AS-IS 无担保与第三方托管免责整条丢失；needle 取开屏卡特有措辞，设置→关于同条为有意微差的另一形态）', file: 'template.html', needle: '不作任何形式的明示或默示保证，包括但不限于持续可用' },
+// [开屏精简批 2026-10-15 退役]   { name: '#1475c 免责卡「按现状提供＋无担保」条款在位（删＝AS-IS 无担保与第三方托管免责整条丢失；needle 取开屏卡特有措辞，设置→关于同条为有意微差的另一形态）', file: 'template.html', needle: '不作任何形式的明示或默示保证，包括但不限于持续可用' },
   { name: '#1475d 同意记录根键免迁移（漏登记＝migrateLegacy 每次启动把 age-confirmed 搬进 default 并删根键＝改版重确认退化成每次开屏都重确认，#315c 起的存量隐性 bug）', file: 'js/contacts.js', needle: "'age-confirmed']" },
   { name: '#1471a 功能大全跨页链尾步延后落点（删＝切宿主页的异步收层把同一拍点开的面板收走＝「跳过去了面板没开」复发，功能大全→猜拳实测）', file: 'js/feature-hub.js', needle: "const crossPage = it.go.length > 1 && it.go[0].indexOf('[data-app=') >= 0;" },
   { name: '#1473a 使用说明第 10 节「收不到 ④ 手机开了勿扰/免打扰」条在位（删掉＝用户实报的这条成因又没人写；本条同时把系统勿扰与本站自己的免打扰档分开）', file: 'template.html', needle: '收不到 ④ 手机开了「勿扰 / 免打扰」' },
   { name: '#1473b 设置页「后台通知」功能说明补 ⑤ 系统勿扰压制（settings-help 要点面，与第 10 节同口径）', file: 'js/settings-help.js', needle: '⑤ 手机开了勿扰 / 免打扰（系统层压制）' },
   { name: "#1473c 「测试 → 没看到」排查表新增关勿扰那一腿（网页读不到系统勿扰状态，只能教用户自查通知栏）", file: 'js/bg-keep.js', needle: "push('先关勿扰/免打扰" },
-  { name: '#1473d 开屏公告·在线权威源（notice.json）补收不到④勿扰条', file: 'pwa/notice.json', needle: '收不到④·手机开了勿扰/免打扰' },
+// [开屏精简批 2026-10-15 退役]   { name: '#1473d 开屏公告·在线权威源（notice.json）补收不到④勿扰条', file: 'pwa/notice.json', needle: '收不到④·手机开了勿扰/免打扰' },
   { name: '#1473e 开屏公告·离线兜底（template.html）同条在位（断网用户看到的那份与在线源两份同步）', file: 'template.html', needle: '收不到④·手机开了勿扰/免打扰</b>' },
   { name: '#1477a 互动卡点击解析的身份校验快路径（删＝msgs 画后重排时旧下标读错条，「联系人发的红包点不动」回归）', file: 'js/chat.js', needle: 'const okFast = !!(rec && _mk && msgKeyOf(rec) === _mk);' },
   { name: '#1477b 红包领取分支走身份解析＋显示状态 tie-break（删＝只修长按不修领取，主症状回归）', file: 'js/chat.js', needle: 'const rpHit = msgRecFromEl(rpItem, function (m) { return rpStatusText(m) === rpShown; });' },
