@@ -1715,6 +1715,16 @@
     if (document.visibilityState !== 'visible') return;
     setTimeout(tryShowNotifyHealBar, 800); // 回前台补出条（隐藏期间发生的丢失也提示）；错开回前台渲染高峰
   });
+  // ===== 套壳 App（HBuilderX 5+ 运行环境）原生通知旁路 =====
+  // 站点的「后台通知」链路（bgNotifyCheck → showSysNotification）全程走浏览器 Web Notification API，
+  // 而 HBuilderX 云打包出来的 5+ WebView 里没有 Notification 对象（nbPermState() 恒为 'unsupported'），
+  // 于是壳子里既开不了开关、也发不出通知。这里补一条「有 plus 就当作原生通道可用」的旁路：
+  //   window.plus 存在（套壳内）→ 用 plus.push.createMessage 发一条系统本地通知（可进锁屏/通知栏）。
+  // 判据只认 [plus 在场]，浏览器/PWA 里 plus 恒为 undefined ⇒ 本旁路整段不执行，行为与改动前一字不差
+  //（这也是那批通知回归脚本不受影响的原因）。纯自用套壳、不上架应用商店。
+  function nativePushAvailable() {
+    try { return !!(window.plus && window.plus.push && typeof window.plus.push.createMessage === 'function'); } catch (e) { return false; }
+  }
   function showSysNotification(title, opts, chanOut) {
     opts = opts || {};
     // #708 自检优化：通道回报支持「每次调用独立收集」——lastNotifyChannel 是全局共享，
@@ -1726,7 +1736,16 @@
     };
     return new Promise(function (resolve) {
       try {
-        if (!('Notification' in window) || Notification.permission !== 'granted') { note('none'); resolve(false); return; }
+        // 套壳 App（plus 在场）＝原生通道，不走 Web Notification 权限判据；浏览器/PWA 无 plus ⇒ 与改动前一致
+        if (!nativePushAvailable() && (!('Notification' in window) || Notification.permission !== 'granted')) { note('none'); resolve(false); return; }
+        // 壳子里没有 Web Notification API：直接把这一发交给 plus 原生通知（否则下面 SW/页面通道必然落空）
+        if (nativePushAvailable()) {
+          try {
+            plus.push.createMessage(String(opts.body || ''), '', { title: String(title || ''), cover: true, sound: 'system', when: new Date() });
+            note('plus'); resolve(true);
+          } catch (e) { note('none'); resolve(false); }
+          return;
+        }
         const hidden = document.visibilityState === 'hidden';
         const pageFallback = function () {
           // SW 不可用回退页面路径：去掉 image/icon/badge（页面 Notification 对
@@ -1868,6 +1887,8 @@
   const nbBtn = document.getElementById('bg-notify');
   function syncNotifyUI() { if (nbBtn) nbBtn.checked = notifyEnabled; }
   function nbPermState() {
+    // 套壳 App（plus 在场）：原生通道天然可用，等价「权限已授予」——否则开关会被判成 unsupported 直接弹回
+    if (nativePushAvailable()) return 'granted';
     try { return ('Notification' in window) ? Notification.permission : 'unsupported'; } catch (e) { return 'unsupported'; }
   }
   // ===== FIX 2026-09-21 #988：开启「后台通知」的流程重写 =====
@@ -2161,6 +2182,12 @@
     nbSyncPermWarn();
     if (notifyEnabled) nbArmWatch(nbAttempt);
   })();
+  // 套壳 App：plus 注入完成（plusready）可能晚于本模块初始化——届时把「原生通道」判据的结果
+  // 补同步到开关与标红说明（否则初始化那一瞬读到 'unsupported'，会误挂「请改用 Chrome」那条说明）
+  try {
+    if (nativePushAvailable()) { nbSyncPermWarn(); }
+    else document.addEventListener('plusready', function () { try { syncNotifyUI(); nbSyncPermWarn(); nbArmWatch(nbAttempt); } catch (e) {} }, { once: true });
+  } catch (e) {}
 
   // ===== v3.26.x 修复 #88：IDB 回填完成后重读一次两个开关 =====
   // 症状：小米 14U Edge 反馈「后台通知有时候会自己关闭」。上面两个初始化 IIFE 在模块
@@ -2909,7 +2936,11 @@
     // 去重闸门——不在这里 markSeen（否则下面的 seenDup 会被自己刚记的账吞掉），
     // 同一内容前台真看过（seenDup/已发窗）照样吞，绝不双弹。
     if (document.visibilityState === 'visible') { if (!extra.late) { markSeen(nkey); return; } }
-    if (!('Notification' in window) || Notification.permission !== 'granted') return;
+    // 套壳 App（plus 在场）＝原生通道可用，跳过 Web Notification 权限判据；浏览器/PWA 无 plus ⇒ 与改动前一字不差。
+    // 判据在这里内联而非调 nativePushAvailable()：本函数会被回归脚本按函数体单独抽出来求值
+    //（verify-notify-dup-gate.mjs 的 new Function(...参数注入...)），引用同 IIFE 的兄弟函数会 ReferenceError。
+    if (!(window.plus && window.plus.push && typeof window.plus.push.createMessage === 'function') &&
+        (!('Notification' in window) || Notification.permission !== 'granted')) return;
     // FIX 2026-09-18 #780：消息身份闸门（治「切后台突然弹前几分钟看过的消息」）——
     // 整页冻结解冻时积压的回复链一口气重投，下面三道内容去重窗口起点全是 Date.now()
     // （已弹 2min / 已看 3min / 历史 5min），冻结几分钟就全部熬过期，重放被判成新内容。

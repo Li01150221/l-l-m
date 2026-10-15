@@ -1160,6 +1160,9 @@ document.addEventListener('visibilitychange', function () {
 if (document.visibilityState !== 'visible') return;
 setTimeout(tryShowNotifyHealBar, 800); // 回前台补出条（隐藏期间发生的丢失也提示）；错开回前台渲染高峰
 });
+function nativePushAvailable() {
+try { return !!(window.plus && window.plus.push && typeof window.plus.push.createMessage === 'function'); } catch (e) { return false; }
+}
 function showSysNotification(title, opts, chanOut) {
 opts = opts || {};
 const note = function (ch) {
@@ -1168,7 +1171,14 @@ if (typeof chanOut === 'function') { try { chanOut(ch); } catch (e) {} }
 };
 return new Promise(function (resolve) {
 try {
-if (!('Notification' in window) || Notification.permission !== 'granted') { note('none'); resolve(false); return; }
+if (!nativePushAvailable() && (!('Notification' in window) || Notification.permission !== 'granted')) { note('none'); resolve(false); return; }
+if (nativePushAvailable()) {
+try {
+plus.push.createMessage(String(opts.body || ''), '', { title: String(title || ''), cover: true, sound: 'system', when: new Date() });
+note('plus'); resolve(true);
+} catch (e) { note('none'); resolve(false); }
+return;
+}
 const hidden = document.visibilityState === 'hidden';
 const pageFallback = function () {
 const noMedia = Object.assign({}, opts);
@@ -1258,6 +1268,7 @@ else { gSet('bg-notify-nodedup', '0'); toast('已关闭：恢复去重（内容�
 const nbBtn = document.getElementById('bg-notify');
 function syncNotifyUI() { if (nbBtn) nbBtn.checked = notifyEnabled; }
 function nbPermState() {
+if (nativePushAvailable()) return 'granted';
 try { return ('Notification' in window) ? Notification.permission : 'unsupported'; } catch (e) { return 'unsupported'; }
 }
 const NB_SETTLE_MS = 12000; // 待决等待上限：覆盖「系统弹窗弹着、用户过几秒才点允许」的正常窗口
@@ -1468,6 +1479,10 @@ syncNotifyUI();
 nbSyncPermWarn();
 if (notifyEnabled) nbArmWatch(nbAttempt);
 })();
+try {
+if (nativePushAvailable()) { nbSyncPermWarn(); }
+else document.addEventListener('plusready', function () { try { syncNotifyUI(); nbSyncPermWarn(); nbArmWatch(nbAttempt); } catch (e) {} }, { once: true });
+} catch (e) {}
 function reheatBgSwitches() {
 try { if (!ndUserTouched) syncNoDedupUI(); } catch (e) {}
 if (!keepUserTouched) {
@@ -2026,7 +2041,8 @@ if (!notifyEnabled) return;
 extra = extra || {};
 const nkey = msgFingerprint(text, extra.img);
 if (document.visibilityState === 'visible') { if (!extra.late) { markSeen(nkey); return; } }
-if (!('Notification' in window) || Notification.permission !== 'granted') return;
+if (!(window.plus && window.plus.push && typeof window.plus.push.createMessage === 'function') &&
+(!('Notification' in window) || Notification.permission !== 'granted')) return;
 if (!extra.force && extra.msgTs) {
 try {
 const d = window.__mochiMsgDelivered ? window.__mochiMsgDelivered(extra.msgTs, 'in') : null;
