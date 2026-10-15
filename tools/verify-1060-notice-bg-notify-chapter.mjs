@@ -1,10 +1,9 @@
-// ===== 验证 #1060：开屏公告末章「关于后台通知相关设置（怎么开、收不到怎么办）」=====
-// 用户直派：「关于后台通知相关设置也放在公告里，放在公告的最后新增一个目录。」
-// 两份权威源同步（硬规则）：在线 src/pwa/notice.json（sections 末条，渲染走 textContent＝纯文本）
-//   ＋离线兜底 src/template.html（.splash-sec-wrap 末个块，可用 <b>）；开屏「目录（N 章）」由
-//   clock.js 按 .splash-sec 自动计数，新增章节应自动 +1。
-// 断言：S 两份源各含该章且在最后；P 产物（index.html / 根 notice.json）；B 无头真实渲染
-//   （末章标题、6 条要点、目录计数包含本章、进入流程不受影响）。
+// ===== #1060 开屏公告末章「关于后台通知相关设置」（2026-10-15 开屏精简批改口）=====
+// 原：断言该章同时存在于离线兜底（template.html）与在线权威源（notice.json）两处。
+// 现：开屏精简批已把在线权威源 sections 整段清空 + hide:true（联网用户不再从远程源渲染公告，
+//   只剩余离线兜底 template.html）。本脚本改为：离线兜底章仍在位（#1060a 哨兵仍活动）＋
+//   在线源侧转删除型断言（该章不得再出现、sections 为空、hide:true、#1060b 哨兵已退役）。
+// 判据静态部分不依赖浏览器；行为面（B1~B4）在无头浏览器不可用时跳过。
 // 用法：node tools/verify-1060-notice-bg-notify-chapter.mjs [--root=<已构建副本目录>]
 import { spawn } from 'node:child_process';
 import { createServer } from 'node:http';
@@ -25,21 +24,36 @@ const json = read('src/pwa/notice.json');
 const prodHtml = read('index.html');
 const prodJson = read('notice.json');
 
-// ---- S/P 静态 ----
+// ---- 离线兜底（template.html）：该章仍在位 ----
 ok(tpl.includes(H + '</p>'), 'S1 离线兜底（template.html）含该章标题（#1502 起目录统一编号，判据去前导「>」＝对「N、」前缀不敏感）');
 const tplBlocks = tpl.split('class="splash-sec-wrap"');
 ok(tplBlocks[tplBlocks.length - 1].includes(H), 'S2 该章是公告的最后一个章节块（用户要求放最后）');
 const tplChunk = tplBlocks[tplBlocks.length - 1].split('class="splash-bullet"').length - 1;
 ok(tplChunk >= 6, 'S3 离线兜底 6 条要点齐（实为 ' + tplChunk + ' 条）');
+
 let J = null;
 try { J = JSON.parse(json); } catch (e) {}
-ok(!!J && String(J.sections[J.sections.length - 1].h).replace(/^\d+、/, '') === H, 'S4 在线权威源 notice.json 的 sections 末条＝该章（#1502 起剥编号前缀再比）');
-ok(!!J && (J.sections[J.sections.length - 1].p || []).length >= 6, 'S5 在线源要点数 ≥6（实为 ' + (J ? (J.sections[J.sections.length - 1].p || []).length : '-') + '）');
-ok(!json.includes('<b>'), 'S6 在线源保持纯文本（渲染走 textContent，写 <b> 会显示成字面量）');
-ok(prodHtml.includes(H), 'P1 产物 index.html 含该章（离线兜底已构建）');
-ok(prodJson.includes(H), 'P2 产物根 notice.json 含该章（在线权威源已构建）');
+// ---- 在线权威源侧：开屏精简批已整段清空，转删除型断言 ----
+ok(!!J && Array.isArray(J.sections) && J.sections.length === 0, 'S4 在线源 sections 已清空（删除型：联网用户不再看远程公告）');
+ok(!!J && J.hide === true, 'S5 在线源 hide:true（公告区在线隐藏）');
+ok(!json.includes(H), 'S6 在线源不含该章标题（删除型：该章只存活在离线兜底）');
+ok(!json.includes('<b>'), 'S7 在线源保持纯文本（渲染走 textContent，写 <b> 会显示成字面量）');
 
-// ---- B 行为：真实渲染 ----
+// ---- 产物 ----
+ok(prodHtml.includes(H), 'P1 产物 index.html 含该章（离线兜底已构建，#1060a 哨兵仍在）');
+let RJ = null; try { RJ = JSON.parse(prodJson); } catch (e) {}
+ok(!!RJ && Array.isArray(RJ.sections) && RJ.sections.length === 0 && !prodJson.includes(H),
+  'P2 产物根 notice.json 不含该章且 sections 已清空（删除型，与 src/pwa/notice.json 同源）');
+
+// ---- build.mjs 哨兵状态：#1060a（离线兜底）活动；#1060b（在线源）已退役 ----
+const build = read('build.mjs');
+const buildLines = build.split('\n');
+const aLine = buildLines.find(l => l.includes('#1060a'));
+const bLine = buildLines.find(l => l.includes('#1060b'));
+ok(!!aLine && !/^\s*\/\//.test(aLine), '哨兵 #1060a（离线兜底章）仍为活动登记');
+ok(!!bLine && /^\s*\/\/\s*\[开屏精简批/.test(bLine), '哨兵 #1060b（在线源）已退役（开屏精简批注释前缀）');
+
+// ---- B 行为：真实渲染（无头浏览器不可用时跳过静态结论之外的部分）----
 const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png', '.json': 'application/json' };
 const server = createServer((req, res) => {
   try {
@@ -53,7 +67,12 @@ const server = createServer((req, res) => {
 await new Promise((r) => server.listen(0, '127.0.0.1', r));
 const url = 'http://127.0.0.1:' + server.address().port + '/index.html';
 const chromePath = [process.env.CHROME_PATH, 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe', 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe', 'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe'].filter(Boolean).find((p) => { try { return statSync(p).isFile(); } catch (e) { return false; } });
-if (!chromePath) { console.error('找不到 Chrome/Edge（CHROME_PATH）'); process.exit(1); }
+if (!chromePath) {
+  console.log('（无头浏览器不可用，跳过 B1~B4 行为断言；静态断言已完成）');
+  server.close();
+  console.log('\n== #1060 开屏公告末章验证: ' + pass + '/' + (pass + fail) + ' ==');
+  process.exit(fail === 0 ? 0 : 1);
+}
 const port = 11900 + Math.floor(Math.random() * 90);
 const chrome = spawn(chromePath, ['--headless=new', '--disable-gpu', '--no-first-run', '--no-default-browser-check', '--user-data-dir=' + join(tmpdir(), 'mochi-1060-' + Date.now()), '--remote-debugging-port=' + port, 'about:blank'], { stdio: 'ignore' });
 let ws = null, id = 0; const pend = new Map();
