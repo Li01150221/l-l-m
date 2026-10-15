@@ -114,26 +114,12 @@ html { margin:0; padding:0; }
   scrollbar-width:none; -ms-overflow-style:none;
 }
 .splash-box::-webkit-scrollbar { display:none; }
-/* v8.29 #973：开屏最顶端「使用前必看」红卡——.splash-box 首个子节点（在品牌卡之上，开屏第一眼），
-   红左竖条 + 淡红底，与 #315b 免责卡 / #793 停更公告同一红色警示族但更靠前、左竖条更粗（4px）；
-   宽度与品牌卡一致 min(324px,100%) 保持整页左右对齐 */
-/* #1046（2026-09-22）：顶卡加到 6 段后 495px 会把 #864 指引条挤出首屏（top 885 > vh 844），行距/留白按此收紧
-   （字号 12.5px、颜色、加粗、内容一字不动；#973b 哨兵 needle 的 background/border 段原样保留） */
-.splash-bigwarn { width:min(324px, 100%); box-sizing:border-box; margin:0 0 10px; padding:11px 15px 12px 16px; background:#fdecec; border-left:4px solid #d23430; border-radius:12px; text-align:left; animation:splash-fade-up .6s ease 0s backwards; }
-.splash-bigwarn .splash-bigwarn-t { font-size:13.5px; font-weight:800; color:#c22b27; letter-spacing:.6px; margin-bottom:6px; line-height:1.6; }
-.splash-bigwarn p { font-size:12.5px; line-height:1.6; color:#7a1d1a; font-weight:700; }
-.splash-bigwarn p + p { margin-top:5px; }
-.splash-bigwarn strong { color:#c22b27; font-weight:800; }
 /* v8.29 #976：必读卡组容器——7 张必读卡从「品牌卡内 2 张 + 公告卡内 5 张」整组前移到品牌卡之前，
    宽度与品牌卡/公告卡一致（min(324px,100%)）保持整页左右对齐；组内统一 14px 节奏（搬进来的两张卡原本是
    品牌卡内联排距，改由组内统一），末张不留白、由容器 margin-bottom 收口 */
 .splash-mustread { width:min(324px, 100%); box-sizing:border-box; display:flex; flex-direction:column; align-items:stretch; margin:0 0 14px; }
 .splash-mustread > * { margin:0 0 14px !important; }
 .splash-mustread > *:last-child { margin-bottom:0 !important; }
-[data-theme="dark"] .splash-bigwarn { background:rgba(210,52,48,.20); border-color:#ff6b6b; }
-[data-theme="dark"] .splash-bigwarn .splash-bigwarn-t { color:#ff8f8f; }
-[data-theme="dark"] .splash-bigwarn p { color:#f0c6c6; }
-[data-theme="dark"] .splash-bigwarn strong { color:#ff8f8f; }
 /* v3.8.y：顶部品牌区卡片框——logo/标题/署名/原作信息统一装进一个精致白卡片 */
 .splash-brandcard {
   width:min(324px, 100%); box-sizing:border-box;
@@ -167,37 +153,6 @@ html { margin:0; padding:0; }
    默认 nowrap 会把开屏撑出横向滚动（#973 S20 / #976 S15 实测）→ 仅本块内放开换行，不影响其余品牌行 */
 .splash-license .splash-source-line { white-space:normal; padding:0 14px; }
 .splash-source-url { color:var(--ink); font-weight:600; }
-/* v3.26.x #793：停更公告横幅（品牌卡内·署名行正下方，data-stop-update）——红色警示形态（同 #315b 免责卡红），
-   开屏第一屏第一眼必见；品牌卡整体居中排版，横幅自身改左对齐保正文可读性；暗色主题同批适配 */
-/* v8.29 #976：停更公告换「须知」橙族（用户定「红只留给使用红线」）——文案一字未改；
-   位置由品牌卡内挪进 #splash-mustread（必读卡组），间距交给组内统一节奏 */
-.splash-stopupdate {
-  width:100%; box-sizing:border-box;
-  padding:12px 14px 13px 15px;
-  background:#fff3e6; border-left:3px solid #e8590c; border-radius:12px;
-  text-align:left;
-}
-.splash-stopupdate .splash-stopupdate-t { font-size:13px; font-weight:800; color:#c2410c; letter-spacing:1px; margin-bottom:6px; }
-.splash-stopupdate p { font-size:12.5px; line-height:1.8; color:#8a3d05; font-weight:700; }
-.splash-stopupdate p + p { margin-top:6px; }
-.splash-stopupdate strong { color:#c2410c; font-weight:800; }
-[data-theme="dark"] .splash-stopupdate { background:rgba(232,89,12,.16); border-color:#ff8a3d; }
-[data-theme="dark"] .splash-stopupdate .splash-stopupdate-t { color:#ffa76a; }
-[data-theme="dark"] .splash-stopupdate p { color:#f3cfa8; }
-[data-theme="dark"] .splash-stopupdate strong { color:#ffa76a; }
-/* v3.26.x #864：开屏顶部「公告已精简 · 使用说明请看设置→关于」指引条（品牌卡内·署名行下方＝开屏第一屏第一眼）——
-   橙色提示形态（与 #793 停更公告的红色警示形态区分开：这条是入口说明不是警告）；品牌卡整体居中，本条自身左对齐保可读性 */
-.splash-abouttip {
-  margin:12px 0 0; width:100%; box-sizing:border-box;
-  padding:11px 14px 12px 15px;
-  background:#fff3e6; border-left:3px solid #e8590c; border-radius:12px;
-  text-align:left;
-}
-.splash-abouttip p { font-size:12.5px; line-height:1.8; color:#8a3d05; font-weight:700; }
-.splash-abouttip strong { color:#c2410c; font-weight:800; }
-[data-theme="dark"] .splash-abouttip { background:rgba(232,89,12,.16); border-color:#ff8a3d; }
-[data-theme="dark"] .splash-abouttip p { color:#f3cfa8; }
-[data-theme="dark"] .splash-abouttip strong { color:#ffa76a; }
 /* v3.8.y：底部统一卡片框——版本/加载/提示/按钮装进一个白卡片，与顶部品牌卡片呼应 */
 .splash-footcard {
   width:min(324px, 100%); box-sizing:border-box;
@@ -249,25 +204,6 @@ html { margin:0; padding:0; }
 .splash-alert p { font-size:12px; line-height:1.75; color:var(--soft-ink); }
 .splash-alert p + p { margin-top:6px; }
 .splash-alert strong { color:var(--ink); font-weight:800; }
-/* v3.27.x #315b：免责声明——红色警示形态，比防骗/署名卡更醒目（未成年人禁止使用） */
-.splash-alert.splash-disclaimer {
-  padding:13px 15px 14px 16px;
-  background:#fdecec; border-left:3px solid #d23430; border-radius:12px;
-}
-.splash-alert.splash-disclaimer .splash-alert-t { color:#c22b27; font-size:13px; letter-spacing:1px; }
-.splash-alert.splash-disclaimer .splash-alert-t::before { background:#c22b27; }
-.splash-alert.splash-disclaimer p { color:#7a1d1a; font-size:12.5px; font-weight:700; line-height:1.8; }
-.splash-alert.splash-disclaimer strong { color:#c22b27; font-weight:800; }
-[data-theme="dark"] .splash-alert.splash-disclaimer { background:rgba(210,52,48,.16); border-color:#e05555; box-shadow:none; }
-[data-theme="dark"] .splash-alert.splash-disclaimer .splash-alert-t { color:#ff8080; }
-[data-theme="dark"] .splash-alert.splash-disclaimer .splash-alert-t::before { background:#ff8080; color:#3a0d0d; }
-[data-theme="dark"] .splash-alert.splash-disclaimer p { color:#f0c6c6; }
-[data-theme="dark"] .splash-alert.splash-disclaimer strong { color:#ff8080; }
-/* v3.26.x：开屏最顶·使用前提卡——蓝色警示形态（字卡传讯/纯代码/无 AI/不是小手机，先了解再用） */
-/* v8.29 #976：使用前提卡撤掉专属蓝色（全站强调色 6→4，用户直派「颜色太乱」）——不再写颜色，
-   回落 .splash-alert 默认灰族（底/竖条/标题/正文全走 var(--sp-*) 语义变量）；只保留原字号度量，避免版面跳动。
-   文案一字未改；data-anti-scam="w" 标记保留（clock.js 不认领该标记） */
-.splash-alert.splash-what p { font-size:12.5px; font-weight:700; line-height:1.8; }
 /* v3.27.x #319：防未成年人·系统内置字卡锁卡——琥珀警示形态 + 解锁动作按钮 */
 .splash-alert.splash-cardlock { background:#fdf3e0; border-left:3px solid #c07f1f; border-radius:12px; padding:13px 15px 14px 16px; }
 .splash-alert.splash-cardlock .splash-alert-t { color:#9a6410; }
@@ -286,30 +222,6 @@ html { margin:0; padding:0; }
 .cardlock-state { font-size:12px; font-weight:700; color:#9a6410; margin-top:8px; min-height:1em; }
 [data-theme="dark"] .splash-alert.splash-cardlock { background:rgba(192,127,31,.15); border-color:#d99a3a; }
 [data-theme="dark"] .splash-alert.splash-cardlock .splash-alert-t { color:#eebb60; }
-/* 2026-10-01 必读卡组两张新卡专属配色（作者直派补备份/数据不互通两卡）：
-   原「安卓浏览器」（#738）与「iPhone 添加到主屏幕」（#991）两卡样式已随卡收进公告目录同批撤除；
-   本批两张新卡沿用 #976 定的两族形态参数——备份卡＝琥珀「需要你操作」族（同系统内置字卡锁）、
-   数据不互通卡＝橙「须知/提醒」族（同停更公告）。哨兵 needle 取 minify 后的单行形态 */
-.splash-alert.splash-backup { background:#fdf3e0; border-left:3px solid #c07f1f; border-radius:12px; padding:13px 15px 14px 16px; }
-.splash-alert.splash-backup .splash-alert-t { color:#9a6410; font-size:13px; letter-spacing:1px; }
-.splash-alert.splash-backup .splash-alert-t::before { background:#9a6410; }
-.splash-alert.splash-backup p { color:#6b4a0e; font-size:12.5px; font-weight:700; line-height:1.8; }
-.splash-alert.splash-backup p + p { margin-top:6px; }
-.splash-alert.splash-backup strong, .splash-alert.splash-backup b { color:#9a6410; font-weight:800; }
-[data-theme="dark"] .splash-alert.splash-backup { background:rgba(192,127,31,.15); border-color:#d99a3a; }
-[data-theme="dark"] .splash-alert.splash-backup .splash-alert-t { color:#eebb60; }
-[data-theme="dark"] .splash-alert.splash-backup .splash-alert-t::before { background:#eebb60; color:#3a2504; }
-[data-theme="dark"] .splash-alert.splash-backup p { color:#ecd9b0; }
-[data-theme="dark"] .splash-alert.splash-backup strong, [data-theme="dark"] .splash-alert.splash-backup b { color:#eebb60; }
-.splash-alert.splash-storesplit {
-  padding:13px 15px 14px 16px;
-  background:#fff3e6; border-left:3px solid #e8590c; border-radius:12px;
-}
-.splash-alert.splash-storesplit .splash-alert-t { color:#c2410c; font-size:13px; letter-spacing:1px; }
-.splash-alert.splash-storesplit .splash-alert-t::before { background:#e8590c; }
-.splash-alert.splash-storesplit p { color:#8a3d05; font-size:12.5px; font-weight:700; line-height:1.8; }
-.splash-alert.splash-storesplit strong { color:#c2410c; font-weight:800; }
-[data-theme="dark"] .splash-alert.splash-storesplit { background:rgba(232,89,12,.16); border-color:#ff8a3d; box-shadow:none; }
 /* v8.29 #991：真·可点 file input（surface 层，device.js mochiFilePickSurface）的原生小按钮要藏掉——
    元素本身保持可见（opacity:1 + 真实尺寸，见 device.js 里的内联样式），只藏它的可见外观：
    不支持该伪元素的旧内核回退为 font-size:0 + 透明前景/背景，同样看不见。
@@ -462,14 +374,6 @@ input.mochi-pick-surface::-webkit-file-upload-button { display:none; }
   accent-color:var(--btn-bg); cursor:pointer;
 }
 .splash-age[hidden] { display:none; }
-/* #1453：勾选行内「查看免责声明」锚点——点它滚回上面那张免责卡（clock.js 接线）。
-   红色沿用免责卡的警示红族（浅色 #c22b27；暗色覆写在 dark.css）；margin-left:auto 靠行尾，
-   不挤占勾选文案的换行宽度。只做查看入口，与门控无关（未勾选仍进不去） */
-.splash-age-view {
-  flex:none; margin-left:auto; padding-left:8px;
-  color:#c22b27; font-weight:700; text-decoration:underline; text-underline-offset:2px;
-  cursor:pointer; -webkit-tap-highlight-color:transparent;
-}
 /* 折叠公告按钮：勾选已读后显示，点击折叠/展开详细说明章节（置顶必读卡与品牌卡始终保留） */
 .splash-fold-toggle {
   margin:8px auto 0; padding:6px 18px; text-align:center;

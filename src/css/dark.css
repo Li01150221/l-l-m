@@ -70,8 +70,6 @@
 [data-theme="dark"] .ver-credit { color:#777; }
 [data-theme="dark"] .set-alert { background:#232323; color:#aaa; }
 [data-theme="dark"] .set-alert b { color:#eee; }
-/* #1453：开屏勾选行「查看免责声明」锚点——暗色用免责卡的亮红（同 base.css 和 #315b 卡口径） */
-[data-theme="dark"] .splash-age-view { color:#ff8080; }
 [data-theme="dark"] .gs-row { border-bottom-color:rgba(255,255,255,.05); }
 [data-theme="dark"] .stp-min,
 [data-theme="dark"] .stp-max { background:var(--dark-hover); color:#aaa; }
