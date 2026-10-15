@@ -119,9 +119,9 @@
     }
   }
   function run() {
-    // #613/#621：合并置顶声明卡（免费 · 署名 · 防倒卖）重建锚点 = 公告区最顶——refNode 传 null，
-    // ensureBar 落到 notice.firstChild；只影响「卡被删后重建插到哪」，静态顺序由 template.html 决定。
-    ensureBar(BARS[0], null);
+    // [开屏精简批 2026-10-15 退役] 静态「免费 · 署名 · 防倒卖」置顶卡已随作者直派的「开屏内容大规模删减」
+    // 一并移除，故不再回填——原 #613/#621 的 ensureBar(BARS[0], null) 会在卡缺失时把它重建回必读区最顶。
+    // ensureSettings() 保留：设置页底部那条声明不属开屏、未删；ensureBulletin() 保留：notice.json 无 bulletin 字段时 inert。
     ensureSettings();
     ensureBulletin();
     setupCardLockCard();
@@ -396,19 +396,8 @@
       updateEnterState();
     });
   }
-  // #1453：勾选行旁「查看免责声明」→ 滚回上面那张免责卡（#splash-disclaimer）。
-  //   preventDefault：挡掉 <a> 默认的 hash 跳转（#splash-box 才是整页滚动容器，走 scrollIntoView
-  //   的手感与目录跳转一致）。该 <a> 在 <label> 内，但交互元素本身不触发 label 的勾选激活。
-  //   只提供「查看」入口，门控一字未动：未勾选仍进不去（updateEnterState）。
-  const ageView = document.getElementById('splash-age-view');
-  if (ageView) {
-    ageView.addEventListener('click', function (ev) {
-      const card = document.getElementById('splash-disclaimer');
-      if (!card) return;
-      ev.preventDefault();
-      card.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-  }
+  // [开屏精简批 2026-10-15 退役] 原 #1453 的「查看免责声明」锚点（#splash-age-view）随开屏免责卡一并删除，
+  //   其点击滚回 #splash-disclaimer 的接线同步移除（目标卡已不存在）。
   // v3.26.x：数据加载较慢（idbRestore 12 秒保险丝触发）且未真就绪时显示的逃生口链接
   const forceEnterEl = document.getElementById('splash-force-enter');
   const foldToggleEl = document.getElementById('splash-fold-toggle');

@@ -97,7 +97,6 @@ box.querySelector('p').textContent = want;
 }
 }
 function run() {
-ensureBar(BARS[0], null);
 ensureSettings();
 ensureBulletin();
 setupCardLockCard();
@@ -290,15 +289,6 @@ ageCheck.addEventListener('change', function () {
 ageOk = !!ageCheck.checked;
 try { if (ageOk) localStorage.setItem(AGE_KEY, JSON.stringify({ t: Date.now(), v: AGE_VER })); } catch (e) {}
 updateEnterState();
-});
-}
-const ageView = document.getElementById('splash-age-view');
-if (ageView) {
-ageView.addEventListener('click', function (ev) {
-const card = document.getElementById('splash-disclaimer');
-if (!card) return;
-ev.preventDefault();
-card.scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 }
 const forceEnterEl = document.getElementById('splash-force-enter');

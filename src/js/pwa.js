@@ -856,35 +856,9 @@
     }
   }, 300);
 })();
-// ===== v3.26.x：防倒卖第二锚点——开屏两条官方声明「在位看门狗」（与 clock.js 运行时回填互为备份） =====
-// clock.js 的回填负责加载时重建/篡改重写 + 官方远程刷新；这里是独立常驻兜底：任何时刻只要两条声明
-// 缺失（二传者运行时删除、或 clock.js 回填整段被删），5 秒内用本地常量补回——想彻底去掉声明必须
-// 同时改 clock.js 与本文件两处。只补缺失、绝不改写已在位内容，与 clock.js 的 marked 判定互不干扰。
-(function () {
-  const W = '本站完全免费，没有收过任何人一分钱，个人出资和花费时间搭建的。开放二传二改但禁止以盈利为目的。Mochi字卡网站完全免费，作者只有小红书这一个账号：小红书@言序（1842523578）。如有出现任何收费情况，均为诈骗，注意防止被骗。二传、分享本站链接必须标注作者署名：小红书 @言序（1842523578），禁止删除或修改。严禁冒为自己制作、删除篡改署名，或以任何形式收费倒卖本站链接、安装包——本站完全免费，收费即诈骗。如果你是花钱买来的链接：你被骗了，请拒付退款并举报卖家。';
-  function mkWatchBar(tag, title, text) {
-    const b = document.createElement('div');
-    b.className = 'splash-alert';
-    b.setAttribute('data-anti-scam', tag);
-    b.innerHTML = '<div class="splash-alert-t"></div><p></p>';
-    b.querySelector('.splash-alert-t').textContent = title;
-    b.querySelector('p').textContent = text;
-    return b;
-  }
-  setInterval(function () {
-    try {
-      // v8.29 #976：必读卡组前移后，查找放宽到整个开屏滚动容器、补回锚点＝必读卡组最顶
-      // （#splash-mustread 缺失的旧副本回退 #splash-notice，二传副本照常兜住）
-      const n = document.getElementById('splash-mustread') || document.getElementById('splash-notice');
-      const scope = document.getElementById('splash-box') || document;
-      if (!n) return;
-      // #613/#621：合并置顶声明卡（免费 · 署名 · 防倒卖，原防骗卡+署名卡并成一张）补回锚点 = 必读区最顶
-      if (!scope.querySelector('.splash-alert[data-anti-scam="1"]')) {
-        n.insertBefore(mkWatchBar('1', '免费 · 署名 · 防倒卖', W), n.firstChild);
-      }
-    } catch (e) { /* 静默：看门狗绝不能成为错误源 */ }
-  }, 5000);
-})();
+// [开屏精简批 2026-10-15 退役] 原 v3.26.x「防倒卖第二锚点·开屏声明在位看门狗」（每 5s 把 data-anti-scam="1"
+// 的「免费 · 署名 · 防倒卖」置顶卡补回必读区最顶；与 clock.js 运行时回填互为备份）随作者直派的开屏大幅
+// 删减整块移除——静态卡已删、clock.js 也不再回填，本兜底一并停用（原 43 行看门狗删除）。
 
 // ================= #802 外置功能包加载失败自愈（「更多功能」成片「加载失败」根治） =================
 // 用户实报（2026-09-19）：「更多功能里的小功能全部，打开显示加载失败」。外置化（PERF-PLAN 阶段 1）
