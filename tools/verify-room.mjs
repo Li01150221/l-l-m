@@ -259,7 +259,6 @@ check('B21 冷却到期 TA 自主重抽行为', engOk, engDetail);
 await evalJs("(function(){window.closeRoom();var cid=window.__activeCid||'default';var dt=new Date();var tk=dt.getFullYear()+'-'+(dt.getMonth()+1)+'-'+dt.getDate();var d={fx:[{i:'a1',t:'desklamp',x:2,y:1,r:0},{i:'a2',t:'vase',x:4,y:2,r:0}],inv:{},pts:20,lv:3,wall:'dusk',floor:'wood',day:tk,lit:{a1:true},vaseFlower:true,earn:{day:tk,n:0,ta:0},ta:{x:0,y:3,act:'idle',tx:0,ty:3,faint:false,nextAt:Date.now()+60000}};window.storeFor(cid).set('room-data',JSON.stringify(d));window.openRoom();return true;})()");
 await sleep(550);
 check('B22 点亮的灯在地板投暖光斑（.r-pool×1）', await evalJs("document.querySelectorAll('#room-floor .r-pool').length===1"));
-check('B23 花瓶插花徽章（花园联动 🌸）', await evalJs("!!document.querySelector('#room-floor .r-bloom')"));
 check('B24 入场动画 room-in 已挂载', await evalJs("document.getElementById('room-scene').classList.contains('room-in')"));
 
 // 放置模式格子高亮（空格 ok 呼吸 / 被占 bad）——注意先 closeRoom（落盘内存档）再改存储

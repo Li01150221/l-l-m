@@ -118,7 +118,7 @@ check('切 tab 后预设壁纸仍在（图层 opacity 恢复 1）', String(bgAft
 // ============ Bug 1：恢复默认桌面 ============
 console.log('\n===== Bug1 恢复默认桌面（只点底部确定）=====');
 await freshLoad(null);
-await ev("(function(){var s=window.activeStore();s.set('desk-layout',JSON.stringify([['deco','quote-row','checkin','apps','music','p2apps','memo-row','week','weekend','desk-period','app-chat','app-mail','app-feed','app-calendar','app-memory','app-note','app-music','app-stats','app-interact','app-checkin','app-garden'],['deco','quote-row','checkin','apps']]));return true;})()");
+await ev("(function(){var s=window.activeStore();s.set('desk-layout',JSON.stringify([['deco','quote-row','checkin','apps','music','p2apps','memo-row','week','weekend','desk-period','app-chat','app-mail','app-feed','app-calendar','app-memory','app-note','app-music','app-stats','app-interact','app-checkin','app-room'],['deco','quote-row','checkin','apps']]));return true;})()");
 // 点击恢复默认行
 await ev("(function(){var r=document.getElementById('row-desk-reset');if(r)r.click();return true;})()");
 await sleep(300);

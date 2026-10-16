@@ -523,7 +523,7 @@
     render();
   }
 
-  // ---- 烹饪系统（玩家 + TA；时间戳现算，仿 garden 离线友好） ----
+  // ---- 烹饪系统（玩家 + TA；时间戳现算，离线友好） ----
   function cookKey() { return 'fishing-cook'; }
   function loadCook() { const c = readJSON(cookKey(), null); return c && typeof c === 'object' ? c : { mine: [], ta: [], taWeek: { weekKey: '', count: 0 } }; }
   function saveCook(c) { writeJSON(cookKey(), c); }

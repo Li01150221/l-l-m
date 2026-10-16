@@ -1229,7 +1229,7 @@
       [/gc-profiles/, '群聊资料', null],
       [/period-|cycle-/, '经期记录', null],
       [/accounting|expense/, '记账', null],
-      [/garden-|room-data/, '花园/房间', null],
+      [/room-data/, '房间', null],
       [/drift-data/, '漂流瓶', null],
       [/desk-layout|hidden-icons/, '桌面布局', null]
     ];

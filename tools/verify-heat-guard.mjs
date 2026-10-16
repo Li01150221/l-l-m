@@ -96,7 +96,7 @@ try {
   ok('B2 切后台挂暂停类', (await evalJs('document.body.classList.contains("mochi-bg-pause")')) === true);
   // B3 挂类时动画被暂停（取一条真实 infinite 动画元素核对计算值）
   const paused = await evalJs(`(() => {
-    const el = document.querySelector('.garden-plant-emoji, .r-twinkle, .mw-bars.playing rect, [class*="splashDots"]') || document.querySelector('div');
+    const el = document.querySelector('.r-twinkle, .mw-bars.playing rect, [class*="splashDots"]') || document.querySelector('div');
     if (!el) return 'no-el';
     return getComputedStyle(el).animationPlayState;
   })()`);
@@ -108,7 +108,7 @@ try {
     true`);
   ok('B4 回前台摘类', (await evalJs('document.body.classList.contains("mochi-bg-pause")')) === false);
   const resumed = await evalJs(`(() => {
-    const el = document.querySelector('.garden-plant-emoji, .r-twinkle, .mw-bars.playing rect, [class*="splashDots"]') || document.querySelector('div');
+    const el = document.querySelector('.r-twinkle, .mw-bars.playing rect, [class*="splashDots"]') || document.querySelector('div');
     if (!el) return 'no-el';
     return getComputedStyle(el).animationPlayState;
   })()`);

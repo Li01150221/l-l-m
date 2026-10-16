@@ -224,7 +224,7 @@ await ev(`(function(){
   var s = window.activeStore();
   s.set('desk-layout', JSON.stringify([['deco','quote-row','checkin','apps','music','p2apps','memo-row','week','weekend','desk-period']]));
   s.set('app-icon-order-main', JSON.stringify(['chat','mail','feed','calendar','memory','note','music','stats']));
-  s.set('hidden-icons', JSON.stringify(['garden']));
+  s.set('hidden-icons', JSON.stringify(['room']));
   return true;
 })()`);
 await sleep(500); // 等 IDB 写入

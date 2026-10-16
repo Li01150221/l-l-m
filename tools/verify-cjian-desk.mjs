@@ -1,9 +1,8 @@
-// ===== 专项验证：此间桌面图标 + 图标排位（花园/此间/喝水/同频/伸手） =====
-// 用户需求：① 手机桌面要有「此间」按钮；② 喝水放第三页；③ 此间放喝水原位置（第二页，
-//   喝水原在花园前 → 此间排在花园后）；④ 此间与花园调换（花园在左，此间在右，此间占
-//   原喝水位）；最终第二排 = 花园 此间 同频 伸手，第三页 = 经期/记账/梦角档案/喝水/吃什么/存钱罐/番茄钟。
+// ===== 专项验证：此间桌面图标 + 图标排位（此间/同频/伸手） =====
+// 用户需求：① 手机桌面要有「此间」按钮；② 喝水放第三页；③ 此间放喝水原位置（第二页）；
+//   最终第二排 = 此间 同频 伸手，第三页 = 经期/记账/梦角档案/喝水/吃什么/存钱罐/番茄钟。
 // 用例：
-//   T1 第二页 p2-grid 含 花园、此间（data-app）图标；且顺序为 花园 此间 同频 伸手
+//   T1 第二页 p2-grid 含 此间（data-app）图标；且顺序为 此间 同频 伸手
 //   T2 第三页 p3-grid 含 喝水；喝水不在第二页
 //   T3 点桌面「此间」图标 → 打开 page-cjian；返回按钮回桌面（page-phone）
 //   T4 聊天「更多功能」→ 此间 仍正常（返回回聊天）
@@ -27,8 +26,8 @@ const chromePath = candidates.find((p) => { try { return statSync(p).isFile(); }
 if (!chromePath) { console.error('找不到 Chrome/Edge'); process.exit(1); }
 
 const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.png': 'image/png' };
-const cssFiles = ['base.css', 'home.css', 'chat-main.css', 'chat-pages.css', 'market.css', 'group-chat.css', 'setting.css', 'tabbar.css', 'dark.css', 'garden.css', 'memo.css'];
-const jsFiles = ['idb.js', 'contacts.js', 'clock.js', 'tabs.js', 'desktop-slider.js', 'quote-cards.js', 'personalize.js', 'chat.js', 'group-chat.js', 'chatcard.js', 'chat-settings.js', 'reply-settings.js', 'fav-settings.js', 'default-cards-data.js', 'default-cards.js', 'mood-followup-data.js', 'mood-reply-cards.js', 'music-player.js', 'calendar.js', 'divination.js', 'avatar-lib.js', 'ta-ask.js', 'ck-question.js', 'ta-invite.js', 'bg-keep.js', 'records.js', 'call.js', 'mail.js', 'feed.js', 'p2-features.js', 'gift-shop.js', 'memo-app.js', 'period.js', 'accounting.js', 'garden.js', 'decision.js', 'pong.js', 'snake-game.js', 'sfx.js', 'fullscreen.js', 'data-backup.js', 'pwa.js', 'cjian.js', 'mobile-adapt.js'];
+const cssFiles = ['base.css', 'home.css', 'chat-main.css', 'chat-pages.css', 'market.css', 'group-chat.css', 'setting.css', 'tabbar.css', 'dark.css', 'memo.css'];
+const jsFiles = ['idb.js', 'contacts.js', 'clock.js', 'tabs.js', 'desktop-slider.js', 'quote-cards.js', 'personalize.js', 'chat.js', 'group-chat.js', 'chatcard.js', 'chat-settings.js', 'reply-settings.js', 'fav-settings.js', 'default-cards-data.js', 'default-cards.js', 'mood-followup-data.js', 'mood-reply-cards.js', 'music-player.js', 'calendar.js', 'divination.js', 'avatar-lib.js', 'ta-ask.js', 'ck-question.js', 'ta-invite.js', 'bg-keep.js', 'records.js', 'call.js', 'mail.js', 'feed.js', 'p2-features.js', 'gift-shop.js', 'memo-app.js', 'period.js', 'accounting.js', 'decision.js', 'pong.js', 'snake-game.js', 'sfx.js', 'fullscreen.js', 'data-backup.js', 'pwa.js', 'cjian.js', 'mobile-adapt.js'];
 let testHtml = readFileSync(join(root, 'src/template.html'), 'utf8');
 testHtml = testHtml.replace('/*__STYLES__*/', cssFiles.map((f) => readFileSync(join(root, 'src/css', f), 'utf8')).join('\n'));
 testHtml = testHtml.replace('/*__SCRIPTS__*/', jsFiles.map((f) => '(function () { try {\n' + readFileSync(join(root, 'src/js', f), 'utf8') + '\n} catch (__e) { try { console.error("[JS] ' + f + '", __e && __e.message || __e); } catch (x) {} if (window.__jsErrors) window.__jsErrors.push(String(__e && __e.message || __e)); } })();').join('\n'));
@@ -105,8 +104,8 @@ try {
   console.log('\n== T1 第二页图标排位 ==');
   const p2 = await evalJs("(function () { const g = document.querySelector('.app-grid.p2-grid'); if (!g) return null; return Array.prototype.map.call(g.querySelectorAll('.app'), function (a) { return a.getAttribute('data-app'); }); })()");
   ok('第二页网格存在', Array.isArray(p2), p2);
-  ok('第二页包含 花园 与 此间', p2 && p2.indexOf('garden') >= 0 && p2.indexOf('cjian') >= 0, p2);
-  ok('第二排顺序 = 花园 此间 同频 伸手（花园在左，此间在右）', p2 && p2.indexOf('garden') === 4 && p2.indexOf('cjian') === 5 && p2.indexOf('tongpin') > p2.indexOf('cjian') && p2.indexOf('shenshou') > p2.indexOf('tongpin'), p2);
+  ok('第二页包含 此间', p2 && p2.indexOf('cjian') >= 0, p2);
+  ok('第二排顺序 = 此间 同频 伸手', p2 && p2.indexOf('cjian') === 4 && p2.indexOf('tongpin') > p2.indexOf('cjian') && p2.indexOf('shenshou') > p2.indexOf('tongpin'), p2);
 
   console.log('\n== T2 喝水在第三页 ==');
   const p3 = await evalJs("(function () { const g = document.querySelector('.app-grid.p3-grid'); if (!g) return null; return Array.prototype.map.call(g.querySelectorAll('.app'), function (a) { return a.getAttribute('data-app'); }); })()");

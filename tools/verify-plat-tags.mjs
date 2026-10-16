@@ -67,7 +67,7 @@ ok(tpl.includes('安卓或电脑上的 Chrome / Edge（Chromium 内核）且 htt
 ok(shelp.includes('【开启步骤（安卓 / 电脑）】'), 'S8c 后台通知胶囊开启步骤标题已改「安卓 / 电脑」');
 
 // ===== 行为：自组装页 =====
-const cssFiles = ['base.css', 'home.css', 'chat-main.css', 'chat-pages.css', 'market.css', 'group-chat.css', 'setting.css', 'tabbar.css', 'dark.css', 'garden.css', 'memo.css', 'memo-arc.css', 'room.css'];
+const cssFiles = ['base.css', 'home.css', 'chat-main.css', 'chat-pages.css', 'market.css', 'group-chat.css', 'setting.css', 'tabbar.css', 'dark.css', 'memo.css', 'memo-arc.css', 'room.css'];
 const jsFiles = ['device.js', 'idb.js', 'contacts.js', 'clock.js', 'tabs.js', 'desktop-slider.js', 'quote-cards.js', 'personalize.js', 'settings-help.js', 'onboarding.js'];
 let html = tpl;
 const styles = cssFiles.map((f) => readSrc('css/' + f)).join('\n');

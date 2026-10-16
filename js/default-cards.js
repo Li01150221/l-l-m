@@ -259,7 +259,7 @@ try { if (window.quoteSpellResetDict) window.quoteSpellResetDict(); } catch (e) 
 }
 return n > 0;
 }
-const FUNC_KEYS = ['fish', 'eat', 'period', 'water', 'garden', 'sync', 'reach', 'cjian', 'room', 'piggy', 'drift', 'interact', 'music'];
+const FUNC_KEYS = ['fish', 'eat', 'period', 'water', 'sync', 'reach', 'cjian', 'room', 'piggy', 'drift', 'interact', 'music'];
 const BASE_KEYS = ['main', 'kaomoji', 'emoji', 'touch'];
 const ALL_KEYS = BASE_KEYS.concat(FUNC_KEYS);
 const TAB_LABELS = (function () {
@@ -403,8 +403,8 @@ apply('');
 }
 mountSetTabs('dc-set-tabs', 'dc-set-', ['scene', 'prob', 'cat']);
 mountSetTabs('dict-set-tabs', 'dict-set-', ['use', 'prob']);
-const DCF_DEF = { fish: 35, eat: 35, period: 25, water: 35, garden: 40, sync: 60, reach: 55, cjian: 100, room: 100, piggy: 100, drift: 100, interact: 100, music: 100, deskcheck: 50, checkin: 100, pomo: 100, care: 100, memo: 100, ask: 100 };
-const DCF_DEF_NAME = { fish: '摸鱼', eat: '吃饭', period: '经期', water: '喝水', garden: '花园', sync: '同频', reach: '伸手', cjian: '此间', room: '房间', piggy: '存钱罐', drift: '漂流瓶', interact: '互动回应', music: '音乐', deskcheck: '跨桌面查岗', checkin: '寻踪日常', pomo: '番茄钟', care: 'TA的关心', memo: '备忘提醒', ask: 'TA主动提问' };
+const DCF_DEF = { fish: 35, eat: 35, period: 25, water: 35, sync: 60, reach: 55, cjian: 100, room: 100, piggy: 100, drift: 100, interact: 100, music: 100, deskcheck: 50, checkin: 100, pomo: 100, care: 100, memo: 100, ask: 100 };
+const DCF_DEF_NAME = { fish: '摸鱼', eat: '吃饭', period: '经期', water: '喝水', sync: '同频', reach: '伸手', cjian: '此间', room: '房间', piggy: '存钱罐', drift: '漂流瓶', interact: '互动回应', music: '音乐', deskcheck: '跨桌面查岗', checkin: '寻踪日常', pomo: '番茄钟', care: 'TA的关心', memo: '备忘提醒', ask: 'TA主动提问' };
 function dcfEnabled() {
 try { const v = window.activeStore().get('dcf-enabled'); return v === null ? true : v === '1'; } catch (e) { return true; }
 }
@@ -504,7 +504,6 @@ fish: '【摸鱼】联系人按你摸鱼/钓鱼的进度，在桌面上飘出「
 eat: '【吃饭】到饭点（早 06:30–09:30、午 11:00–13:30、晚 17:00–19:30、夜宵 21:30–23:30）时，联系人主动来聊天提醒你吃饭，并按概率补一句「追问关心」（夜宵时段用夜宵关心话术）。\n触发时机：每 4 分钟判定一次，每个饭点每天只提醒一次，23:00–06:00 静默。主提醒由本功能自带的概率（默认 2%）控制；本项概率只控制提醒之后是否补发追问。\n概率 = 补发追问的概率（默认 35%），0% = 只提醒、不追问。',
 period: '【经期·温柔化】处于经期时，联系人的每条文字回复有概率被加上温柔前缀/后缀（如「抱抱」「慢慢来」）。\n触发时机：TA 每生成一条文字回复时判定一次，仅经期生效。\n概率 = 每条回复被温柔化的概率（默认 25%），0% = 不加温柔前缀/后缀。\n拼接时前缀、正文、动作各自是一张字卡，中间空一格（与单气泡拼字同款，不是被粘成一串）。\n（本项属经期专属语态，词典拼字/梦角自由造句全关也只停各自玩法；但「回复设置→多字卡回复」总开关关闭时本项一并不改写——加前缀/动作＝往同一条气泡里拼第二张字卡，归那颗总开关管。想单独停掉温柔语态只认本页概率与逐张开关。）\n（预测期的「梦角关心」是独立的一项「TA的关心」，另见其说明。）',
 water: '【喝水】每天 06:00–23:00，联系人会来聊天里催你喝水；当天已打卡达标时改为约 1/4 概率发夸奖。\n触发时机：页面在前台时每 8 分钟判定一次，至少隔 50 分钟、每天最多 4 条；打开喝水页时也可能补发；后台不触发。\n概率 = 每次判定发出催水的概率（默认 35%），0% = 完全不催。',
-garden: '【花园】联系人在花园打理植物（播种/浇水/收成/施肥/巡逻）后，可能在花园日志里留一句「梦角悄悄话」。\n触发时机：你与花园互动时有 8% 概率触发 TA 帮忙打理；回到手机桌面或进花园时，TA 也会按后台经过时间打理（每 30 分钟一段、每段 40% 概率）。\n概率 = 每次 TA 打理后追加悄悄话的概率（默认 40%），0% = 只打理、不留悄悄话。\n（TA 摘花送进聊天是另一套 30% 逻辑，不受本项影响。）',
 sync: '【同频】在「同频」页长按敲三下（每下长按 0.35 秒、三下需在 5 秒内完成）时，联系人有概率接住并回应你。\n触发时机：靠你主动长按触发，无冷却、无每日上限；回应会发到聊天（可在同频页关掉「发到聊天」）。\n概率 = 敲三下后接住的概率（默认 60%），0% = 永远接不住。',
 reach: '【伸手】在「伸手」页长按 0.5 秒时，联系人有概率回应你（温热/微凉/发丝等触感＋悄悄话，会发到聊天，可在该页关掉）。\n触发时机：靠你主动长按触发，无冷却、无每日上限。\n概率 = 主动伸手被回应的概率（默认 55%），0% = 主动伸手时只飘字、不留卡。\n（打开伸手页时 TA 也可能主动碰你（距上次 >6 小时 70%、否则 25%），该被动回应不受本项控制。）',
 cjian: '【此间】在「此间」页点「感知」时，联系人有概率补一句气息/落空的话术（只在页内显示，不发聊天）。\n触发时机：靠你点「感知」触发；按钮自带 4 秒防抖，梦角状态最多每 15 分钟变化一次。\n概率 = 每次感知出现话术的概率（默认 100%），0% = 感知不出话术。',

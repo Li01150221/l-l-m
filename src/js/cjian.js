@@ -111,7 +111,7 @@
     document.body.appendChild(m);
   }
   // v3.15.x：感知播报句走字卡库【系统预设字卡→此间】同源池（DEFAULT_CARD_DATA.cjian，
-  // dc-off-cjian:* 过滤已关卡片，全关回退内置兜底）——与 room/garden 同模式
+  // dc-off-cjian:* 过滤已关卡片，全关回退内置兜底）——与 room 同模式
   function cjLine(group, fallbackArr) {
     // v3.32.x #132：此间字卡概率接 dcf-cjian（默认 100=原行为，0=感知播报不出字卡，
     // 此时回退 fallbackArr 首条都不发，返回空串由调用方拼进原句式为空）

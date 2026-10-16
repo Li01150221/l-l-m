@@ -566,7 +566,7 @@
 <button class="we-btn" id="weekend-fish" title="摸鱼 +1">摸鱼 +<b id="weekend-count">0</b></button>
 </div>
 
-<!-- 第二页功能：两排图标（第一排 音乐/聊天统计/提问记录/寻踪；第二排 花园/此间/同频(注入)/伸手(注入)；
+<!-- 第二页功能：两排图标（第一排 音乐/聊天统计/提问记录/寻踪；第二排 此间/同频(注入)/伸手(注入)；
      喝水已移至第三页 p3-grid（p2-features 注入）），整组移到摸鱼组件（周末倒计时）下面 -->
 <div class="app-grid p2-grid" data-app="p2" data-desk-widget="p2apps">
 <div class="app" data-app="music" data-desk-widget="app-music">
@@ -584,11 +584,6 @@
 <div class="app" data-app="checkin" data-desk-widget="app-checkin">
 <div class="app-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/><path d="M12 3a9 9 0 000 18"/></svg></div>
 <div class="app-name">寻踪</div>
-</div>
-<!-- 花园自第三页移入：第二排「花园 此间 同频 伸手」（此间紧随其后为模板静态图标，同频/伸手由 p2-features 追加） -->
-<div class="app" data-app="garden" data-desk-widget="app-garden">
-<div class="app-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 21h10l-1.5-5h-7z"/><path d="M12 16v-7"/><path d="M12 12c-2 0-3.5-1-3.5-3"/><path d="M12 10c2 0 3.5-1 3.5-3"/><circle cx="12" cy="6" r="2"/></svg></div>
-<div class="app-name">花园</div>
 </div>
 <!-- v3.13.x：此间（梦角世界时间与在场感知）桌面入口——聊天「更多功能」同款页面，从桌面进入返回桌面 -->
 <div class="app" data-app="cjian" data-desk-widget="app-cjian">
@@ -1420,7 +1415,6 @@
         <button class="cc-tab" data-type="eat">吃饭</button>
         <button class="cc-tab" data-type="period">经期</button>
         <button class="cc-tab" data-type="water">喝水</button>
-        <button class="cc-tab" data-type="garden">花园</button>
         <button class="cc-tab" data-type="sync">同频</button>
         <button class="cc-tab" data-type="reach">伸手</button>
         <button class="cc-tab" data-type="cjian">此间</button>
@@ -1719,12 +1713,12 @@
           <div class="txt">修改摸鱼天数<span class="sub">摸鱼天数＝使用网站的累计天数（当天聊天/打卡等互动记 1 天）；数据丢失清零后在这里手动改回</span></div>
           <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>
         </div>
-        <!-- v3.27.x：各功能数据单独管理（feature-data.js）——桌面上每个功能（花园/房间/记账/
+        <!-- v3.27.x：各功能数据单独管理（feature-data.js）——桌面上每个功能（房间/记账/
              经期/占卜/音乐/小游戏…）各自分开导出/导入/清空，原来只有聊天/朋友圈/信箱三处有。
              整机备份（含全部功能）仍是上面的导出数据/导入数据；这里只针对单个功能。 -->
         <div class="set-row" id="row-feature-data">
           <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5.5" rx="8" ry="3"/><path d="M4 5.5v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"/><path d="M4 11.5v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"/></svg></div>
-          <div class="txt">各功能数据管理<span class="sub">花园/房间/记账/经期/占卜/音乐…每个功能单独导出、导入、清空，互不影响</span></div>
+          <div class="txt">各功能数据管理<span class="sub">房间/记账/经期/占卜/音乐…每个功能单独导出、导入、清空，互不影响</span></div>
           <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>
         </div>
         <!-- v3.26.x：查看存储——用户反馈「存储已用 1.x GB」时，能一眼看出各功能占多少空间，
@@ -2475,7 +2469,7 @@
             <div class="lg-body">
           <div class="lic-li">字卡库：浏览全部字卡，支持搜索与自定义分组管理</div>
           <div class="lic-li">聊天字卡分类可上传：【主字卡】【颜文字】【emoji】【表情包】【图片】【拍一拍】【语音】分类</div>
-          <div class="lic-li">其他互动功能字卡（自定义）：字卡库→可自定义字卡→其他互动功能字卡·公用 / ·专属，可为摸鱼 / 吃饭 / 经期 / 喝水 / 花园 / 音乐等功能添加自定义字卡（可编辑 / 删除），功能触发时 TA 会随机使用</div>
+          <div class="lic-li">其他互动功能字卡（自定义）：字卡库→可自定义字卡→其他互动功能字卡·公用 / ·专属，可为摸鱼 / 吃饭 / 经期 / 喝水 / 音乐等功能添加自定义字卡（可编辑 / 删除），功能触发时 TA 会随机使用</div>
           <div class="lic-li">互动卡片可自定义内容，概率触发互动（在字卡库里）</div>
           <div class="lic-li">TA 的询问 / 小问题 / 好奇 / 吐槽 / 查岗（含互动动作）/ 邀请：题库内容均可自定义</div>
           <div class="lic-li">寻踪日常字卡：地点、在做什么、说的话，均可自定义</div>
@@ -2483,7 +2477,7 @@
           <div class="lic-li">内置词库规模：情绪 11 组 → 心意 9 组 + 特殊心意 4 组 → 交流意图 8 组三级链路，整类与单张均可开关</div>
           <div class="lic-li">经期中负面情绪组权重自动上调、正向组下调，TA 的回应更贴合状态</div>
           <div class="lic-li">游戏结果回应池：游戏胜利 / 失败 / 平局后 TA 抽对应字卡回应</div>
-          <div class="lic-li">新功能专属字卡：TA 的邀请（猜拳 / Pong / 贪吃蛇 / 贴贴）、经期关心、喝水、花园、房间、漂流瓶、位置卡等，逐条开关 + 自定义添加</div>
+          <div class="lic-li">新功能专属字卡：TA 的邀请（猜拳 / Pong / 贪吃蛇 / 贴贴）、经期关心、喝水、房间、漂流瓶、位置卡等，逐条开关 + 自定义添加</div>
           <div class="lic-li">字卡库页入口：公用字卡（全桌面联系人共享）、专属字卡（仅当前桌面联系人）、寻踪日常字卡、桌面今日情话、聊天默认字卡、聊天情绪字卡、聊天回应字卡及各功能专属字卡统一管理</div>
           <div class="lic-li">字卡管理：去重复、导出数据、一键清空所有分类</div>
           <div class="lic-li">触发概率可查看可调：系统预设字卡各页都能看到「当前触发概率」并当场调整（0~100%，0% 即该字卡不再出现）——聊天默认字卡（聊天 / 写信 / 朋友圈）、聊天情绪字卡（情绪 / 心意 / 交流意图）、聊天回应字卡（整条替换 / 连接词追加）、寻踪日常字卡（发送到聊天）以及其他互动功能字卡各分类</div>
@@ -2507,7 +2501,7 @@
           <details class="lic-grp">
             <summary><span class="lg-num">04</span><span class="lg-name">心意币 · 红包 · 礼物</span><span class="lg-count">11</span></summary>
             <div class="lg-body">
-          <div class="lic-li">全局统一账本「心意币」：红包、礼物、小游戏、花园、钓鱼、漂流瓶共用一本账，新用户双方各 ¥520</div>
+          <div class="lic-li">全局统一账本「心意币」：红包、礼物、小游戏、钓鱼、漂流瓶共用一本账，新用户双方各 ¥520</div>
           <div class="lic-li">聊天红包：「我发 / TA 发」双向红包，预设情侣金额档（¥5.20 / 13.14 / 52 / 99.99 / 131.40 / 520）与七夕特别档，支持随机金额、自定义金额、留言与红包封面图</div>
           <div class="lic-li">发出的红包约 80% 概率被领取并致谢，24 小时未领取自动退回；长按可退回待领红包；被领取后 TA 还有概率再捎一句（我领 TA 的、TA 领我的都算；默认开启、默认 60%，开关 / 概率 / 「捎什么内容」三档都在聊天页红包的「设置」里，按每个联系人单独保存）</div>
           <div class="lic-li">TA 平时也会主动发红包（每天最多 5 次），七夕更爱发大额</div>
@@ -2517,7 +2511,7 @@
           <div class="lic-li"><b>心意市集·上传我的商品</b>：市集顶部的【＋ 上传我的商品】——用自己的照片当礼物（不传图就用 emoji），填上名字、价格、分类和一句默认留言就能存进市集，自己送、TA 送、加心愿单都跟默认商品一样能用。同一块里还有【导出商品数据】和【导入商品数据】：导出是一份 json 文件（你上传的图片一起打包），换手机、换浏览器或搬到另一个桌面，选这个文件导入即可还原；同一件商品（名字/分类/价格/图片都一样）会自动跳过，反复导入也不会翻倍。导出只装你自己上传的商品——默认商品、对默认商品的修改与删除、心意币、心愿单、心意柜记录都不包含、也不会被改动；导入时可选「合并」（已有的保留、缺的补上）或「先清空我的商品再导入」，文件里格式不对的条目会被忽略并在提示里说明跳过了几件</div>
           <div class="lic-li">送礼给 TA：挑商品写心意留言送出，礼物卡片飞进聊天并同步存进心意柜；TA 每天 5% 概率主动从市集挑礼物回礼（最多 3 次）；反过来我送出的每一份礼物（含心愿卡上点【送 TA】）都有概率换 TA 回一句——默认开启、默认 60%，「TA 回什么」可切系统预设话术 / 像正常聊天一样回复 / 混合，开关与概率都在「心意集市和心意柜设置」里</div>
           <div class="lic-li">心意柜：收到 / 送出礼物册，「TA 送我的 / 我送 TA 的」分类翻看与统计</div>
-          <div class="lic-li">小游戏与种花奖励对齐红包金额体系（¥5.2 / 13.14 / 52 / 1314…），各自每日封顶防刷</div>
+          <div class="lic-li">小游戏奖励对齐红包金额体系（¥5.2 / 13.14 / 52 / 1314…），各自每日封顶防刷</div>
             </div>
           </details>
 
@@ -2543,22 +2537,7 @@
           </details>
 
           <details class="lic-grp">
-            <summary><span class="lg-num">06</span><span class="lg-name">花园</span><span class="lg-count">9</span></summary>
-            <div class="lg-body">
-          <div class="lic-li">桌面【花园】：初始 12 块地，升级只解锁「开垦资格」、工具条点「开垦」才真正扩地（最多 30 块，不开垦小花园照常玩、奖励照拿），24 种普通花 + 10 种稀有花，种子 → 发芽 → 开花</div>
-          <div class="lic-li">天气季节氛围：晴天生长加速、当季花 1.3 倍速、雨天自动浇水</div>
-          <div class="lic-li">浇水 / 施肥加速成熟；浇水保湿 36 小时，开花 72 小时不收才会凋谢（只拿一半经验）</div>
-          <div class="lic-li">相邻同阶段不同花可杂交出稀有种子；升级花盆提升生长速度</div>
-          <div class="lic-li">收花按品质入库存并发心意币：完美 ¥52 / 优质 ¥13.14 / 普通 ¥5.2（每日封顶 ¥520）</div>
-          <div class="lic-li">工具条「补种」一键把空地块按上次品种补齐（不消耗稀有花种子）；升到 Lv.3/5/8/12 还各送 1 颗稀有种子</div>
-          <div class="lic-li">TA 定期代管花园：帮忙种植浇水收获，还可能把花做成花束直接送到聊天，偶尔留悄悄话</div>
-          <div class="lic-li">六个页签：花园 / 图鉴（搜索 + 按季筛选）/ 工坊（花束合成送 TA）/ 装饰 / 成就（23 枚徽章）/ 年报（年度数据一键分享朋友圈）</div>
-          <div class="lic-li">免费装饰带增益 buff（喷泉保湿、温室满保水、鸟巢引 TA 来…），蝴蝶蜜蜂小鸟随机来访，每日任务 + 连续打理保底稀有种子</div>
-            </div>
-          </details>
-
-          <details class="lic-grp">
-            <summary><span class="lg-num">07</span><span class="lg-name">漂流瓶</span><span class="lg-count">5</span></summary>
+            <summary><span class="lg-num">06</span><span class="lg-name">漂流瓶</span><span class="lg-count">5</span></summary>
             <div class="lg-body">
           <div class="lic-li">全屏页「两个世界之间的海」：捡一个瓶子 / 放一个瓶子，19 点后切换夜景</div>
           <div class="lic-li">可捡到话痨瓶 / 装小物的瓶子 / 特别瓶；小概率捡到 TA 的瓶子——内容取自 TA 说过的字卡，越久没聊越可能出现</div>
@@ -2569,7 +2548,7 @@
           </details>
 
           <details class="lic-grp">
-            <summary><span class="lg-num">08</span><span class="lg-name">手机桌面</span><span class="lg-count">18</span></summary>
+            <summary><span class="lg-num">07</span><span class="lg-name">手机桌面</span><span class="lg-count">18</span></summary>
             <div class="lg-body">
           <div class="lic-li">桌面多页滑动（scroll-snap，最多 5 页），指示器圆点点击切换，支持动态新增 / 删除页面</div>
           <div class="lic-li">组件隐藏池自由添加：时钟 / 月历 / 计时器 / 纪念日倒计时 / 图片组件 / 文字组件</div>
@@ -2578,7 +2557,7 @@
           <div class="lic-li">桌面组件【今日备忘】【今天的心情】可简单输入记录</div>
           <div class="lic-li">和 TA 一起摸鱼打卡：摸鱼值 / 工作值双方随机增长，打卡横幅统计摸鱼天数，摸鱼抓包彩蛋涨值翻倍</div>
           <div class="lic-li">第一页图标：聊天、群聊（开启群聊模式后显示）、主页、信箱、朋友圈、日历、纪念、占卜（开启群聊模式期间收起，改用 设置 → 工具 → 占卜 打开）、收藏</div>
-          <div class="lic-li">第二页：音乐播放器卡、本周日常、周末倒计时；图标——音乐、聊天统计、提问记录、寻踪、花园、此间、同频、伸手</div>
+          <div class="lic-li">第二页：音乐播放器卡、本周日常、周末倒计时；图标——音乐、聊天统计、提问记录、寻踪、此间、同频、伸手</div>
           <div class="lic-li">第三页：经期倒计时大卡、今日备忘 / 今天的心情、备忘录状态横幅；图标——经期记录、记账、梦角档案、我的档案、房间、备忘录、喝水、吃什么、存钱罐、番茄钟</div>
           <div class="lic-li">心意市集 / 心意柜图标成组自动注入桌面</div>
           <div class="lic-li">装修模式：编辑布局、添加卡片、点图标换图、卡片设背景、长按拖拽跨页摆放、恢复图标</div>
@@ -2593,7 +2572,7 @@
           </details>
 
           <details class="lic-grp">
-            <summary><span class="lg-num">09</span><span class="lg-name">寻踪</span><span class="lg-count">5</span></summary>
+            <summary><span class="lg-num">08</span><span class="lg-name">寻踪</span><span class="lg-count">5</span></summary>
             <div class="lg-body">
           <div class="lic-li">桌面【寻踪】包含：TA 的日常、TA 在哪里、TA 在做什么、TA 想对你说——为【TA 的日常】字卡库内容随机刷新，可自由添加字卡</div>
           <div class="lic-li">联系人更新日常时，聊天消息里会发送一条【联系人昵称 更新了一条日常】，且有概率触发联系人提醒你寻踪的消息</div>
@@ -2604,7 +2583,7 @@
           </details>
 
           <details class="lic-grp">
-            <summary><span class="lg-num">10</span><span class="lg-name">音乐</span><span class="lg-count">12</span></summary>
+            <summary><span class="lg-num">09</span><span class="lg-name">音乐</span><span class="lg-count">12</span></summary>
             <div class="lg-body">
           <div class="lic-li">音乐功能可本地上传音乐，也可链接上传网易云免费歌曲</div>
           <div class="lic-li"><b>音乐导入只有 3 种来源</b>：① 本机音频文件（上传音乐，mp3 / m4a / aac / ogg / wav / flac）；② 网易云歌曲数字 ID / 完整链接 / 分享短链 / 歌单链接（链接添加、批量导入）；③ 音频文件直链（点开就是音频本身、以 .mp3 等结尾的 URL）。<br><b>QQ音乐、酷狗、酷我、咪咕、B站、YouTube、Spotify、Apple Music 等其他 App 的「分享」链接不能导入</b>——这种链接打开是网页、不是音频文件，导进来也放不出声；要用这些歌，得先把音频文件存到手机里，再用「上传音乐」添加。<br><b>⚠ 上传音乐只认不加密的标准音频</b>：音乐 App 里下载 / 缓存的歌曲文件大多带了加密，即使扩展名是 .mp3 / .flac / .m4a 也放不出声；放不出来的转成 mp3（兼容性最好）再上传。<br><b style="color:var(--danger-ink,#a32d2d)">⚠ 直接导入网易云歌单链接即可</b></div>
@@ -2622,7 +2601,7 @@
           </details>
 
           <details class="lic-grp">
-            <summary><span class="lg-num">11</span><span class="lg-name">通话</span><span class="lg-count">6</span></summary>
+            <summary><span class="lg-num">10</span><span class="lg-name">通话</span><span class="lg-count">6</span></summary>
             <div class="lg-body">
           <div class="lic-li">联系人可主动拨打和挂断电话；我也可以拨打</div>
           <div class="lic-li">TA 会来电，可接听 / 拒绝，接通后缩为可拖动的迷你通话小框（位置记忆）</div>
@@ -2634,7 +2613,7 @@
           </details>
 
           <details class="lic-grp">
-            <summary><span class="lg-num">12</span><span class="lg-name">信箱</span><span class="lg-count">5</span></summary>
+            <summary><span class="lg-num">11</span><span class="lg-name">信箱</span><span class="lg-count">5</span></summary>
             <div class="lg-body">
           <div class="lic-li">信箱里我可以主动给联系人写信和回信</div>
           <div class="lic-li">联系人可以主动写信和回信</div>
@@ -2645,7 +2624,7 @@
           </details>
 
           <details class="lic-grp">
-            <summary><span class="lg-num">13</span><span class="lg-name">朋友圈</span><span class="lg-count">8</span></summary>
+            <summary><span class="lg-num">12</span><span class="lg-name">朋友圈</span><span class="lg-count">8</span></summary>
             <div class="lg-body">
           <div class="lic-li">朋友圈里我可以主动发布朋友圈动态（点右上角 + 图标）</div>
           <div class="lic-li">联系人可主动发布朋友圈</div>
@@ -2659,7 +2638,7 @@
           </details>
 
           <details class="lic-grp">
-            <summary><span class="lg-num">14</span><span class="lg-name">日历</span><span class="lg-count">6</span></summary>
+            <summary><span class="lg-num">13</span><span class="lg-name">日历</span><span class="lg-count">6</span></summary>
             <div class="lg-body">
           <div class="lic-li">每日首次打开，联系人会在日历留言并触发弹窗</div>
           <div class="lic-li">日历里除了联系人留言，我也可以简单留言</div>
@@ -2671,7 +2650,7 @@
           </details>
 
           <details class="lic-grp">
-            <summary><span class="lg-num">15</span><span class="lg-name">纪念</span><span class="lg-count">3</span></summary>
+            <summary><span class="lg-num">14</span><span class="lg-name">纪念</span><span class="lg-count">3</span></summary>
             <div class="lg-body">
           <div class="lic-li">桌面【纪念】可设置纪念日和倒数日</div>
           <div class="lic-li">纪念日显示在桌面顶部双方头像下方（可设恋爱/亲情/友情向，显示相伴天数）</div>
@@ -2680,7 +2659,7 @@
           </details>
 
           <details class="lic-grp">
-            <summary><span class="lg-num">16</span><span class="lg-name">生活工具</span><span class="lg-count">6</span></summary>
+            <summary><span class="lg-num">15</span><span class="lg-name">生活工具</span><span class="lg-count">6</span></summary>
             <div class="lg-body">
           <div class="lic-li">【备忘录】待办管理：置顶 / 截止日期 / 临期排序 / 一键清已完成；添加备忘 TA 会在聊天里回应追问，还能概率催办提醒（开关 + 概率可调，命中后至少隔 2 天一次，不频扰）、偶尔帮你勾掉最旧一条</div>
           <div class="lic-li">【喝水】今日杯数进度环 + 近 7 天柱状图，目标杯数 / 杯量自定义；TA 定时催喝水、达标夸奖，战报可发到聊天</div>
@@ -2692,7 +2671,7 @@
           </details>
 
           <details class="lic-grp">
-            <summary><span class="lg-num">17</span><span class="lg-name">经期记录</span><span class="lg-count">6</span></summary>
+            <summary><span class="lg-num">16</span><span class="lg-name">经期记录</span><span class="lg-count">6</span></summary>
             <div class="lg-body">
           <div class="lic-li">一键标记经期开始 / 结束，月历标注实际经期、预测区间与排卵期，可翻月查看</div>
           <div class="lic-li">点月历上任意一天＝从那天起按你设的「经期天数」当场记上这次经期（再点一次只开浮层、不动记录；要取消就在浮层顶部那个开关里关掉的保存）；月历首尾补进来的是相邻月的真日子，跨月那几天不用翻月也点得到、照样跟着涂色；每日详情浮层：经量四档、11 种症状多选、基础体温、五档情绪与备注</div>
@@ -2704,7 +2683,7 @@
           </details>
 
           <details class="lic-grp">
-            <summary><span class="lg-num">18</span><span class="lg-name">此间 · 同频 · 伸手</span><span class="lg-count">8</span></summary>
+            <summary><span class="lg-num">17</span><span class="lg-name">此间 · 同频 · 伸手</span><span class="lg-count">8</span></summary>
             <div class="lg-body">
           <div class="lic-li">【此间】每位梦角有自己的世界时间（十二时辰展示：与现实同步 / 快慢偏移 / 独立时间流）与「在场 × 空闲」双状态，随时间自动变化</div>
           <div class="lic-li">空闲状态共六档：有空（适合交流）/ 有事 / 忙着 / 休息 / 睡着（TA 那边已休息，可能不会回）/ 未知；每一档都悬停或长按状态标签可看含义</div>
@@ -2718,7 +2697,7 @@
           </details>
 
           <details class="lic-grp">
-            <summary><span class="lg-num">19</span><span class="lg-name">梦角档案 / 我的档案</span><span class="lg-count">8</span></summary>
+            <summary><span class="lg-num">18</span><span class="lg-name">梦角档案 / 我的档案</span><span class="lg-count">8</span></summary>
             <div class="lg-body">
           <div class="lic-li">【梦角档案】认识 TA：九个分区——TA 是谁 / 喜好 / 习惯 / 与我的相处 / 我对 TA 的了解 / 位置感 / 物品 / 我们的共同记录 / 当前 IF 世界</div>
           <div class="lic-li">梦角档案不是 AI：本站没有任何 AI 功能，只是手动记录——内容全部由你自己写下</div>
@@ -2732,19 +2711,19 @@
           </details>
 
           <details class="lic-grp">
-            <summary><span class="lg-num">20</span><span class="lg-name">房间（双人小屋）</span><span class="lg-count">6</span></summary>
+            <summary><span class="lg-num">19</span><span class="lg-name">房间（双人小屋）</span><span class="lg-count">6</span></summary>
             <div class="lg-body">
           <div class="lic-li">和 TA 共同拥有一个小屋：21 种家具全部可互动（躺床 / 浇绿植 / 点台灯 / 泡热茶…），支持移动 / 翻转 / 收回仓库 / 长按拖动</div>
           <div class="lic-li">小屋 Lv1~5 按舒适度升级，解锁新家具与 9 种墙纸 × 4 种地板装扮</div>
           <div class="lic-li">屋里的 TA 使用当前联系人头像渲染，会在房间走动 / 坐家具 / 看书 / 靠近你，点 TA 可靠近 / 打招呼</div>
           <div class="lic-li">点数来源：每日进屋礼 + 使用 / 互动得点数，攒点数兑换解锁新家具；白天夜晚灯光氛围与天气变化</div>
-          <div class="lic-li">点家具窗户冒字卡话术，「感应」查 TA 大致方位；花园有收成后房间花瓶才能真正插上花</div>
+          <div class="lic-li">点家具窗户冒字卡话术，「感应」查 TA 大致方位</div>
           <div class="lic-li">数据按联系人隔离——每位 TA 一个家；桌面第三页与聊天更多功能均可进入</div>
             </div>
           </details>
 
           <details class="lic-grp">
-            <summary><span class="lg-num">21</span><span class="lg-name">群聊</span><span class="lg-count">7</span></summary>
+            <summary><span class="lg-num">20</span><span class="lg-name">群聊</span><span class="lg-count">7</span></summary>
             <div class="lg-body">
           <div class="lic-li">设置开启「群聊模式」后桌面第一页出现群聊入口：所有联系人桌面的成员聚在一个窗口聊天；<b>同一时间桌面占卜图标会收起</b>（第一页留给群聊入口），要占卜走 <b>设置 → 工具 → 占卜</b>，两者不是互斥的功能，关闭群聊模式占卜图标就回来</div>
           <div class="lic-li">你发言后随机成员回复，@某成员昵称则 TA 必定回复；回复内容由公用字卡 + 各自桌面专属字卡 + 默认字卡三层决定</div>
@@ -2757,7 +2736,7 @@
           </details>
 
           <details class="lic-grp">
-            <summary><span class="lg-num">22</span><span class="lg-name">记录统计</span><span class="lg-count">6</span></summary>
+            <summary><span class="lg-num">21</span><span class="lg-name">记录统计</span><span class="lg-count">6</span></summary>
             <div class="lg-body">
           <div class="lic-li">桌面【提问记录】统计历史：提问记录、TA 的询问、TA 的小问题、TA 的好奇、TA 的吐槽、我的邀请 / 问问</div>
           <div class="lic-li">桌面【主页】多 tab 统计：联系人换头像、通话记录、每日摸鱼值 / 每日打工值、摸鱼抓包（我抓到 TA / 被 TA 抓到 双向记录）、TA 的关心（查岗 / 经期 / 喝水 / 吃饭 / 番茄陪伴聚合）、心意币红包 / 赚钱 / 申请记录</div>
@@ -2769,7 +2748,7 @@
           </details>
 
           <details class="lic-grp">
-            <summary><span class="lg-num">23</span><span class="lg-name">个性化</span><span class="lg-count">25</span></summary>
+            <summary><span class="lg-num">22</span><span class="lg-name">个性化</span><span class="lg-count">25</span></summary>
             <div class="lg-body">
           <div class="lic-li">联系人昵称和我的昵称：桌面那一套在桌面双方头像组件下方修改（或 设置 → 通用 → 联系人 / 桌面）；聊天里显示的名字是另一套，要去 聊天设置 → 形象 单独设置，两者互不同步</div>
           <div class="lic-li">联系人名称与头像，消息头像形状（圆形 / 方形）</div>
@@ -2800,7 +2779,7 @@
           </details>
 
           <details class="lic-grp">
-            <summary><span class="lg-num">24</span><span class="lg-name">音效设置</span><span class="lg-count">4</span></summary>
+            <summary><span class="lg-num">23</span><span class="lg-name">音效设置</span><span class="lg-count">4</span></summary>
             <div class="lg-body">
           <div class="lic-li">可本地上传音频设置：【联系人来电铃声】【联系人聊天消息音效】【我的消息音效】</div>
           <div class="lic-li">上传后可试听、清除；未设置则不播放</div>
@@ -2810,7 +2789,7 @@
           </details>
 
           <details class="lic-grp">
-            <summary><span class="lg-num">25</span><span class="lg-name">数据</span><span class="lg-count">7</span></summary>
+            <summary><span class="lg-num">24</span><span class="lg-name">数据</span><span class="lg-count">7</span></summary>
             <div class="lg-body">
           <div class="lic-li"><b>清除本地数据 / 清空重置</b>（设置 → 通用）：清掉本机<b>全部</b> xy-home-v2 数据——所有联系人的桌面与聊天、字卡库、收藏、美化、桌面布局等，并删除 IndexedDB 整库，随后自动重载回到全新状态（重新弹新手引导）。<b>不可撤销、无法找回</b>，做之前请先「导出数据」备份；只想清掉某一位联系人的数据，去 设置 → 通用 → 联系人 / 桌面 里删除该联系人（同样不可恢复）。</div>
           <div class="lic-li">数据存储设备本地，可导入导出</div>
@@ -2823,7 +2802,7 @@
           </details>
 
           <details class="lic-grp">
-            <summary><span class="lg-num">26</span><span class="lg-name">帮我决定 / 多人决定</span><span class="lg-count">7</span></summary>
+            <summary><span class="lg-num">25</span><span class="lg-name">帮我决定 / 多人决定</span><span class="lg-count">7</span></summary>
             <div class="lg-body">
           <div class="lic-li">类型 A：是 / 否 / 半对 随机决定</div>
           <div class="lic-li">类型 B：自定义选项随机决定，可设置最多选几个（1-5 个）</div>
@@ -2836,7 +2815,7 @@
           </details>
 
           <details class="lic-grp">
-            <summary><span class="lg-num">27</span><span class="lg-name">占卜</span><span class="lg-count">6</span></summary>
+            <summary><span class="lg-num">26</span><span class="lg-name">占卜</span><span class="lg-count">6</span></summary>
             <div class="lg-body">
           <div class="lic-li">两种模式：塔罗（78 张完整牌库：22 大阿卡纳 + 56 小阿卡纳，带正逆位与详细解读）/ 雷诺曼（40 张）</div>
           <div class="lic-li">抽取张数：1 张（运势）/ 3 张（过去 · 现在 · 未来）/ 7 张（完整牌阵）</div>
@@ -2848,7 +2827,7 @@
           </details>
 
           <details class="lic-grp">
-            <summary><span class="lg-num">28</span><span class="lg-name">多联系人 / 多桌面</span><span class="lg-count">4</span></summary>
+            <summary><span class="lg-num">27</span><span class="lg-name">多联系人 / 多桌面</span><span class="lg-count">4</span></summary>
             <div class="lg-body">
           <div class="lic-li">每个联系人 = 独立命名空间，数据互不互通（聊天 / 字卡 / 桌面 / 设置等均独立）</div>
           <div class="lic-li">朋友圈为全局共享层，按联系人聚合显示所有动态</div>
@@ -2858,7 +2837,7 @@
           </details>
 
           <details class="lic-grp">
-            <summary><span class="lg-num">29</span><span class="lg-name">回复设置</span><span class="lg-count">9</span></summary>
+            <summary><span class="lg-num">28</span><span class="lg-name">回复设置</span><span class="lg-count">9</span></summary>
             <div class="lg-body">
           <div class="lic-li">六面板 tab：聊天 / 群聊 / 信箱 / 朋友圈 / 查岗 / 其他，参数按联系人独立保存（群聊面板全局共用）</div>
           <div class="lic-li">聊天：被动回复（回复速度 / 条数 / 已读不回 / 拍一拍 / 表情包 / emoji / 图片 / 语音 / 颜文字 / 引用 / 撤回 / 补发概率）、多字卡回复（触发概率 / 最少最多条数 / 拼接符号池含「换行」）、主动发送（概率 / 间隔 / 条数 / 免打扰 / 标识可换可自定义）</div>
@@ -2873,7 +2852,7 @@
           </details>
 
           <details class="lic-grp">
-            <summary><span class="lg-num">30</span><span class="lg-name">全屏 / 移动端适配</span><span class="lg-count">6</span></summary>
+            <summary><span class="lg-num">29</span><span class="lg-name">全屏 / 移动端适配</span><span class="lg-count">6</span></summary>
             <div class="lg-body">
           <div class="lic-li"><b>屏幕适配微调</b>（设置 → 工具 →「屏幕适配微调」）：滑杆手动微调、屏幕错位自己调——顶部（内容被状态栏遮挡/离太远）、底部（导航栏悬空/被手机手势条裁掉）、页面高度（底部留白/内容超出）、整体位移（整页偏上/偏下导致顶部或底部被遮挡）、左右安全边（曲面屏内容贴到弧边）、桌面图标区（全屏时图标/按钮整体偏上，只影响桌面页）、文字大小（只影响聊天与设置里的正文文字）；滑杆按生效页面分三组、当前页那组带「你正在这一页」标记，面板顶部写明「正在调：桌面 / 聊天」（反色高亮那枚＝你现在调的页，点另一枚切过去看现场）；边拖边看、双击滑杆复位，改完立即生效、本机永久保存（跨桌面共用、换设备各自调），「全部恢复默认」一键归零；建议先用 设置 → 信息诊断 →「屏幕适配诊断」看差多少像素再来填</div>
           <div class="lic-li">屏幕适配诊断：顶部空白 / 底部裁切 / 缩放异常一键定位（含 60 秒视口时间线回放键盘开合），异常时整段复制留档比对</div>
@@ -2885,7 +2864,7 @@
           </details>
 
           <details class="lic-grp">
-            <summary><span class="lg-num">31</span><span class="lg-name">开屏 / 系统</span><span class="lg-count">8</span></summary>
+            <summary><span class="lg-num">30</span><span class="lg-name">开屏 / 系统</span><span class="lg-count">8</span></summary>
             <div class="lg-body">
           <div class="lic-li">开屏加载动画（含公告 / 版本时间 / 数据加载等待 / 我已阅读并知晓）</div>
           <div class="lic-li">开屏有一次性的<b>年龄确认闸门</b>：勾选「已年满 18 周岁并同意全部说明」并把说明滑到底，「点击进入」才可点；本站禁止未成年人使用，确认后不再重复询问（免责声明改版时会再确认一次，确认记录只保存在你自己设备的浏览器本地、不上传）。</div>
@@ -2899,7 +2878,7 @@
           </details>
 
           <details class="lic-grp">
-            <summary><span class="lg-num">32</span><span class="lg-name">诊断与自检</span><span class="lg-count">12</span></summary>
+            <summary><span class="lg-num">31</span><span class="lg-name">诊断与自检</span><span class="lg-count">12</span></summary>
             <div class="lg-body">
           <div class="lic-li"><b>设备兼容诊断</b>（设置 → 信息诊断）：一键采集本机环境（型号 / 浏览器 / 存储 / 性能 / 最近错误），遇兼容问题整段复制留档比对</div>
           <div class="lic-li"><b>功能诊断</b>（设置 → 信息诊断）：逐个测试全部功能是否正常（入口 / 页面 / 图标 / 打开 / 关闭，约 15 秒）</div>
@@ -2944,7 +2923,7 @@
               <div class="lic-li"><b>导入 milk 字卡库的 json</b>：公用字卡、专属字卡都支持。会一并导入 milk 的【主字卡】+【拍一拍】+【Emoji 库】+【字卡分组】（含分组结构），颜文字 / 表情包等分类也会按类型归位。milk 侧对应位置：<b>设置 → 高级功能 → 自定义回复 → 导入字卡</b>；把导出的 json 存到手机后，再到本站「字卡库 → 导入数据」选它。</div>
               <div class="lic-li"><b>只适配了 milk（传讯）字卡库导出的 json</b>：其他网站的字卡格式不支持，导入会提示格式错误；本站自己的备份 / 星言格式另有识别。</div>
               <div class="lic-li">发消息：首页点联系人进入聊天，输入后发送。TA 的回复、主动消息、互动邀请都是<b>按概率随机触发</b>的。</div>
-              <div class="lic-li">手机桌面：左右滑动切换页面，点图标进入聊天 / 字卡 / 查岗 / 日历 / 信箱 / 朋友圈 / 音乐 / 占卜 / 花园等各功能。</div>
+              <div class="lic-li">手机桌面：左右滑动切换页面，点图标进入聊天 / 字卡 / 查岗 / 日历 / 信箱 / 朋友圈 / 音乐 / 占卜等各功能。</div>
               <div class="lic-li">想调 TA 的话多话少：<b>设置 → 聊天 → 回复设置</b> 调回复速度、概率、条数；单个功能字卡的概率在 <b>字卡库 → 其他互动功能字卡</b> 里调（0 = 不触发）。</div>
               <div class="lic-li">找不到功能：<b>设置 → 聊天 → 功能大全</b>，可搜索全部功能入口。</div>
             </div>
@@ -2983,7 +2962,7 @@
               <div class="lic-li">恢复 / 换机：新设备用 <b>设置 → 通用 → 导入数据</b> 选择之前导出的备份文件即可恢复（导入会覆盖当前数据）。</div>
               <div class="lic-li">顶部会有<b>备份提醒</b>（距上次成功导出超过 1 天提醒一次）；别只把备份留在下载列表里。</div>
               <div class="lic-li"><b>iPhone / iPad 必做</b>：把本站<b>「添加到主屏幕」</b>后从桌面图标长期使用——在 Safari 标签页里，Apple 会在<b>连续 7 天没打开本站</b>后自动清空它的全部本地数据（这是 Safari 的隐私策略，网站躲不过），这也是 iPhone 上「数据总是丢」最常见的原因。注意主屏幕应用与 Safari 是<b>两套独立存储</b>：切过去之前先在 设置 → 通用 →「导出数据」导一份，切过去后在桌面应用里走「导入数据」恢复；平时都从桌面图标打开，Safari 清不清都不影响你的数据。</div>
-              <div class="lic-li"><b>每个功能都能单独搬家</b>：<b>设置 → 工具 → 各功能数据管理</b> 里按功能列出<b>花园 / 房间 / 记账 / 经期 / 占卜 / 音乐 / 小游戏…</b>，每项都能单独<b>导出</b>成一个文件、单独<b>导入</b>回来（可选「合并」或「清空本功能后导入」）、单独<b>清空</b>——只动这一个功能的数据，别的功能和其他桌面都不受影响。</div>
+              <div class="lic-li"><b>每个功能都能单独搬家</b>：<b>设置 → 工具 → 各功能数据管理</b> 里按功能列出<b>房间 / 记账 / 经期 / 占卜 / 音乐 / 小游戏…</b>，每项都能单独<b>导出</b>成一个文件、单独<b>导入</b>回来（可选「合并」或「清空本功能后导入」）、单独<b>清空</b>——只动这一个功能的数据，别的功能和其他桌面都不受影响。</div>
               <div class="lic-li">聊天记录可在 <b>聊天设置 → 数据</b> 里单独导出 / 导入 / 删除；字卡可在字卡库用「自定义字卡·全量导出 / 导入」单独迁移。</div>
               <div class="lic-li">各联系人是独立命名空间，专属字卡属于当前桌面联系人，换设备后请在对应联系人桌面导入。</div>
             </div>
@@ -3004,7 +2983,7 @@
               <div class="lic-li">聊天：首页点联系人进入；右上角是<b>聊天设置</b>；输入框旁「+」展开更多功能面板，分 <b>互动 / 小游戏 / 工具 / TA的提问</b> 四类。</div>
               <div class="lic-li"><b>互动</b>类：邀请 TA、通话、拍一拍、红包、心意集市、心意柜、头像和昵称互动、漂流瓶等。</div>
               <div class="lic-li"><b>小游戏</b>类：猜拳、Pong、贪吃蛇、打砖块、钓鱼、四子棋、扫雷、记忆翻牌等；<b>工具</b>类：帮我决定、多人决定、问问 TA、搜索记录、占卜、寻踪、此间、房间、心情日记等。</div>
-               <div class="lic-li">桌面图标：日历、信箱、朋友圈、音乐、占卜、花园、房间、漂流瓶、记账、经期、备忘录、纪念等；左右滑动桌面临换页。</div>
+               <div class="lic-li">桌面图标：日历、信箱、朋友圈、音乐、占卜、房间、漂流瓶、记账、经期、备忘录、纪念等；左右滑动桌面临换页。</div>
                <div class="lic-li">注意：<b>开启群聊模式期间，桌面占卜图标会收起</b>（第一页留给「群聊」入口），占卜改从 <b>设置 → 工具 → 占卜</b> 打开，效果与点桌面图标一样（含历史记录）；关掉群聊模式图标自动回来。</div>
               <div class="lic-li">完整索引：<b>设置 → 聊天 → 功能大全</b>（可搜索、点条目直达）；群聊在 <b>设置 → 通用 → 开启群聊</b>。</div>
             </div>
@@ -3334,7 +3313,6 @@
               <div class="gs-row"><span>吃饭字卡概率</span><div class="stepper" id="dcf-prob-eat-rs" data-dcfkey="eat" data-min="0" data-max="100" data-step="5"><button class="stp-min">−</button><input class="stp-val" id="dcf-prob-eat-rs-val" readonly><button class="stp-max">+</button></div></div>
               <div class="gs-row"><span>经期字卡概率</span><div class="stepper" id="dcf-prob-period-rs" data-dcfkey="period" data-min="0" data-max="100" data-step="5"><button class="stp-min">−</button><input class="stp-val" id="dcf-prob-period-rs-val" readonly><button class="stp-max">+</button></div></div>
               <div class="gs-row"><span>喝水字卡概率</span><div class="stepper" id="dcf-prob-water-rs" data-dcfkey="water" data-min="0" data-max="100" data-step="5"><button class="stp-min">−</button><input class="stp-val" id="dcf-prob-water-rs-val" readonly><button class="stp-max">+</button></div></div>
-              <div class="gs-row"><span>花园字卡概率</span><div class="stepper" id="dcf-prob-garden-rs" data-dcfkey="garden" data-min="0" data-max="100" data-step="5"><button class="stp-min">−</button><input class="stp-val" id="dcf-prob-garden-rs-val" readonly><button class="stp-max">+</button></div></div>
               <div class="gs-row"><span>同频字卡概率</span><div class="stepper" id="dcf-prob-sync-rs" data-dcfkey="sync" data-min="0" data-max="100" data-step="5"><button class="stp-min">−</button><input class="stp-val" id="dcf-prob-sync-rs-val" readonly><button class="stp-max">+</button></div></div>
               <div class="gs-row"><span>伸手字卡概率</span><div class="stepper" id="dcf-prob-reach-rs" data-dcfkey="reach" data-min="0" data-max="100" data-step="5"><button class="stp-min">−</button><input class="stp-val" id="dcf-prob-reach-rs-val" readonly><button class="stp-max">+</button></div></div>
               <div class="gs-row"><span>此间字卡概率</span><div class="stepper" id="dcf-prob-cjian-rs" data-dcfkey="cjian" data-min="0" data-max="100" data-step="5"><button class="stp-min">−</button><input class="stp-val" id="dcf-prob-cjian-rs-val" readonly><button class="stp-max">+</button></div></div>
@@ -3427,7 +3405,7 @@
             <div class="gs-sub"><b>是什么</b>：梦角（联系人）说话时按「触发概率」随机掷一次，命中就把一句语料<b>截字重造句</b>后当作 TA 的回复发出来（气泡下带「梦角自由造句」小标签）；命中时若同一条回复也掷中了词典拼字，拼字优先、本次造句让位（同一回复不叠加两种玩法）。概率 0＝不触发。<br>
 <b>关掉总开关</b>（#1236）：不再造句，历史气泡下残留的「梦角自由造句」标签也一并不再显示（重新打开即恢复显示，消息本身与标签数据都不删）。<br>
 <b>语料来自四类字卡</b>——造句就是在「自定义字卡＋默认聊天字卡＋词典」这三处字卡里选的（词典＝字卡库→词典，和默认聊天字卡同属系统预设），对应下方三个「语料·」开关，细分四类：<br>
-· ①【自定义字卡·公用字卡】＋ ②【自定义字卡·专属字卡】——由「语料·自定义字卡」一个开关管两个作用域（公用全桌面共享、专属只在本联系人桌面）；字卡库→可自定义字卡 里两个作用域各自的【分组停用】都生效，改/删字卡实时跟新，抽语料时会跳过【其他互动功能字卡】类（鱼塘/吃喝/经期/花园/此间/房间/存钱罐/漂流瓶/互动回应/音乐/这里造的句子本身…）；<br>
+· ①【自定义字卡·公用字卡】＋ ②【自定义字卡·专属字卡】——由「语料·自定义字卡」一个开关管两个作用域（公用全桌面共享、专属只在本联系人桌面）；字卡库→可自定义字卡 里两个作用域各自的【分组停用】都生效，改/删字卡实时跟新，抽语料时会跳过【其他互动功能字卡】类（鱼塘/吃喝/经期/此间/房间/存钱罐/漂流瓶/互动回应/音乐/这里造的句子本身…）；<br>
 · ③【系统预设·默认聊天字卡】——由「语料·默认聊天字卡」开关控制，取 字卡库→系统预设→默认聊天字卡 的四大基础分类（主字卡 / 颜文字 / emoji / 拍一拍）；颜文字与 emoji 基本不含 4 个以上汉字，实际不会成为源句，真正参与的是主字卡与拍一拍。该分类的开关（主字卡/颜文字/emoji/拍一拍）与逐张关闭都生效；<br>
 · ④【系统预设·词典】——由「语料·词典」开关控制，取 字卡库→词典 的全部语录（词库里的 2~3 字词只用于切词、不作为源句）；词典的逐张关闭生效（关掉的语录不再被用）。<br>
 · 二级密码锁锁定时：系统预设（③默认聊天字卡 / ④词典）不参与，①②自建字卡照常。<br>
@@ -3903,7 +3881,7 @@
         </span>
         <span class="ch-name">其他互动功能字卡</span>
       </div>
-      <div class="sm-set-hint" style="padding:8px 16px 0">说明：以下为各功能（摸鱼 / 吃饭 / 经期 / 喝水 / 花园 / 同频 / 伸手 / 此间 / 房间 / 存钱罐 / 漂流瓶 / 互动回应 / 寻踪日常 / 番茄钟）触发时联系人会使用的自搓字卡或发进聊天的消息，非聊天通用字卡，可逐张开启或关闭。每一项右侧的「使用概率」为该功能触发的概率，可自由调整（0% 即不再出现）；每行都有「功能说明」可点开看触发详情。</div>
+      <div class="sm-set-hint" style="padding:8px 16px 0">说明：以下为各功能（摸鱼 / 吃饭 / 经期 / 喝水 / 同频 / 伸手 / 此间 / 房间 / 存钱罐 / 漂流瓶 / 互动回应 / 寻踪日常 / 番茄钟）触发时联系人会使用的自搓字卡或发进聊天的消息，非聊天通用字卡，可逐张开启或关闭。每一项右侧的「使用概率」为该功能触发的概率，可自由调整（0% 即不再出现）；每行都有「功能说明」可点开看触发详情。</div>
       <!-- v3.33.x：总开关——其他互动功能字卡可整体开启/关闭（dcf-enabled 键，默认开启）；
            关闭后各功能触发字卡都不再随机出现，各分类概率（底部 dcf-prob-*）仍可独立调整；
            不影响独立入口「联系人跨桌面查岗」。 -->
@@ -3920,7 +3898,6 @@
         <div class="gs-row"><span>吃饭字卡概率</span><div class="stepper" id="dcf-prob-eat" data-min="0" data-max="100" data-step="5"><button class="stp-min">−</button><input class="stp-val" id="dcf-prob-eat-val" readonly><button class="stp-max">+</button></div></div>
         <div class="gs-row"><span>经期字卡概率（温柔前缀/动作/经期关心）</span><div class="stepper" id="dcf-prob-period" data-min="0" data-max="100" data-step="5"><button class="stp-min">−</button><input class="stp-val" id="dcf-prob-period-val" readonly><button class="stp-max">+</button></div></div>
         <div class="gs-row"><span>喝水字卡概率</span><div class="stepper" id="dcf-prob-water" data-min="0" data-max="100" data-step="5"><button class="stp-min">−</button><input class="stp-val" id="dcf-prob-water-val" readonly><button class="stp-max">+</button></div></div>
-        <div class="gs-row"><span>花园字卡概率</span><div class="stepper" id="dcf-prob-garden" data-min="0" data-max="100" data-step="5"><button class="stp-min">−</button><input class="stp-val" id="dcf-prob-garden-val" readonly><button class="stp-max">+</button></div></div>
         <div class="gs-row"><span>同频字卡概率</span><div class="stepper" id="dcf-prob-sync" data-min="0" data-max="100" data-step="5"><button class="stp-min">−</button><input class="stp-val" id="dcf-prob-sync-val" readonly><button class="stp-max">+</button></div></div>
         <div class="gs-row"><span>伸手字卡概率</span><div class="stepper" id="dcf-prob-reach" data-min="0" data-max="100" data-step="5"><button class="stp-min">−</button><input class="stp-val" id="dcf-prob-reach-val" readonly><button class="stp-max">+</button></div></div>
         <div class="gs-row"><span>此间字卡概率</span><div class="stepper" id="dcf-prob-cjian" data-min="0" data-max="100" data-step="5"><button class="stp-min">−</button><input class="stp-val" id="dcf-prob-cjian-val" readonly><button class="stp-max">+</button></div></div>
@@ -3947,7 +3924,6 @@
         <button class="cc-tab" data-type="eat">吃饭</button>
         <button class="cc-tab" data-type="period">经期</button>
         <button class="cc-tab" data-type="water">喝水</button>
-        <button class="cc-tab" data-type="garden">花园</button>
         <button class="cc-tab" data-type="sync">同频</button>
         <button class="cc-tab" data-type="reach">伸手</button>
         <button class="cc-tab" data-type="cjian">此间</button>
@@ -4382,64 +4358,6 @@
         <div class="acc-list-card glass">
           <div class="acc-list" id="acc-list"></div>
         </div>
-      </div>
-    </div>
-
-    <!-- 花园页（桌面第二页点「花园」进入） -->
-    <div class="page" id="page-garden" hidden>
-      <div class="chat-head">
-        <span class="ch-back" id="garden-back">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-        </span>
-        <span class="ch-name">花园</span>
-      </div>
-      <div class="garden-scroll">
-        <!-- 天气 + 花园状态 -->
-        <div class="garden-weather-bar" id="garden-weather-bar">
-          <span class="garden-weather-ico" id="garden-weather-ico">☀️</span>
-          <span class="garden-weather-txt" id="garden-weather-txt">晴朗 · 适合浇水</span>
-          <span class="garden-season" id="garden-season">🌸 春季</span>
-        </div>
-        <div class="garden-level-bar" id="garden-level-bar"></div>
-        <div class="garden-grid" id="garden-grid"></div>
-        <div class="garden-stats" id="garden-stats"></div>
-        <div class="garden-visitor" id="garden-visitor"></div>
-        <!-- 工具条 -->
-        <div class="garden-toolbar" id="garden-toolbar">
-          <button class="garden-tool" data-tool="water" title="浇水">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5S8 8.5 8 12a4 4 0 008 0c0-3.5-4-9.5-4-9.5z"/><path d="M8 18v2a2 2 0 002 2h4a2 2 0 002-2v-2"/></svg>
-            <span class="garden-tool-label">浇水</span>
-          </button>
-          <button class="garden-tool" data-tool="plant" title="种植">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 21h10l-1.5-5h-7z"/><path d="M12 16v-7"/><path d="M12 12c-2 0-3.5-1-3.5-3"/><path d="M12 10c2 0 3.5-1 3.5-3"/><circle cx="12" cy="6" r="2"/></svg>
-            <span class="garden-tool-label">种植</span>
-          </button>
-          <button class="garden-tool" data-tool="fertilize" title="施肥">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l2 5h8l2-5"/><path d="M12 3v3"/><path d="M9 6h6"/><rect x="5" y="14" width="14" height="6" rx="1"/></svg>
-            <span class="garden-tool-label">施肥</span>
-          </button>
-          <button class="garden-tool" data-tool="harvest" title="收获">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l3 4h12l3-4"/><path d="M6 10v8a2 2 0 002 2h8a2 2 0 002-2v-8"/><path d="M12 10v10"/><path d="M9 14h6"/></svg>
-            <span class="garden-tool-label">收获</span>
-          </button>
-          <button class="garden-tool batch" data-tool="waterall" title="一键浇水">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3S4 7 4 9.5a3 3 0 006 0C10 7 7 3 7 3z"/><path d="M17 3S14 7 14 9.5a3 3 0 006 0C20 7 17 3 17 3z"/><path d="M12 11S9 15 9 17.5a3 3 0 006 0C15 15 12 11 12 11z"/></svg>
-            <span class="garden-tool-label">全浇</span>
-          </button>
-          <button class="garden-tool batch" data-tool="harvestall" title="一键收获">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h18l-2 12H5z"/><path d="M8 8V5a4 4 0 018 0v3"/><path d="M12 12v4"/></svg>
-            <span class="garden-tool-label">全收</span>
-          </button>
-        </div>
-        <!-- 花园日志 -->
-        <div class="garden-log glass" id="garden-log">
-          <div class="garden-log-title">花园日志</div>
-          <div class="garden-log-list" id="garden-log-list"></div>
-        </div>
-        <div class="garden-dex glass" id="garden-dex"></div>
-        <div class="garden-inv glass" id="garden-inv"></div>
-        <div class="garden-decor glass" id="garden-decor"></div>
-        <div class="garden-lb glass" id="garden-lb"></div>
       </div>
     </div>
 

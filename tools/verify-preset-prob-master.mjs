@@ -139,7 +139,7 @@ const DCP_ROWS = [
   ['ta-ask-prob', 5], ['tc-prob', 5], ['tcu-prob', 5], ['tr-prob', 5],
   ['ckq-prob', 2], ['ai-rps-prob', 8], ['ai-game-prob', 5], ['ai-cuddle-prob', 5]
 ];
-const DCF_KEYS = ['fish', 'eat', 'period', 'water', 'garden', 'sync', 'reach', 'cjian', 'room', 'piggy', 'drift', 'interact', 'music', 'deskcheck', 'checkin', 'pomo', 'care', 'memo', 'ask'];
+const DCF_KEYS = ['fish', 'eat', 'period', 'water', 'sync', 'reach', 'cjian', 'room', 'piggy', 'drift', 'interact', 'music', 'deskcheck', 'checkin', 'pomo', 'care', 'memo', 'ask'];
 
 check('A1 总档行走回复设置 data-k 体系 + DEFAULTS 缺省 100',
   tplSrc.includes('data-k="dcp-all"') && rsSrc.includes("'dcp-all': 100"));
@@ -150,7 +150,7 @@ check('A3 开关型两行（情话/位置卡）+ 绑定既有键（不新开键�
   rsSrc.includes("['dcp-tg-quote', 'quote-cards-default', '桌面今日情话·系统预设']") &&
   rsSrc.includes("['dcp-tg-loc', 'loc-lib-default', 'TA在身边位置卡·系统预设']") &&
   rsSrc.includes("ls.set(t[1], el.checked ? '1' : '0')"));
-check('A4 dcf 19 类折叠行齐全（data-dcfkey 自动接管）',
+check('A4 dcf 18 类折叠行齐全（data-dcfkey 自动接管）',
   DCF_KEYS.every((k) => tplSrc.includes('id="dcf-prob-' + k + '-rs"') && tplSrc.includes('data-dcfkey="' + k + '"')));
 check('A5 折叠块 + 展开状态按桌面持久化',
   tplSrc.includes('id="dcp-fun-expander-row"') && tplSrc.includes('id="dcp-fun-box"') &&

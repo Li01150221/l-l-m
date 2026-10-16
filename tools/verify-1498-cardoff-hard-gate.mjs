@@ -4,8 +4,7 @@
 // 本尺钉的是四处「禁了还在用」的口子（全部机型无关，纯判据缺失）：
 //   ① 裸抽调 getInteractPool 的 8 个模块（拍卖/五子棋/连线/消消乐/四子棋/记忆/钓鱼/音乐）+
 //      chat.js「吐槽·回应」/ ta-ask.js「询问·回应」——getLibPool 只「取组」不过闸；
-//   ② 各功能模块「过闸后为空 ⇒ 回落内置兜底」，而兜底常与数据组逐字同文（花园悄悄话 7/7、
-//      喝水催喝 6/6 重合）＝全关等于没关；
+//   ② 各功能模块「过闸后为空 ⇒ 回落内置兜底」，而兜底常与数据组逐字同文（喝水催喝 6/6 重合）＝全关等于没关；
 //   ③ room.js 的「过滤后非空才采用」（if (f.length) arr = f）＝全关时整个未过滤池被留下；
 //   ④ gift-shop.js 礼物寄语池直接扫 DEFAULT_CARD_DATA.main 全量，零闸。
 // 断言：
@@ -40,7 +39,6 @@ const indexHtml = readFileSync(join(root, 'index.html'), 'utf8');
 const srcOf = (f) => { try { return readFileSync(join(root, 'js', f), 'utf8'); } catch (e) { return ''; } };
 const dc = srcOf('default-cards.js') + indexHtml;
 const roomCode = srcOf('room.js') + indexHtml;
-const gardenCode = srcOf('garden.js') + indexHtml;
 const musicCode = srcOf('music-player.js') + indexHtml;
 const giftCode = srcOf('gift-shop.js') + indexHtml;
 console.log('S 源码/产物锚');
@@ -48,8 +46,6 @@ ok('S1 getLibPool 内置同源池过 isDefaultCardOff 总闸', dc.includes('if (
 ok('S2 兜底池统一出口 gateCardFallback 在位', dc.includes('window.gateCardFallback = function (cat, fallback) {'));
 ok('S3 room.js：兜底过闸 + 过滤结果一律采用（不再「非空才采用」）',
   roomCode.includes("window.gateCardFallback('room'") && !roomCode.includes('if (f.length) arr = f;'));
-ok('S4 garden.js：悄悄话兜底过闸 + 空则不发音',
-  gardenCode.includes("window.gateCardFallback(\"garden\", WM)") && gardenCode.includes('if (wmPool.length) {'));
 ok('S5 music-player.js：听歌字卡兜底过闸', musicCode.includes("window.gateCardFallback('music', fallback)"));
 ok('S6 gift-shop.js：礼物寄语池过闸 + 只读探针', giftCode.includes("!(off && off('main', x))") && giftCode.includes('window.__giftCardPool = function ()'));
 
@@ -198,16 +194,6 @@ const b3 = await evalJs(`
 ok('B3 未关时 getLibPool 有货', b3 && b3.before > 0, JSON.stringify(b3));
 ok('B3b 逐张关光 room「进门」组 ⇒ getLibPool 归零（原先照旧全量）', b3 && b3.after === 0, JSON.stringify(b3));
 ok('B3c 兜底出口同口径：关了内置兜底也归零（原「全关回落兜底」＝禁用无效）', b3 && b3.gatedFb === 0, JSON.stringify(b3));
-
-// ---- B4 gateCardFallback 部分关闭只掉被关的 ----
-const b4 = await evalJs(`
-  var s = window.activeStore();
-  var WM = ["今天也辛苦啦，花花儿们也在努力长大哦","给你的小花浇了点水，要快快长大哦","看着花园里的花花，就想到你"];
-  WM.forEach(function(c){ s.set('dc-off-garden:' + c, '1'); });
-  return { allOff: window.gateCardFallback('garden', WM).length,
-    partial: window.gateCardFallback('garden', WM.concat(['这条没被关'])).length };
-`);
-ok('B4 兜底出口：全关 ⇒ 0；只关一部分 ⇒ 只掉被关的', b4 && b4.allOff === 0 && b4.partial === 1, JSON.stringify(b4));
 
 // ---- B5 礼物寄语池过闸 ----
 const b5 = await evalJs(`

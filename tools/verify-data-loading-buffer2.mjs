@@ -1,16 +1,10 @@
-// ===== 回归 #804：数据加载缓冲第二批——records 空态分流 + garden 等待链（保存闸/占位/收敛） =====
-// 背景见 tools/verify-data-loading-buffer.mjs 头注（#785 第一批：日历/信箱/朋友圈）。本批两页：
+// ===== 回归 #804：数据加载缓冲第二批——records 空态分流 =====
+// 背景见 tools/verify-data-loading-buffer.mjs 头注（#785 第一批：日历/信箱/朋友圈）。本批：
 //   records.js  9 处 .ta-empty 空态走 recEmpty 分流（pending→「正在读取…」，不说「暂无…」）；
 //               旧 mochi-restore-done 监听的 if(!page-home.hidden) 永久跳过闸门换 mochiOnDataReady(render)
-//   garden.js   junkEmpty×pending 时不再渲染内存默认档/跑默认档初始化：出 garden-dataloading 占位＋
-//               gardenSaveHold 扣住一切落盘（回填「只补缺失键」——等待期默认档落盘＝真数据被永久遮蔽）＋
-//               1s 重探 probeIdb（命中即按真数据进园）＋ mochi-restore-done 加速 ＋ 36s 墙钟兜底回退
-// 断言（绿基线全过；纯 HEAD 红基线恰红 F1/G1 三条＝缺陷本体，F2/G2/G3 两侧同绿）：
+// 断言（绿基线全过；纯 HEAD 红基线恰红 F1 一条＝缺陷本体，F2/G3 两侧同绿）：
 //   F1 未就绪进主页记录 → 头像面板说「正在读取…」不说「暂无换头像」      （HEAD 红＝无分流）
 //   F2 派发 done → 不重进页自动收敛为「暂无换头像记录」终态
-//   G1 未就绪进花园 → 出「读取中」占位；默认档不渲染（grid 空）；等待期 LS 零落盘（保存闸）
-//                                                       （HEAD 红两条＝无占位＋立刻渲染默认档）
-//   G2 派发 done → 占位拆除、花园正常初始化渲染
 //   G3 全程零 JS 报错
 // 夹具沿 #804 修正版：新文档期扣住 __mochiDataReady/restore-done（确定性模拟慢机器，模块全部以
 // loading 态完成注册），进应用前 __mo785Release() 放行——否则外置化 defer 模块的 mochiOnDataReady
@@ -142,22 +136,6 @@ await sleep(700);
 const F2 = await evalJs(avSlot);
 check('F2 派发 done → 不重进页自动收敛为「暂无换头像记录」终态',
   /暂无换头像记录/.test(String(F2 || '')) && !/正在读取/.test(String(F2 || '')), F2);
-
-// ---- G 组：garden（junkEmpty×pending 等待链） ----
-const gKey = "localStorage.getItem('xy-home-v2:default:garden-data')";
-await evalJs("(function(){" + PENDING + "var a=document.querySelector('.app[data-app=\"garden\"]');if(a)a.click();return 1;})()");
-await sleep(2500);
-const G1 = await evalJs("(function(){var p=document.getElementById('garden-dataloading');var g=document.getElementById('garden-grid');return [(p?p.innerHTML.indexOf('mochi-data-loading')>=0:-1), (g?g.children.length:-1), " + gKey + "===null].join(',');})()");
-check('G1 未就绪进花园 → 出「读取中」占位、默认档不渲染（grid 空）、等待期 LS 零落盘（保存闸）',
-  G1 === 'true,0,true', G1);
-await evalJs("(function(){" + READY_FIRE + "return 1;})()");
-let G2 = '';
-for (let i = 0; i < 20; i++) {
-  await sleep(500);
-  G2 = await evalJs("(function(){var p=document.getElementById('garden-dataloading');var g=document.getElementById('garden-grid');return [p===null, (g?g.children.length:0)>=4].join(',');})()");
-  if (G2 === 'true,true') break;
-}
-check('G2 派发 done → 占位拆除、花园正常初始化渲染（重探未命中按空档进园＝今天的行为）', G2 === 'true,true', G2);
 
 // ---- G3：零报错 ----
 const jsErrs = await evalJs("(window.__jsErrors||[]).slice(0,4).join(' | ')");

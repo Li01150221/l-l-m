@@ -97,7 +97,7 @@ await sleep(800);
 await evalJs("(function(){var s=document.getElementById('splash');if(s)s.classList.add('hide');return true;})()");
 check('开屏已关闭进入桌面', await evalJs("(function(){var s=document.getElementById('splash');return !s||s.classList.contains('hide');})()"));
 
-// T2 构造「用户装修过」状态：把第二页花园图标移出网格，直接挂在页面上（与装修库
+// T2 构造「用户装修过」状态：把第二页某个桌面图标移出网格，直接挂在页面上（与装修库
 // 「添加到此页」/拖拽移出同构的 DOM 状态），第三页网格内图标保持原位作对照组
 const moved = await evalJs("(function(){var g=document.querySelector('.app-grid.p2-grid');if(!g)return 'no-p2grid';var a=g.querySelector('.app[data-app]');if(!a)return 'no-app';g.closest('.page-slide').appendChild(a);return a.dataset.app;})()");
 check('已构造独立组件图标（移出 p2 网格）', typeof moved === 'string' && moved !== 'no-p2grid' && moved !== 'no-app', String(moved));

@@ -144,7 +144,7 @@ const seeded = await evalJs(`(function(){
     for (var j = 1; j <= 25; j++) C.set('desk-image-src-' + j, new Array(900).join('b')); // 25 键分类（触发截断标注）
     C.set('mail-letters', JSON.stringify([{ a: 1, b: new Array(400).join('c') }]));
     C.set('feed-posts', JSON.stringify([{ a: 1, b: new Array(400).join('d') }]));
-    C.set('garden-data', JSON.stringify({ p: [1, 2, 3] }));
+    C.set('room-data', JSON.stringify({ p: [1, 2, 3] }));
     C.set('accounting-records', JSON.stringify([{ a: new Array(300).join('e') }]));
     G.set('period-records', JSON.stringify([{ a: new Array(300).join('f') }]));
     G.set('__diag-errs', JSON.stringify([{ e: new Array(300).join('g') }]));

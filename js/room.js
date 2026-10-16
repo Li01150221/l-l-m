@@ -309,8 +309,7 @@ const el = document.createElement('div');
 el.className = 'r-furn' + (it.r ? ' r-flip' : '') + (d.lit[it.i] ? ' r-lit' : '') + (c.flk ? ' r-flkc' : '');
 const p = pctPos(it.x, it.y);
 el.style.left = p.l + '%'; el.style.top = p.t + '%';
-if (it.t === 'vase' && d.vaseFlower) el.innerHTML = c.e + '<u class="r-bloom">🌸</u>';
-else el.textContent = c.e;
+el.textContent = c.e;
 el.dataset.i = it.i;
 floorEl.appendChild(el);
 if (d.lit[it.i]) {
@@ -477,18 +476,6 @@ if (txt == null) { b.hidden = true; sceneEl.classList.remove('placing'); mode = 
 else { b.hidden = false; tx.textContent = txt; sceneEl.classList.add('placing'); }
 refreshCells();
 }
-function gardenBloom() {
-try {
-const raw = S().get('garden-data'); if (!raw) return false;
-const g = JSON.parse(raw);
-if (g && g.st && (g.st.h | 0) > 0) return true;
-if (Array.isArray(g.p)) {
-const now = Date.now() / 1000;
-return g.p.some(pl => pl && pl.planted && (now - pl.planted) > 259200);
-}
-} catch (e) {}
-return false;
-}
 function useFurniture(inst) {
 const c = CAT[inst.t];
 if (c.lamp) {
@@ -498,12 +485,6 @@ save(); renderScene();
 bubble(on ? (isNight() ? '灯亮起来了，房间一下子软了。' : '亮着也很好看。') : '关掉灯，安静了一会儿。', BUB_SHORT);
 gainPts(1, 'n'); vib(15);
 if (on) lampFeedback(inst, on); else lampOffFeedback(inst);
-return;
-}
-if (inst.t === 'vase' && gardenBloom() && !d.vaseFlower) {
-d.vaseFlower = true; save(); renderScene();
-bubble('把花园带回来的花，插进了瓶子里。🌸');
-gainPts(1, 'n'); vib([15, 40, 15]);
 return;
 }
 const taHere = d.ta.x === inst.x && d.ta.y === inst.y;

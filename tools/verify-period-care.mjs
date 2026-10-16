@@ -420,10 +420,10 @@ await navigate();
   })()` ) || '{}');
   // v3.16.x：功能触发字卡独立成页（#fc-tabs），功能 tab 全量预置在模板
   // （v3.26.x 补 music 音乐 tab：492f082 起 template/FUNC_KEYS 已含，本表原缺 → C10 误报）
-  const want = ['摸鱼','吃饭','经期','喝水','花园','同频','伸手','此间','房间','存钱罐','漂流瓶','互动回应','音乐'];
+  const want = ['摸鱼','吃饭','经期','喝水','同频','伸手','此间','房间','存钱罐','漂流瓶','互动回应','音乐'];
   check('C9 tab 条换行铺开（flex-wrap=wrap、无溢出）', tabs.wrap === 'wrap' && (tabs.offscreen || []).length === 0 && tabs.overflowX !== 'auto',
     { wrap: tabs.wrap, off: tabs.offscreen });
-  check('C10 全部分类 tab 存在且在屏内（功能触发 tab 按用户词汇命名连排，含此间/漂流瓶/音乐，共13个）',
+  check('C10 全部分类 tab 存在且在屏内（功能触发 tab 按用户词汇命名连排，含此间/漂流瓶/音乐，共12个）',
     tabs.n === want.length && (tabs.labels || []).join(',') === want.join(','),
     { n: tabs.n, labels: tabs.labels });
 }

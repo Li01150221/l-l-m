@@ -112,8 +112,8 @@ function minifyCss(code) {
 }
 
 // ===== 按顺序拼接样式 / 脚本（顺序即生效顺序） =====
-const cssFiles = ['base.css', 'home.css', 'chat-main.css', 'chat-pages.css', 'market.css', 'group-chat.css', 'setting.css', 'tabbar.css', 'dark.css', 'garden.css', 'memo.css', 'memo-arc.css', 'room.css', 'drift-bottle.css', 'applock.css', 'feature-data.css', 'display-tune.css'];
-const jsFiles = ['device.js', 'idb.js', 'contacts.js', 'applock.js', 'card-lock.js', 'dcp-master.js', 'media-pool.js','storage-slim.js', 'perf-check.js', 'energy-check.js', 'flash-check.js', 'img-compress.js', 'img-ingest.js', 'clock.js', 'tabs.js', 'desktop-slider.js', 'quote-cards.js', 'personalize.js', 'chat.js', 'group-chat.js', 'chatcard.js', 'chat-settings.js', 'reply-settings.js', 'fav-settings.js', 'default-cards-data.js', 'dict-ext-data.js', 'default-cards.js', 'quote-spell.js', 'dream-free.js', 'mood-followup-data.js', 'mood-reply-cards.js', 'ta-mood-data.js', 'ta-mood.js', 'music-player.js', 'calendar.js', 'divination.js', 'avatar-lib.js', 'ta-ask.js', 'ck-question.js', 'incoming-requests.js', 'ta-invite.js', 'bg-keep.js', 'records.js', 'call.js', 'mail.js', 'feed.js', 'loc-lib.js', 'p2-features.js', 'gift-shop.js', 'memo-app.js', 'memo-arc.js', 'my-arc.js', 'period.js', 'accounting.js', 'garden.js', 'room.js', 'drift-bottle.js', 'decision.js', 'group-decision.js', 'pong.js', 'snake-game.js', 'breakout.js', 'connect-four.js', 'coop-mine.js', 'fishing.js', 'memory-game.js', 'gomoku.js', 'linkup.js', 'match3.js', 'auction.js', 'arcade.js', 'mood-diary.js', 'sfx.js', 'fullscreen.js', 'data-backup.js', 'feature-data.js', 'pwa.js', 'cjian.js', 'feature-hub.js', 'settings-help.js', 'onboarding.js', 'page-coach.js', 'card-audit.js', 'storage-guide.js', 'mobile-adapt.js'];
+const cssFiles = ['base.css', 'home.css', 'chat-main.css', 'chat-pages.css', 'market.css', 'group-chat.css', 'setting.css', 'tabbar.css', 'dark.css', 'memo.css', 'memo-arc.css', 'room.css', 'drift-bottle.css', 'applock.css', 'feature-data.css', 'display-tune.css'];
+const jsFiles = ['device.js', 'idb.js', 'contacts.js', 'applock.js', 'card-lock.js', 'dcp-master.js', 'media-pool.js','storage-slim.js', 'perf-check.js', 'energy-check.js', 'flash-check.js', 'img-compress.js', 'img-ingest.js', 'clock.js', 'tabs.js', 'desktop-slider.js', 'quote-cards.js', 'personalize.js', 'chat.js', 'group-chat.js', 'chatcard.js', 'chat-settings.js', 'reply-settings.js', 'fav-settings.js', 'default-cards-data.js', 'dict-ext-data.js', 'default-cards.js', 'quote-spell.js', 'dream-free.js', 'mood-followup-data.js', 'mood-reply-cards.js', 'ta-mood-data.js', 'ta-mood.js', 'music-player.js', 'calendar.js', 'divination.js', 'avatar-lib.js', 'ta-ask.js', 'ck-question.js', 'incoming-requests.js', 'ta-invite.js', 'bg-keep.js', 'records.js', 'call.js', 'mail.js', 'feed.js', 'loc-lib.js', 'p2-features.js', 'gift-shop.js', 'memo-app.js', 'memo-arc.js', 'my-arc.js', 'period.js', 'accounting.js', 'room.js', 'drift-bottle.js', 'decision.js', 'group-decision.js', 'pong.js', 'snake-game.js', 'breakout.js', 'connect-four.js', 'coop-mine.js', 'fishing.js', 'memory-game.js', 'gomoku.js', 'linkup.js', 'match3.js', 'auction.js', 'arcade.js', 'mood-diary.js', 'sfx.js', 'fullscreen.js', 'data-backup.js', 'feature-data.js', 'pwa.js', 'cjian.js', 'feature-hub.js', 'settings-help.js', 'onboarding.js', 'page-coach.js', 'card-audit.js', 'storage-guide.js', 'mobile-adapt.js'];
 
 // ===== PERF-PLAN 阶段 1：JS 外置化（2026-09-18）=====
 // 首开「3.8MB 内联 JS 主线程整段解析执行」是 iOS/中低端安卓卡顿的结构性大头
@@ -975,7 +975,6 @@ const FIX_SENTINELS = [
   { name: '#120 导入侧保留备份未含的旧键防 clear 致丢（idbReplaceAll 前列出当前 IDB 键，备份没有的读出值加入 pairs）', file: 'js/data-backup.js', needle: '已保留备份未含的' },
   { name: '导出权威键强制读 IDB（isAuthorityKey，chat-msgs/feed-posts 不因 LS 有损小快照跳过 IDB 权威，修跨浏览器导入丢数据）', file: 'js/data-backup.js', needle: 'isAuthorityKey' },
   { name: '导入 chat-msgs 无 IDB 权威时 LS 快照写 IDB 兜底（chatFallback，不再无条件跳过导致彻底丢失）', file: 'js/data-backup.js', needle: 'chatFallback' },
-  { name: '副本消费方已全部移除（absent 守卫：花园不再整包 JSON.parse 自动备份副本，防数百 MB 遗留快照 OOM）', file: 'js/garden.js', needle: 'offerSnapshotRecover', absent: true },
   { name: '聊天更多功能固定每行4个（.more-grid 改 4 列 grid + justify-items 居中，修不同屏宽 flex 换行每行 3~4 个不一）', file: 'css/chat-main.css', needle: 'grid-template-columns:repeat(4, 1fr); gap:14px; justify-items:center' },
   { name: '#88 启动按 IndexedDB 权威值校正当前桌面（correctCidFromIdb，修小米14U Edge LS 失效时「聊天记录几小时自己消失」＝桌面静默切回 default）', file: 'js/contacts.js', needle: 'correctCidFromIdb' },
   { name: '#88 migrateLegacy 判空改走 regStore（裸 localStorage 在 LS 失效机上恒空 → 每启动把真值改回 default，抵消上面的校正）', file: 'js/contacts.js', needle: "if (!regStore().get('active-contact'))" },
@@ -1076,7 +1075,6 @@ const FIX_SENTINELS = [
   { name: '#115 input 监听命中相同文本时先放行真实编辑（只摘守卫标记不清框）', file: 'js/chat.js', needle: "if (userEditedAfterClear()) { input._mClearTxt = ''; return; }" },
   { name: '#115 真实输入活动跟踪（keydown/compositionstart/insert 类 beforeinput 捕获阶段刷新 lastUserEditAt，闸门判据来源）', file: 'js/chat.js', needle: "input.addEventListener('compositionstart', () => { lastUserEditAt = Date.now(); }, true);" },
   { name: 'v3.14 聚焦态清空走 execCommand 编辑管线终结组合会话（防输入法迟到写回；#115 补登哨兵，该块此前整块零保护）', file: 'js/chat.js', needle: "document.execCommand('selectAll', false, null)" },
-  { name: '#116 工坊配方卡缺料反馈（需求行改「已有/需求」+ 缺料提示行 + 按钮常驻缺料置灰，修「工坊做不了花艺配方」无从知晓缺什么）', file: 'js/garden.js', needle: 'recipe-lack' },
   { name: '#122 TA的心情235张系统预设注册字卡库跨分类搜索（修「系统编码字卡搜不到」）', file: 'js/ta-mood.js', needle: "name: 'TA的心情'" },
   { name: '#122 聊天内置系统回应池（兜底/邀请婉拒/贴贴）注册字卡库跨分类搜索', file: 'js/chat.js', needle: "name: '聊天系统回应'" },
   // #1422 换锚（2026-09-29）：两池已进系统预设单一数据源（DEFAULT_CARD_DATA.interact），chatcard 的「默认聊天字卡」登记项遍历全部分类自动收录，旧 `name: '朋友圈互动'` 登记块整块撤掉＝旧 needle 必然消失；锚收到预设行取值处（feed.js 内唯一）
@@ -1338,7 +1336,6 @@ const FIX_SENTINELS = [
   { name: '#132 同频敲三下回应概率接 dcf-sync（改回硬编码 0.6 即回归）', file: 'js/p2-features.js', needle: "dcfP('sync', 60)" },
   { name: '#132 伸手摸到概率接 dcf-reach（改回硬编码 0.55 即回归）', file: 'js/p2-features.js', needle: "dcfP('reach', 55)" },
   { name: '#132 喝水字卡乘法门控接 dcf-water（删 dcfHit 门控行即回归——多档内部节奏不改，0=全关）', file: 'js/p2-features.js', needle: "if (!dcfHit('water')) return;" },
-  { name: '#132 花园悄悄话概率接 dcf-garden（改回 Math.random()<0.4 硬编码即回归）', file: 'js/garden.js', needle: "if (Math.random() * 100 < _gP) {" },
   { name: '#132 查岗回应概率接 dcf-deskcheck（改回 Math.random()*100<50 硬编码即回归）', file: 'js/chat.js', needle: 'Math.random() * 100 < _dkP' },
   { name: '#132 房间字卡门控接 dcf-room（删 sayLine 门控行即回归）', file: 'js/room.js', needle: "window.dcfGet('room')" },
   { name: '#132 此间字卡门控接 dcf-cjian（删 cjLine 门控行即回归）', file: 'js/cjian.js', needle: "window.dcfGet('cjian')" },
@@ -2225,28 +2222,6 @@ const FIX_SENTINELS = [
   { name: '#455 懒加载态拒绝空树整包写回（saveGroups/flushCcSave/ccEnsureDurable 判空收口；删则页外写入方拿空编辑树覆盖权威键＝字卡库整库清空复发，#193 同族）', file: 'js/chatcard.js', needle: "if (!groups) { ccDirty = false; return; }" },
   // ==== 2026-09-14 #456 启动恢复红包封面 out/in 双向 IDB 回灌（#454 遗留项源码实锤：恢复段占位符 RP_COVER_KEY 全 src 无定义，ReferenceError 被 try/catch 静默吞＝iOS 清存储后封面丢失无自愈；收口构建者按 #456 会话台账代办登记）====
   { name: '#456 红包封面启动恢复双向回灌（删则退回死段/静默失效＝iOS 系统级清存储后 rp-cover-out/in 丢失且无自愈路径复发）', file: 'js/chat.js', needle: "myPrefix + ':rp-cover-' + side" },
-  // ==== 2026-09-14 #446 花园扩建改自愿+一键补种+养护减负（用户反馈「花园里不用一直扩建，建这么多养不过来」：
-  //      ①等级自动送地改「开垦资格」手动开垦——plotN=已开垦数，load() 迁移按当前等级一次性补齐资格，存量玩家已有的地一块不少；
-  //      ②升级里程碑跨 Lv3/5/8/12 各送 1 颗随机稀有种子，升级奖励与「要不要多地块」脱钩；
-  //      ③浇水有效期 24h→36h（WATER_SEC）、凋谢宽限 48h→72h（WILT_SEC=259200）、新增温室装饰满保水；
-  //      ④工具条「补种」空地按上次品种一键补齐（不消耗 rareInv 稀有库存））====
-  { name: '#446 扩建改自愿·开垦资格到顶分支（plotN≥资格给提示弹窗；删则回退等级自动送地，「建这么多养不过来」复发）', file: 'js/garden.js', needle: 'if (cur >= ent) {' },
-  { name: '#446/#601e plotN 存量迁移（load 默认 12 块；存档 12 块之后已有花则保留到最远那株＝老玩家的花一块不少。删则存量玩家升级地块被裁回 12 且花被截）', file: 'js/garden.js', needle: 'd.plotN = _maxP >= PLOTS ? (_maxP + 1) : PLOTS;' },
-  { name: '#601f 装饰商店 emoji 可见（emoji 外套白底圆)；删则绿底上的白色字形 emoji 又「看不见」', file: 'js/garden.js', needle: 'garden-decor-shop-ico' },
-  { name: '#601f 装饰商店 emoji 可见（白底圆样式）；删则 emoji 回落绿底低对比', file: 'css/garden.css', needle: '.garden-decor-shop-ico {' },
-  { name: '#446 里程碑奖励与地块脱钩（跨 Lv3/5/8/12 送稀有种子；删则「不开垦=亏升级奖励」的强制感回归）', file: 'js/garden.js', needle: 'msgs.push("🎁 里程碑奖励：稀有种子「"' },
-  { name: '#446 一键补种（空地按上次品种补齐且不消耗稀有库存；删则 30 块地日常=逐块点种植，养护负担复发）', file: 'js/garden.js', needle: 'data.lastSeed && T[data.lastSeed] && !T[data.lastSeed].rare' },
-  { name: '#446 浇水有效期 36h（waterLvl 分母 WATER_SEC；删则回退 24h 天天浇＝多地块高负担复发）', file: 'js/garden.js', needle: 'plot.watered) / WATER_SEC);' },
-  { name: '#446 凋谢宽限 72h→#503 再放宽 96h（WILT_SEC=345600；删则回退收不及时就枯萎＝收花心意币钱损复发）', file: 'js/garden.js', needle: 'var WILT_SEC = 345600;' },
-  // ==== #503 花园减负与 UI 重排（用户反馈「开垦的地太多太挤」：上限瘦身+手动缩地+空地折叠+日志全量+日志独立 tab）====
-  { name: '#503 资格缩小不裁已有地（plotCount 去掉向下钳制＝老存档 plotN 高于新资格也一块不裁；改回钳制则上限瘦身后老玩家多种的花被静默删除）', file: 'js/garden.js', needle: 'return data.plotN || PLOTS;' },
-  { name: '#503 手动缩地 shrinkPlots（只收尾部空地、下限 4 块、有花不裁；删则「开多了收不回」复发）', file: 'js/garden.js', needle: 'while (cur > MIN_PLOTS && !data.p[cur - 1]) cur--;' },
-  { name: '#503 收地按钮登记（工具条 shrink；删则缩地无入口）', file: 'js/garden.js', needle: 'sb.dataset.tool = "shrink";' },
-  { name: '#528 花园土地默认展开（#503 折叠改默认展开；改回 true 则土地又被默认收起＝用户反馈复发）', file: 'js/garden.js', needle: 'var emptyFolded = false;' },
-  { name: '#528 空地折叠砖保留（默认展开时仍给「收起」入口；删则无法手动收起空地）', file: 'js/garden.js', needle: '(emptyFolded ? "点开" : "收起")' },
-  { name: '#503 日志全量查看（默认 20 条+「查看全部」展开；删则联系人的打理记录看不全复发）', file: 'js/garden.js', needle: 'garden-log-toggle' },
-  { name: '#503 日志容量 100→300（slice(-300)；改回 100 则老记录被挤掉复发）', file: 'js/garden.js', needle: 'if (data.l.length > 300) data.l = data.l.slice(-300);' },
-  { name: '#503 日志独立 tab（garden-log 移入「日志」分区；删则日志又挤回花园页）', file: 'js/garden.js', needle: 'move("garden-log", "log");' },
   // ==== 2026-09-14 #450 收藏页「大量内容加载失败，只出现问号黑块」+图片显示异常（iPhone 15 Pro Max Chrome 等多机型；
   //      iOS 裂图=黑底问号块。根因：miss 读并发上限 MISS_READ_MAX=8，一屏令牌图超上限的部分当年拿不到读也不再被扫
   //      ——src 保持 @@m: 令牌＝浏览器当相对 URL 404＝裂图；原实现只在 DOM 再变更时才重扫，收藏列表翻到底不再动的
@@ -2945,14 +2920,13 @@ const FIX_SENTINELS = [
   { name: '#696a 待选标记先消费再分支（改回先转 openIconFitPanel＝无图图标让它早退，标记悬空把之后每次点图标都劫持进位置面板，「点图标上传图片失效」复发）', file: 'js/personalize.js', needle: "window.__iconAdjustPick = false;\nif (app && app.dataset.app && store.get('app-icon-' + app.dataset.app)) { openIconFitPanel(app); return; }" },
   { name: '#696b 退出装修收掉挂起标记与位置面板（删＝点了「调整图片位置」没点图标就退出，标记留到下次进装修，那次点图标弹的是位置面板）', file: 'js/personalize.js', needle: "window.__iconAdjustPick = false;\nconst fitPanelEl = document.getElementById('icon-fit-panel');" },
   { name: '#696c 边看边调「图标」分区补单个上传入口（删＝抽屉里只有批量与调整位置，用户报的「边看边调不能上传单个图标的图片」复发）', file: 'js/personalize.js', needle: "mkAct('上传单个图标图片（点图标）'" },
-  // ==== #588 卡顿/误判为 bug 的性能批（gift-shop 每件一次 JSON.parse / records 关心页 O(n²) / garden 空花园无提示）====
+  // ==== #588 卡顿/误判为 bug 的性能批（gift-shop 每件一次 JSON.parse / records 关心页 O(n²)）====
   // 行为断言 tools/verify-jank-batch2.mjs（RED=1 内联还原三处旧形态，断言逐条转红）
   { name: '#588a TA 心愿 id 集合记忆化入口（删＝giftItemHtml 每件礼物重解析一次心愿单，302 件＝302 次 JSON.parse）', file: 'js/gift-shop.js', needle: 'function taWishIds() {' },
   { name: '#588b 集合失效点挂在 wishSave 上（删＝TA 心愿变更后角标不刷新；WL_TA_KEY 全部写路径都过 wishSave）', file: 'js/gift-shop.js', needle: 'if (key === WL_TA_KEY) _taWishIds = null;' },
   { name: '#588c 礼物格渲染改走记忆化集合（回退 wishLoad(...).some＝每件一次解析复发）', file: 'js/gift-shop.js', needle: 'const taWanted = taWishIds().has(g.id);' },
   { name: '#588d 关心页问卡时间戳预排序 + 二分（回退全表 some＝聊天上千条时 O(n²) 卡住「关心」页签复发）', file: 'js/records.js', needle: 'const hasAskCardNear = (t) => {' },
   { name: '#588e ask-msg 改调二分判据（删＝退回对全表 some 的 O(n²) 实现）', file: 'js/records.js', needle: 'const nearCard = hasAskCardNear(t);' },
-  { name: '#588f 花园读回期「正在读取」提示（删＝LS 未回填时先画空花园，用户以为数据全丢）', file: 'js/garden.js', needle: 'toast("正在读取本地花园数据…");' },
   // ==== 2026-09-16 #593 朋友圈贴纸「点击照片选贴纸位置」提示条挡住使用（用户明说多机型同报）====
   // 用户原话：「朋友圈的贴纸功能【点击照片选贴纸位置】的提示，会挡住使用」。
   // 根因：提示条绝对定位钉在照片顶部（照片高约 104px 时占 33px≈顶部 1/3），点那一带被提示条接走
@@ -3325,7 +3299,7 @@ const FIX_SENTINELS = [
   // 这是「删数据」的功能，误伤面比其它功能大，四条锚点守的都是数据安全底线：
   //   a 共享资源池（媒体池 @@m: 令牌指向的图片/语音、上传字体包）不归属任何功能——一旦被
   //     某个功能认领，清空该功能就会顺手删掉别的功能还在引用的图片（跨功能连锁丢图）；
-  //   b 桌面隔离——不带 cid 判定的话，在 A 桌面清空花园会把 B/C 桌面的花园一起删掉；
+  //   b 桌面隔离——不带 cid 判定的话，在 A 桌面清空房间会把 B/C 桌面的房间一起删掉；
   //   c 导入落点——文件里的桌面键必须落到当前桌面命名空间，否则导入别桌面的文件会写串桌面；
   //   d 导出补媒体池条目——不然导出文件换机后该功能的图片/语音全是坏图（#582 同款口径）。
   { name: '#668a 共享资源池/字体包不归属任何功能（删＝清空某功能时媒体池条目被当本功能数据一起删除）', file: 'js/feature-data.js', needle: 'info.suffix.indexOf(MEDIA_PREFIX) === 0 || info.suffix.indexOf(BLOB_PREFIX) === 0' },
@@ -3543,11 +3517,10 @@ const FIX_SENTINELS = [
   { name: '#708c 自检 8 秒超时哨兵（删掉＝发送链卡死时「点测试没反应」#614 形态回归）', file: 'js/bg-keep.js', needle: '✗ 测试超时：通知发送链 8 秒未落定（应用内故障，非权限/系统问题）' },
   // ==== 2026-09-18 #712 梦角档案顶部「不是 AI」常驻说明（用户直派：网站没有任何 AI 功能，这个只是记录的功能）——「梦角/认识TA」的说法易被误解成 AI 角色或自动生成；开屏使用前提卡虽已写明「纯代码运行、没有任何 AI」，但功能页内没有就地讲清。修复=memo-arc 总览页（view=home，含无梦角空态）渲染顶部常驻一条说明，分区子页不加（返回总览即可见）；功能介绍页第 19 节补同口径一行（lg-count 7→8）====
   { name: '#712a 顶部说明正文（删掉/改没「本站没有任何 AI 功能…只是记录」表述＝误解回归）', file: 'js/memo-arc.js', needle: '本站没有任何 AI 功能，梦角档案只是记录' },
-  // ==== 2026-09-18 #723 iOS 卡顿收尾批：无限循环非合成属性动画改合成 + backdrop-filter 清理（用户派单「确定有用和真的会优化就帮我做」；编号说明：#715~#722 已被滚动旗标/K80 三联/换头像/兼容四小批/e2e 形态/渲染分帧/触摸被动化/未接电话+关于说明条各批占用，顺延 #723；注意 #722 本身已被两批重复占用）——全站 keyframes 审计后把 6 个「infinite × 非合成属性（box-shadow/filter/background/left）」常驻动画改为伪元素/位移的 opacity/transform 合成动画（录音呼吸圈、四子棋胜利金晕、钓鱼收杆提亮、花园稀有花晕、房间流星、房间放置呼吸格），同批收敛 market.css 8 处+chat-main.css 1 处 transition:all 为具体属性、room.css 3 处 backdrop-filter 去除（同 base.css v3.6.x 弹窗先例，iOS 每帧重采样）。有限次一次性动画（snkdiered/waterDone/gk-win-pulse 等）审计后确认代价有界不动；splashDots 开屏瞬态不动；pomo-spark 父级百分比无法等价 translate 不动 ====
+  // ==== 2026-09-18 #723 iOS 卡顿收尾批：无限循环非合成属性动画改合成 + backdrop-filter 清理（用户派单「确定有用和真的会优化就帮我做」；编号说明：#715~#722 已被滚动旗标/K80 三联/换头像/兼容四小批/e2e 形态/渲染分帧/触摸被动化/未接电话+关于说明条各批占用，顺延 #723；注意 #722 本身已被两批重复占用）——全站 keyframes 审计后把 5 个「infinite × 非合成属性（box-shadow/filter/background/left）」常驻动画改为伪元素/位移的 opacity/transform 合成动画（录音呼吸圈、四子棋胜利金晕、钓鱼收杆提亮、房间流星、房间放置呼吸格），同批收敛 market.css 8 处+chat-main.css 1 处 transition:all 为具体属性、room.css 3 处 backdrop-filter 去除（同 base.css v3.6.x 弹窗先例，iOS 每帧重采样）。有限次一次性动画（snkdiered/waterDone/gk-win-pulse 等）审计后确认代价有界不动；splashDots 开屏瞬态不动；pomo-spark 父级百分比无法等价 translate 不动 ====
   { name: '#723a 录音呼吸圈改伪元素合成动画（改回 box-shadow 插值＝录音全程每帧重绘回归）', file: 'css/chat-main.css', needle: 'animation:voiceRecPulseRing 1.15s ease-in-out infinite' },
   { name: '#723b 四子棋胜利金晕改棋子伪层（改回 filter:brightness+drop-shadow 插值＝胜利态常驻重绘回归）', file: 'css/chat-pages.css', needle: 'animation:c4winGlow .9s ease-in-out infinite alternate' },
   { name: '#723c 钓鱼收杆提亮改白洗伪层（改回 brightness 插值＝钓鱼页常驻重绘回归）', file: 'css/chat-pages.css', needle: 'animation:fishReelPulse 1s ease-in-out infinite' },
-  { name: '#723d 稀有花呼吸光改晕盘伪层（改回 drop-shadow 插值＝花园页常驻重绘回归）', file: 'css/garden.css', needle: 'animation:gardenRareHalo 2s ease-in-out infinite' },
   { name: '#723e 流星改 translateX 合成位移（改回 left 插值＝夜晚房间每帧 reflow 回归）', file: 'css/room.css', needle: '0% { transform: rotate(-22deg) translateX(0); opacity: 0; }' },
   { name: '#723f 放置呼吸格底色改伪层 opacity（改回 background 插值＝放置模式常驻重绘回归）', file: 'css/room.css', needle: 'background: rgba(122,200,122,.28); opacity: .29; pointer-events: none;' },
   // ==== 2026-09-18 #725 聊天美化「边看边调」气泡透明度/圆角滑块无效甄别（用户报「滑动了，但没有任何区别」）——实测两滑块链路（store→applyChatSurfaces 写 --cs-in/out-surface 与 --chat-bubble-radius→CSS 消费）全通，真根因=自定义气泡 CSS（cs-bubble-css）写了底色/圆角声明：注入样式带 !important 或 head 末尾同特异性后胜，钉死气泡 background/border-radius，滑块变量照常写入但视觉零变化。设计仍是「CSS 为准」不改写用户模板，修复=抽屉气泡分区就地红字警示冲突====
@@ -6303,11 +6276,10 @@ const FIX_SENTINELS = [
   { name: '#1507d 解锁弹窗防重入（删＝委托+自身监听双路径重复渲染）', file: 'js/clock.js', needle: "indexOf('二级验证') === 0" },
   // ==== 2026-09-30 #1498 「禁止使用的字卡」对部分使用方无效（荣耀畅玩40 Plus／夸克实报，明说其他机型同现·要求不要覆盖修改引发跨机型回归）： ====
   // 逐张关闭/整组停用要被所有使用方认账——原先 getLibPool 只「取组」不过闸（8 个游戏/拍卖模块与 chat/ta-ask 两处裸抽）；
-  // 各功能「过闸后为空 ⇒ 回落内置兜底」而兜底与数据组逐字同文（花园 7/7、喝水 6/6）；gift-shop 直读数据零闸。
+  // 各功能「过闸后为空 ⇒ 回落内置兜底」而兜底与数据组逐字同文（喝水 6/6）；gift-shop 直读数据零闸。
   { name: '#1498a getLibPool 内置同源池过总闸（删＝裸抽调 getInteractPool 的 8 个模块无视逐张关闭/整组停用）', file: 'js/default-cards.js', needle: 'if (off) arr = arr.filter(c => !off(cat, c));' },
   { name: '#1498b 兜底池统一出口 gateCardFallback（删＝全关后回落同文内置兜底＝禁用形同无效）', file: 'js/default-cards.js', needle: 'window.gateCardFallback = function (cat, fallback) {' },
   { name: '#1498c 房间话术兜底过闸＋过滤结果一律采用（删＝全关时留下未过滤池，实测 11/11 仍被使用）', file: 'js/room.js', needle: "window.gateCardFallback('room'" },
-  { name: '#1498d 花园悄悄话兜底过闸＋空则不发音（删＝WM 兜底 7/7 与数据组同文，全关后照旧出声）', file: 'js/garden.js', needle: 'window.gateCardFallback("garden", WM)' },
   { name: '#1498e 听歌字卡兜底过闸（删＝DEF_TA_PAUSE/RESUME_CARDS 是数据组旧拷贝，全关后照旧发）', file: 'js/music-player.js', needle: "window.gateCardFallback('music', fallback)" },
   { name: '#1498f 礼物寄语池过闸（删＝TA 送礼/许愿仍把用户禁用的主字卡拼进寄语）', file: 'js/gift-shop.js', needle: 'window.__giftCardPool = function ()' },
   { name: '#1481a 会话稳态高度采集（删＝双稳态内核毛刺读数照进钉高，输入栏反复沉回键盘下）', file: 'js/mobile-adapt.js', needle: '_aKbStableH = cur; _aFullSince = 0; _aFullReads' },
@@ -6484,8 +6456,6 @@ const FIX_SENTINELS = [
   { name: '#1521a 跨桌面查岗题库写前按目标桌面 store 问读全没有（删＝跨桌面来消息抽题那条自动写把对方桌面题库顶成纯预设）', file: 'js/ck-question.js', needle: '!ckAutoHoldIn(s, KEY)) { try { s.set(KEY' },
   { name: '#1521b 昵称池整包写前问读全没有（删＝「添加昵称」这条读-改-写在盲窗里把整池顶掉）', file: 'js/avatar-lib.js', needle: "xyBigWriteBlocked(store, 'nick-lib', '昵称池')" },
   { name: '#1521c 添加昵称尊重闸结果（删＝被拦后仍重绘并报「已添加」，用户以为存进去了）', file: 'js/avatar-lib.js', needle: 'if (saveFn(list) === false) return;' },
-  { name: '#1522a 花园年报分享走 feedAddPost 正路（删＝退回裸读裸写 feed-posts＝同步层读空一发抹掉朋友圈历史＋点击帧兆级串化长任务）', file: 'js/garden.js', needle: '!!window.feedAddPost(text)' },
-  { name: '#1522b 花园年报整包盲写已退役（删除型；回流＝JSON.parse(st.get(FK)) 读空顶库、st.set 整包写回复发）', file: 'js/garden.js', needle: 'st.set(FK, raw)', absent: true },
   { name: '#1522c 冷读合并落定同拍刷新待写槽（删＝已排程的陈旧 arr 在合并后照写＝权威整本被顶回残缺形态丢历史）', file: 'js/feed.js', needle: 'if (!degraded && feedWritePending) feedWritePending = merged;' },
     { name: '#1524a 三类内核一条规则·主链（删＝800/650/300ms 时间引信＝打字间隔＞窗口必拆会话＝两态横跳引擎）', file: 'js/mobile-adapt.js', needle: 'return _aVkHonest ? (_aVkH >= 80 || !_aVkSeen) : !_aHonestSession;' },
     { name: '#1524b 诚实内核判位＝收缩持续存在（删＝单拍瞬时收缩也被当成诚实内核＝overlay 内核 400ms 后被误拆会话，实测尺来不及接管）', file: 'js/mobile-adapt.js', needle: 'if (_aLowRuns >= 2 && _aLowSince && (Date.now() - _aLowSince) > 120) _aHonestSession = 1; _aLowRuns = 0; _aLowSince = 0;' },
@@ -6524,6 +6494,35 @@ const FIX_SENTINELS = [
   { name: '#1538b 二线兜底同口径禁猜（删＝X5/旧夸克族二线仍盲猜）', file: 'js/mobile-adapt.js', needle: 'var _realH2 = 0;' },
   { name: '#1539a 收口先清空再量（删＝#1537 把清空整行替换成量底边 ⇒ Chrome 收键盘后 489px 内联高停留 1s＝不能秒收＋输入栏一行消失；恢复清空为第一步、清完量渲染底边超视口才钉）', file: 'js/mobile-adapt.js', needle: "_aPhone.style.height = ''; // #1539：清空必须先做" },
   { name: '#1540a 开新会话即拆收口封锁窗（删＝关了马上再开时，钉高被上一轮 1.2s 墙拦住＝输入栏被键盘盖住一秒才弹上来＝用户实报「打开键盘时输入栏消失一秒」）', file: 'js/mobile-adapt.js', needle: '_aHoldSuppressUntil = 0; _aPhone.style.alignSelf' },
+  // ===== 花园功能整体下线（用户直派「完全删掉花园功能吧，我不需要」）=====
+  // 花园是独立功能件（js/garden.js + css/garden.css），已从 jsFiles/cssFiles 移除、源文件删除。
+  // 以下原登记全部转为删除型（absent:true）：needle 回流产物即报警（含并行改动/旧缓冲把花园写回）。
+  // 名字/needle 一字未改，仅加 absent:true；file 仍指原 js/garden.js、css/garden.css（两者已不在构建
+  // 清单里，artifactText 回落到 index.html 判定——两处产物都不再含这些特征）。
+  { name: '副本消费方已全部移除（absent 守卫：花园不再整包 JSON.parse 自动备份副本，防数百 MB 遗留快照 OOM）', file: 'js/garden.js', needle: 'offerSnapshotRecover', absent: true },
+  { name: '#116 工坊配方卡缺料反馈（需求行改「已有/需求」+ 缺料提示行 + 按钮常驻缺料置灰，修「工坊做不了花艺配方」无从知晓缺什么）', file: 'js/garden.js', needle: 'recipe-lack', absent: true },
+  { name: '#132 花园悄悄话概率接 dcf-garden（改回 Math.random()<0.4 硬编码即回归）', file: 'js/garden.js', needle: "if (Math.random() * 100 < _gP) {", absent: true },
+  { name: '#446 扩建改自愿·开垦资格到顶分支（plotN≥资格给提示弹窗；删则回退等级自动送地，「建这么多养不过来」复发）', file: 'js/garden.js', needle: 'if (cur >= ent) {', absent: true },
+  { name: '#446/#601e plotN 存量迁移（load 默认 12 块；存档 12 块之后已有花则保留到最远那株＝老玩家的花一块不少。删则存量玩家升级地块被裁回 12 且花被截）', file: 'js/garden.js', needle: 'd.plotN = _maxP >= PLOTS ? (_maxP + 1) : PLOTS;', absent: true },
+  { name: '#601f 装饰商店 emoji 可见（emoji 外套白底圆)；删则绿底上的白色字形 emoji 又「看不见」', file: 'js/garden.js', needle: 'garden-decor-shop-ico', absent: true },
+  { name: '#601f 装饰商店 emoji 可见（白底圆样式）；删则 emoji 回落绿底低对比', file: 'css/garden.css', needle: '.garden-decor-shop-ico {', absent: true },
+  { name: '#446 里程碑奖励与地块脱钩（跨 Lv3/5/8/12 送稀有种子；删则「不开垦=亏升级奖励」的强制感回归）', file: 'js/garden.js', needle: 'msgs.push("🎁 里程碑奖励：稀有种子「"', absent: true },
+  { name: '#446 一键补种（空地按上次品种补齐且不消耗稀有库存；删则 30 块地日常=逐块点种植，养护负担复发）', file: 'js/garden.js', needle: 'data.lastSeed && T[data.lastSeed] && !T[data.lastSeed].rare', absent: true },
+  { name: '#446 浇水有效期 36h（waterLvl 分母 WATER_SEC；删则回退 24h 天天浇＝多地块高负担复发）', file: 'js/garden.js', needle: 'plot.watered) / WATER_SEC);', absent: true },
+  { name: '#446 凋谢宽限 72h→#503 再放宽 96h（WILT_SEC=345600；删则回退收不及时就枯萎＝收花心意币钱损复发）', file: 'js/garden.js', needle: 'var WILT_SEC = 345600;', absent: true },
+  { name: '#503 资格缩小不裁已有地（plotCount 去掉向下钳制＝老存档 plotN 高于新资格也一块不裁；改回钳制则上限瘦身后老玩家多种的花被静默删除）', file: 'js/garden.js', needle: 'return data.plotN || PLOTS;', absent: true },
+  { name: '#503 手动缩地 shrinkPlots（只收尾部空地、下限 4 块、有花不裁；删则「开多了收不回」复发）', file: 'js/garden.js', needle: 'while (cur > MIN_PLOTS && !data.p[cur - 1]) cur--;', absent: true },
+  { name: '#503 收地按钮登记（工具条 shrink；删则缩地无入口）', file: 'js/garden.js', needle: 'sb.dataset.tool = "shrink";', absent: true },
+  { name: '#528 花园土地默认展开（#503 折叠改默认展开；改回 true 则土地又被默认收起＝用户反馈复发）', file: 'js/garden.js', needle: 'var emptyFolded = false;', absent: true },
+  { name: '#528 空地折叠砖保留（默认展开时仍给「收起」入口；删则无法手动收起空地）', file: 'js/garden.js', needle: '(emptyFolded ? "点开" : "收起")', absent: true },
+  { name: '#503 日志全量查看（默认 20 条+「查看全部」展开；删则联系人的打理记录看不全复发）', file: 'js/garden.js', needle: 'garden-log-toggle', absent: true },
+  { name: '#503 日志容量 100→300（slice(-300)；改回 100 则老记录被挤掉复发）', file: 'js/garden.js', needle: 'if (data.l.length > 300) data.l = data.l.slice(-300);', absent: true },
+  { name: '#503 日志独立 tab（garden-log 移入「日志」分区；删则日志又挤回花园页）', file: 'js/garden.js', needle: 'move("garden-log", "log");', absent: true },
+  { name: '#588f 花园读回期「正在读取」提示（删＝LS 未回填时先画空花园，用户以为数据全丢）', file: 'js/garden.js', needle: 'toast("正在读取本地花园数据…");', absent: true },
+  { name: '#723d 稀有花呼吸光改晕盘伪层（改回 drop-shadow 插值＝花园页常驻重绘回归）', file: 'css/garden.css', needle: 'animation:gardenRareHalo 2s ease-in-out infinite', absent: true },
+  { name: '#1498d 花园悄悄话兜底过闸＋空则不发音（删＝WM 兜底 7/7 与数据组同文，全关后照旧出声）', file: 'js/garden.js', needle: 'window.gateCardFallback("garden", WM)', absent: true },
+  { name: '#1522a 花园年报分享走 feedAddPost 正路（删＝退回裸读裸写 feed-posts＝同步层读空一发抹掉朋友圈历史＋点击帧兆级串化长任务）', file: 'js/garden.js', needle: '!!window.feedAddPost(text)', absent: true },
+  { name: '#1522b 花园年报整包盲写已退役（删除型；回流＝JSON.parse(st.get(FK)) 读空顶库、st.set 整包写回复发）', file: 'js/garden.js', needle: 'st.set(FK, raw)', absent: true },
 ];
 try {
   const built = CHECK_SENTINELS ? '' : readFileSync(join(root, 'index.html'), 'utf8');

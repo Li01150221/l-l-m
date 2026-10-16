@@ -1,11 +1,10 @@
-// ===== 心意币与小游戏/花园联动验证 =====
-// 用户需求：心意币与聊天更多功能【小游戏】、桌面【花园】联动
+// ===== 心意币与小游戏联动验证 =====
+// 用户需求：心意币与聊天更多功能【小游戏】联动
 // 覆盖：①猜拳打一局 → 按胜负发币（胜我得 ¥1 / 平我得 ¥0.2 / TA 赢 TA 得 ¥1，日封顶 ¥3）
 //      ②钓鱼死入口接线（#more-fish → openFishPanel 面板可开）
-//      ③花园一键收获 → 按品质发币（完美 ¥2/优质 ¥1/普通 ¥0.5/枯萎 ¥0.2，日封顶 ¥10）
-//      ④Pong/贪吃蛇/打砖块/四子棋结算发币（静态断言 + giftWalletChange 运行时存在）
-//      ⑤giftWalletChange 统一入口写共用账本 gift-wallet
-//      ⑥构建产物静态断言 + 全程无 JS 异常
+//      ③Pong/贪吃蛇/打砖块/四子棋结算发币（静态断言 + giftWalletChange 运行时存在）
+//      ④giftWalletChange 统一入口写共用账本 gift-wallet
+//      ⑤构建产物静态断言 + 全程无 JS 异常
 import { spawn } from 'node:child_process';
 import { createServer } from 'node:http';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
@@ -82,7 +81,7 @@ await cdpConnect();
 await cdp('Page.enable'); await cdp('Runtime.enable');
 await cdp('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 2, mobile: true });
 
-// ---- 种子：账本 100.00/200.00；清各游戏日计数；花园种一株已盛开的花 ----
+// ---- 种子：账本 100.00/200.00；清各游戏日计数 ----
 await gotoApp();
 await evalJs(`(function(){
   var day = new Date().toISOString().slice(0, 10);
@@ -90,12 +89,6 @@ await evalJs(`(function(){
     if (k.indexOf(':ml2_coin_') > 0) localStorage.removeItem(k);
   });
   localStorage.setItem('xy-home-v2:gift-wallet', JSON.stringify({ myBalance: 10000, systemBalance: 20000 }));
-  localStorage.setItem('xy-home-v2:default:garden-data', JSON.stringify({
-    p: [{ type: 'clover', planted: Math.floor(Date.now() / 1000) - 200000, by: 'me', watered: null, pot: null }, null, null, null, null, null, null, null, null, null, null, null],
-    l: [], lpc: Math.floor(Date.now() / 1000) - 100, dex: {}, exp: 0,
-    inv: {}, st: { p: 0, w: 0, h: 0, f: 0, mp: 0, mw: 0, mh: 0, mf: 0 },
-    decor: {}, visitor: null
-  }));
   window.__errs = [];
   window.addEventListener('error', function(e){ window.__errs.push(String(e.message)); });
   return 'seeded';
@@ -153,35 +146,6 @@ s = await evalJs(`(function(){
 })()`);
 check('F1 点【双人钓鱼】能打开钓鱼面板（原死入口已接线）', s && s.btn && s.opened && s.hasFn, JSON.stringify(s));
 
-// ---- A 组：花园一键收获发币 ----
-s = await evalJs(`(function(){
-  var g = document.querySelector('.app[data-app="garden"]');
-  if (!g) return { icon: false };
-  g.click();
-  var page = document.getElementById('page-garden');
-  var hidden = page ? page.hidden : true;
-  return { icon: true, pageVisible: !hidden };
-})()`);
-await sleep(800);
-const wBeforeHarvest = await walletRaw();
-s = await evalJs(`(function(){
-  var btn = document.querySelector('#page-garden [data-tool="harvestall"]');
-  if (!btn) return { btn: false };
-  btn.click();
-  return { btn: true };
-})()`);
-await sleep(900);
-s = await (async () => {
-  const w = await walletRaw();
-  const dayKey = await evalJs(`(function(){
-    var day = new Date().toISOString().slice(0, 10);
-    var k = 'xy-home-v2:default:ml2_coin_garden_' + day;
-    return Number(localStorage.getItem(k)) || 0;
-  })()`);
-  return { w, dayKey };
-})();
-check('A1 一键收获后我的余额增加量 == 收花奖励日计数（普通 ¥5.2/优质 ¥13.14/完美 ¥52/枯萎 ¥1.3）', s && s.dayKey >= 520 && s.w.myBalance === (wBeforeHarvest ? wBeforeHarvest.myBalance : -999) + s.dayKey, JSON.stringify(s));
-
 // ---- O 组：余额不足也可发红包/买礼物（透支为负，不拦截） ----
 await evalJs(`(function(){
   window.xyStore('xy-home-v2').set('gift-wallet', JSON.stringify({ myBalance: 100, systemBalance: 20000 }));
@@ -230,7 +194,6 @@ check('O2 TA 发 ¥520 红包同样不受限：systemBalance 直接扣至负数'
   check('X2 打砖块合作双得已打包（ml2_coin_brick_ + 双方各加 + 档位数组）', pool.indexOf('ml2_coin_brick_') >= 0 && pool.indexOf('双方心意币各 +¥') >= 0 && pool.indexOf('[520, 1314, 5200]') >= 0, '');
   check('X3 四子棋结算发币已打包（ml2_coin_c4_）', pool.indexOf('ml2_coin_c4_') >= 0, '');
   check('X4 贪吃蛇/猜拳发币在 chat.js 已打包（rpGameCoinGrant 两个调用点）', pool.indexOf("rpGameCoinGrant('rps'") >= 0 && pool.indexOf("rpGameCoinGrant('snake'") >= 0, '');
-  check('X5 花园收花奖励已打包（ml2_coin_garden_ + grantHarvestCoin）', pool.indexOf('ml2_coin_garden_') >= 0 && pool.indexOf('grantHarvestCoin') >= 0, '');
   check('X6 产物已无「心意币不足」拦截文案（透支机制生效）', pool.indexOf('我的心意币不足') < 0 && pool.indexOf('的心意币不足') < 0, '');
 }
 

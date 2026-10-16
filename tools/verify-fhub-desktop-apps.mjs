@@ -76,13 +76,13 @@ await ev(`(()=>{ const s=document.getElementById('splash'); if(s) s.remove(); co
 let fail = 0;
 const A = (name, ok, extra) => { console.log((ok ? 'PASS' : 'FAIL') + ' ' + name + (extra !== undefined ? ' | ' + extra : '')); if (!ok) fail++; };
 
-// —— 期望落点表：桌面图标 29 个（桌面第 1/2/3 页顺序） + 各应用页内入口 49 条 ——
+// —— 期望落点表：桌面图标 28 个（桌面第 1/2/3 页顺序） + 各应用页内入口 49 条 ——
 const APPS = [
   ['聊天（桌面图标）', 'page-chat'], ['群聊（桌面图标）', 'page-group-chat'], ['主页（桌面图标）', 'page-home'],
   ['信箱（桌面图标）', 'page-mail'], ['朋友圈（桌面图标）', 'page-feed'], ['日历（桌面图标）', 'page-calendar'],
   ['纪念（桌面图标）', 'page-memory'], ['占卜（桌面图标）', 'page-divine'], ['收藏（桌面图标）', 'page-fav'],
   ['音乐（桌面图标）', 'page-music'], ['聊天统计（桌面图标）', 'page-stats'], ['提问记录（桌面图标）', 'page-interact'],
-  ['寻踪（桌面图标）', 'page-checkin'], ['花园（桌面图标）', 'page-garden'], ['此间（桌面图标）', 'page-cjian'],
+  ['寻踪（桌面图标）', 'page-checkin'], ['此间（桌面图标）', 'page-cjian'],
   ['同频（桌面图标）', 'page-tongpin'], ['伸手（桌面图标）', 'page-shenshou'],
   ['经期记录（桌面图标）', 'page-period'], ['记账（桌面图标）', 'page-accounting'], ['梦角档案（桌面图标）', 'page-memo-arc'],
   ['我的档案（桌面图标）', 'page-my-arc'], ['房间（桌面图标）', 'page-room'], ['喝水（桌面图标）', 'page-water'],
@@ -121,7 +121,7 @@ const SUBS = [
 // 反向断言：这些「点了当场改数据」的动作入口不得被当成跳转目标收进目录
 const BANNED = ['经期 · 标记今天开始', '经期 · 记录今天', '吃什么 · 问TA', '吃什么 · TA提醒',
   '备忘录 · 提醒开关', '备忘录 · 清已完成', '备忘录 · 发到聊天', '音乐 · 清理会员歌曲',
-  '番茄钟 · 铃声', '同频 · 发到聊天', '伸手 · 发到聊天', '提问记录 · 清空', '花园 · 杂交', '花园 · 补种'];
+  '番茄钟 · 铃声', '同频 · 发到聊天', '伸手 · 发到聊天', '提问记录 · 清空'];
 
 // —— 复位：回到设置页（功能大全的入口来源），关掉弹窗/残留页 ——
 const reset = () => ev(`(()=>{
@@ -140,7 +140,7 @@ const clickRow = (nm) => ev(`(()=>{
 })()`);
 
 // #1452（阶段 A）：目录改「首开才建」——先点设置行入口把目录建出来，再量分组数/组内条目（契约不变：
-// 开页后仍是 10 组、桌面应用组 = 29 图标 + 1 条找回说明；B4 会再点一次入口，幂等）。
+// 开页后仍是 10 组、桌面应用组 = 28 图标 + 1 条找回说明；B4 会再点一次入口，幂等）。
 await ev(`document.getElementById('row-featurehub').click()`);
 await sleep(150);
 
@@ -148,7 +148,7 @@ await sleep(150);
 const gs = await ev(`document.querySelectorAll('#fhub-body .gs-title').length`);
 A('B1 分组数=10（新增【桌面应用】组）', gs === 10, '实际 ' + gs);
 
-// ---- B2 桌面应用组存在且条目数 = 29 图标 + 1 找回说明 ----
+// ---- B2 桌面应用组存在且条目数 = 28 图标 + 1 找回说明 ----
 const dp = await ev(`(()=>{
   const t=[...document.querySelectorAll('#fhub-body .gs-title')].find(x=>x.textContent.trim()==='桌面应用');
   if(!t) return 'NO_TITLE';
@@ -157,11 +157,11 @@ const dp = await ev(`(()=>{
   return rows.length+'|'+rows.map(r=>{const x=r.querySelector('.txt'); return x&&x.firstChild?x.firstChild.textContent.trim():'';}).join(',');
 })()`);
 const [dpN, dpNames] = String(dp).split('|');
-A('B2 桌面应用组 = 29 图标 + 1 条「图标不见了怎么找回」', Number(dpN) === 30, '实际 ' + dpN);
+A('B2 桌面应用组 = 28 图标 + 1 条「图标不见了怎么找回」', Number(dpN) === 29, '实际 ' + dpN);
 
-// ---- B3 29 个图标一个不少（组内行名精确覆盖） ----
+// ---- B3 28 个图标一个不少（组内行名精确覆盖） ----
 const missingIcon = APPS.filter(([n]) => (',' + dpNames + ',').indexOf(',' + n + ',') < 0).map(([n]) => n);
-A('B3 29 个桌面图标全部在组内', missingIcon.length === 0, missingIcon.length ? '缺 ' + JSON.stringify(missingIcon) : '缺 0 个');
+A('B3 28 个桌面图标全部在组内', missingIcon.length === 0, missingIcon.length ? '缺 ' + JSON.stringify(missingIcon) : '缺 0 个');
 
 // ---- B4/B5 逐条走真实用户路径：找到行 → 点 → 落在期望页面 ----
 await ev(`document.getElementById('row-featurehub').click()`);
@@ -174,7 +174,7 @@ for (const [nm, expect] of APPS) {
   const pages = await ev(`[...document.querySelectorAll('.page')].filter(p=>!p.hidden).map(p=>p.id)`);
   if (!found || !pages || pages.indexOf(expect) < 0) badApp.push(nm + '→' + JSON.stringify(pages) + (found ? '' : '(行未找到)'));
 }
-A('B4 29 个桌面图标逐条点击落点正确', badApp.length === 0, badApp.length ? badApp.join('; ') : '29/29');
+A('B4 28 个桌面图标逐条点击落点正确', badApp.length === 0, badApp.length ? badApp.join('; ') : '28/28');
 
 const badSub = [];
 for (const [nm, expect] of SUBS) {
@@ -203,7 +203,7 @@ await sleep(120);
 await ev(`(()=>{const i=document.getElementById('fhub-search'); i.value='桌面图标'; i.dispatchEvent(new Event('input'));})()`);
 await sleep(120);
 const sHit = await ev(`[...document.querySelectorAll('#fhub-body .set-row')].filter(r=>r.style.display!=='none' && r.textContent.indexOf('桌面图标')>=0).length`);
-A('B7 搜「桌面图标」有命中', sHit >= 29, '命中 ' + sHit + ' 条');
+A('B7 搜「桌面图标」有命中', sHit >= 28, '命中 ' + sHit + ' 条');
 await ev(`(()=>{const i=document.getElementById('fhub-search'); i.value=''; i.dispatchEvent(new Event('input'));})()`);
 
 // ---- B8 心情日记落点＝日记页（改前只到日历首页，用户点了看不到日记） ----

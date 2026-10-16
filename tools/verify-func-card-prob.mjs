@@ -3,11 +3,11 @@
 //
 // 背景（TASKS #132）：用户问「经期的温柔前缀字卡使用概率是多少」并要求【系统预设字卡】
 // 各页显示概率、可自由调整（对齐【聊天默认字卡 30%】模式）。方案 = 新键 dcf-<分类>
-// （per-cid），【其他互动功能字卡】页 13 分类 +【查岗】页各一个 stepper，默认=各分类
+// （per-cid），【其他互动功能字卡】页 12 分类 +【查岗】页各一个 stepper，默认=各分类
 // 历史硬编码值（行为不变）；消费方经 window.dcfGet / dcfP / dcfHit 接线。
 //
-// A 段 逻辑锚点：dcfGet API 与默认表 / 模板 14 个 stepper / period 温柔前缀 / fish/eat/
-//         sync/reach/water/garden/deskcheck/room/cjian/drift/music 十二处消费点
+// A 段 逻辑锚点：dcfGet API 与默认表 / 模板 13 个 stepper / period 温柔前缀 / fish/eat/
+//         sync/reach/water/deskcheck/room/cjian/drift/music 十一处消费点
 // B 段 行为断言（vm 桩环境加载 default-cards.js 真实源码）：
 //    B1 dcfGet 未设置时回退各分类历史默认（25/35/40/50/55/60/100）
 //    B2 dcfGet 已设置时按 dcf-<分类> 键读（clamp 0-100）
@@ -32,7 +32,6 @@ const dcSrc = read('src/js/default-cards.js');
 const tplSrc = read('src/template.html');
 const periodSrc = read('src/js/period.js');
 const p2Src = read('src/js/p2-features.js');
-const gardenSrc = read('src/js/garden.js');
 const chatSrc = read('src/js/chat.js');
 const roomSrc = read('src/js/room.js');
 const cjianSrc = read('src/js/cjian.js');
@@ -40,7 +39,7 @@ const driftSrc = read('src/js/drift-bottle.js');
 const musicSrc = read('src/js/music-player.js');
 
 check('A1 dcfGet 暴露 + DCF_DEF 默认表', dcSrc.includes('window.dcfGet = dcfVal;') && dcSrc.includes('period: 25'));
-check('A2 fc 页 13 分类 stepper（fish..music）', ['fish','eat','period','water','garden','sync','reach','cjian','room','piggy','drift','interact','music'].every(k => tplSrc.includes('id="dcf-prob-' + k + '"')));
+check('A2 fc 页 12 分类 stepper（fish..music）', ['fish','eat','period','water','sync','reach','cjian','room','piggy','drift','interact','music'].every(k => tplSrc.includes('id="dcf-prob-' + k + '"')));
 check('A3 dk 页查岗 stepper', tplSrc.includes('id="dcf-prob-deskcheck"'));
 check('A4 stepper 值 input（period/deskcheck）', tplSrc.includes('id="dcf-prob-period-val"') && tplSrc.includes('id="dcf-prob-deskcheck-val"'));
 check('A5 fc 页说明文案提到使用概率可调', tplSrc.includes('每个分类下方的「使用概率」'));
@@ -50,7 +49,7 @@ check('A8 温柔前缀默认 25 兜底', periodSrc.includes('var _warmP = 25;'))
 // #224：摸鱼接线改经本 IIFE 助手 dcfPFish（原 dcfP 跨 IIFE 引用必抛 ReferenceError，语义等价 dcfGet('fish') 默认 35）
 check('A9 p2-features 四单值分类接线', p2Src.includes('dcfPFish(35)') && p2Src.includes("dcfP('eat', 35)") && p2Src.includes("dcfP('sync', 60)") && p2Src.includes("dcfP('reach', 55)"));
 check('A10 喝水乘法门控三处', (p2Src.match(/dcfHit\('water'\)/g) || []).length === 3);
-check('A11 花园/查岗接线', gardenSrc.includes("window.dcfGet('garden')") && chatSrc.includes('Math.random() * 100 < _dkP'));
+check('A11 查岗接线', chatSrc.includes('Math.random() * 100 < _dkP'));
 check('A12 room/cjian/drift/music 门控', roomSrc.includes("window.dcfGet('room')") && cjianSrc.includes("window.dcfGet('cjian')") && driftSrc.includes("window.dcfGet('drift')") && musicSrc.includes("window.dcfGet('music')"));
 check('A13 drift 空话术不落库（TA回应瓶）', driftSrc.includes('const _dl = poolLine'));
 check('A14 room bubble 空串守卫', roomSrc.includes('if (!t) return; // v3.32.x #132'));
@@ -88,10 +87,10 @@ function runDc(envExtra) {
 
 try {
   const { dcfGet } = runDc();
-  const defaults = { fish: 35, eat: 35, period: 25, water: 35, garden: 40, sync: 60, reach: 55, cjian: 100, room: 100, piggy: 100, drift: 100, interact: 100, music: 100, deskcheck: 50 };
+  const defaults = { fish: 35, eat: 35, period: 25, water: 35, sync: 60, reach: 55, cjian: 100, room: 100, piggy: 100, drift: 100, interact: 100, music: 100, deskcheck: 50 };
   let ok = true;
   Object.keys(defaults).forEach(k => { if (dcfGet(k) !== defaults[k]) { ok = false; console.log('   dcfGet(' + k + ')=' + dcfGet(k) + ' 预期 ' + defaults[k]); } });
-  check('B1 dcfGet 未设置回退历史默认（14 分类逐一）', ok);
+  check('B1 dcfGet 未设置回退历史默认（13 分类逐一）', ok);
 } catch (e) { check('B1 dcfGet 未设置回退历史默认', false, e.message); }
 
 try {

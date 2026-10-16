@@ -14,7 +14,7 @@
 //   （与心意集市/红包共用，只加我的余额），不做成刷币工具。
 // 字卡库联动：DEFAULT_CARD_DATA.drift 三组（TA的话/TA的回应/海风），字卡库【系统预设字卡】
 //   「漂流瓶」tab 可逐张开关（dc-off-drift:*），getLibPool 同源抽取，全关回退内置兜底。
-// 数据按联系人桌面隔离：activeStore() 键 drift-data，IndexedDB 镜像兜底（room/garden 同款）。
+// 数据按联系人桌面隔离：activeStore() 键 drift-data，IndexedDB 镜像兜底（room 同款）。
 // 入口接线全部在本文件内完成（more-drift 按钮 / 返回键），不改 chat.js。
 (function () {
   const KEY = 'drift-data';
@@ -231,7 +231,7 @@
     try { if (window.idbSet) window.idbSet(window.activePrefix() + ':' + KEY, JSON.stringify(d)); } catch (e) {}
   }
 
-  // IndexedDB 回填兜底（LS 写失败的老设备）：LS 为空则读 IDB 副本写回（room/garden 同款思路）
+  // IndexedDB 回填兜底（LS 写失败的老设备）：LS 为空则读 IDB 副本写回（room 同款思路）
   (function restoreIdb() {
     try {
       const s = S(); if (!s || !window.idbGet || s.get(KEY)) return;

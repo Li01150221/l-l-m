@@ -9,7 +9,7 @@
 // 按房内现有家具筛选可执行行为），偶尔进入「看不见但能感觉到」的淡影态；
 // 点击 TA / 家具 / 窗户触发字卡话术（字卡库【房间】tab 同源 getLibPool('room',分组)，逐张开关联动，
 // 全关回退内置兜底）；轻方位感知（「感应」按钮按需提示，不做常驻文字）。
-// 数据按联系人桌面隔离：activeStore() 键 room-data，IndexedDB 镜像兜底（garden 同款）。
+// 数据按联系人桌面隔离：activeStore() 键 room-data，IndexedDB 镜像兜底。
 // 入口接线全部在本文件内完成（桌面图标 / more-room 按钮 / 返回键），不改 chat.js / personalize.js。
 (function () {
   const KEY = 'room-data';
@@ -186,7 +186,7 @@
     try { if (window.idbSet) window.idbSet(window.activePrefix() + ':' + KEY, JSON.stringify(d)); } catch (e) {}
   }
   // IndexedDB 回填兜底（LS 写失败的老设备）：启动时 LS 为空则读 IDB 副本写回；
-  // 回填晚于 boot 时若当前数据还是全新档则整体采用（garden/chatcard 同款思路）
+  // 回填晚于 boot 时若当前数据还是全新档则整体采用（chatcard 同款思路）
   let booted = false;
   (function restoreIdb() {
     try {
@@ -363,8 +363,7 @@
       el.className = 'r-furn' + (it.r ? ' r-flip' : '') + (d.lit[it.i] ? ' r-lit' : '') + (c.flk ? ' r-flkc' : '');
       const p = pctPos(it.x, it.y);
       el.style.left = p.l + '%'; el.style.top = p.t + '%';
-      if (it.t === 'vase' && d.vaseFlower) el.innerHTML = c.e + '<u class="r-bloom">🌸</u>';
-      else el.textContent = c.e;
+      el.textContent = c.e;
       el.dataset.i = it.i;
       floorEl.appendChild(el);
       // 点亮的灯在地板投一滩暖光（蜡烛/星星灯带火苗闪烁）
@@ -547,19 +546,6 @@
   }
 
   // ---- 家具交互 ----
-  function gardenBloom() {
-    // 花园联动彩蛋：花园有过收获（st.h>0）或有一株种下超 3 天的花 → 花瓶可以真正插花
-    try {
-      const raw = S().get('garden-data'); if (!raw) return false;
-      const g = JSON.parse(raw);
-      if (g && g.st && (g.st.h | 0) > 0) return true;
-      if (Array.isArray(g.p)) {
-        const now = Date.now() / 1000;
-        return g.p.some(pl => pl && pl.planted && (now - pl.planted) > 259200);
-      }
-    } catch (e) {}
-    return false;
-  }
   function useFurniture(inst) {
     const c = CAT[inst.t];
     if (c.lamp) {
@@ -569,12 +555,6 @@
       bubble(on ? (isNight() ? '灯亮起来了，房间一下子软了。' : '亮着也很好看。') : '关掉灯，安静了一会儿。', BUB_SHORT);
       gainPts(1, 'n'); vib(15);
       if (on) lampFeedback(inst, on); else lampOffFeedback(inst);
-      return;
-    }
-    if (inst.t === 'vase' && gardenBloom() && !d.vaseFlower) {
-      d.vaseFlower = true; save(); renderScene();
-      bubble('把花园带回来的花，插进了瓶子里。🌸');
-      gainPts(1, 'n'); vib([15, 40, 15]);
       return;
     }
     const taHere = d.ta.x === inst.x && d.ta.y === inst.y;

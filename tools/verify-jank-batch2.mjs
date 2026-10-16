@@ -1,22 +1,17 @@
 // ===== 验证 #588：第二批「卡顿/误判为 bug」的性能修（三个文件各一处） =====
 // 承 #584（chatcard.js 搜索防抖 + 预压缩串行化），本批继续收上一轮全站排查里
-// 「成本明确、改动局部、可行为断言」的三处：
+//   两处：
 //   · src/js/gift-shop.js —— giftItemHtml 对**每件**礼物都要问一次「TA 是否正许愿这件」，
 //     而 wishLoad 每次调用都是一次完整 JSON.parse；预设礼物 302 件＝每开一次心意市集/
 //     聊天送礼面板就 302 次 parse（打开面板明显慢半拍）。
-//   · src/js/records.js   —— 「TA的关心」页回溯源是 O(n²)：每条 ask-msg 都把整个聊天数组
+//   · src/js/records.js   —— 「TA的关心」页回源是 O(n²)：每条 ask-msg 都把整个聊天数组
 //     再 some() 一遍找 30s 内的问卡；聊天上千条时点页签会明显卡住（用户感知＝点了没反应）。
-//   · src/js/garden.js    —— LS 未回填时先渲染「内存态」＝用户看到一个**空花园**且无任何
-//     提示，最容易当成「数据全丢了」；probeIdb 要重试约 600ms+。
 //
 // 断言策略：不靠「跑得快就算过」（时间断言在有并行会话的机器上不稳），改成
 //   ①静态锚点；②把**真实函数从源码抽出来**在 Node 里跑并对读写次数打点——
 //   「302 件礼物 → 心愿单只被读 1 次」「改心愿后缓存必须失效」；
 //   ③records 那段做**新旧等价性对拍**：二分版与原来的 Math.abs(dt)<30000 全表扫
-//   在随机数据 + 边界值（正好相差 30000ms）上必须逐点同判——这是「优化没改语义」的硬证据；
-//   ④garden 的提示是纯告知性的一行，用「位置在 openGarden 的 junkEmpty 分支内且早于 probeIdb」
-//   的结构断言守（该文件是独立 IIFE，openGarden 不是全局函数、无头里拿不到入口；真正要看的是
-//   真机上点开花园有没有那句提示，已记在 FIX-REGRESSION 的【真机:待验证】里）。
+//   在随机数据 + 边界值（正好相差 30000ms）上必须逐点同判——这是「优化没改语义」的硬证据。
 // 注：时间类断言（「跑得快就算过」）在本机不可靠——同时有并行会话在写盘/构建，刻意不用。
 // 用法：node tools/verify-jank-batch2.mjs
 import { readFileSync } from 'node:fs';
@@ -40,7 +35,6 @@ const endOfBrace = (src, iOpen) => {
 
 const gift = read('js/gift-shop.js');
 const rec = read('js/records.js');
-const gard = read('js/garden.js');
 
 // —— A. 静态锚点 ——
 T('A1 gift-shop 有 TA 心愿 id 集合记忆化入口', gift.indexOf('function taWishIds() {') >= 0);
@@ -53,7 +47,6 @@ T('A4 records 问卡时间戳预排序 + 二分判据在位', rec.indexOf('const
 T('A5 ask-msg 不再对全表 some（旧写法已移除）',
   rec.indexOf('const nearCard = hasAskCardNear(t);') >= 0 &&
   rec.indexOf('const nearCard = (msgs || []).some(') < 0);
-T('A6 garden 读回期提示在位', gard.indexOf('toast("正在读取本地花园数据…");') >= 0);
 
 if (fail) { console.log('静态断言失败 ' + fail + ' 条，跳过行为部分'); process.exit(1); }
 
@@ -131,19 +124,6 @@ if (fail) { console.log('静态断言失败 ' + fail + ' 条，跳过行为部�
       mism === 0 && checked >= 1500, '比对 ' + checked + ' 点，不一致 ' + mism);
     T('C2 对照组不是恒 false（确有命中，避免空绿）', trueCnt > 0, '命中 ' + trueCnt + ' 点');
   }
-}
-
-// —— D. garden：提示必须发生在 probeIdb 之前（否则用户先看到空花园） ——
-{
-  const iToast = gard.indexOf('toast("正在读取本地花园数据…");');
-  const iBranch = gard.indexOf('if (junkEmpty()) {', 1600);
-  const iProbe = gard.indexOf('probeIdb(function (v) {', iBranch);
-  const iBody = gard.indexOf('function openGardenBody(');
-  T('D1 提示在 openGarden 的 junkEmpty 分支内、且早于 probeIdb 调用',
-    iBranch > 0 && iToast > iBranch && (iBody < 0 || iToast < iBody) && iProbe > iToast,
-    'branch=' + iBranch + ' toast=' + iToast + ' probe=' + iProbe);
-  T('D2 提示走的是本文件既有的 toast（不引入新的弹层/DOM）',
-    gard.indexOf('function toast(msg)') > 0);
 }
 
 console.log(fail ? ('❌ jank-batch2 断言失败 ' + fail + ' 条') : '✅ jank-batch2 全部断言通过');

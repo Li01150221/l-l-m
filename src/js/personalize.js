@@ -6743,7 +6743,7 @@ try {
   // 组件 id 列表（对应 template.html 中 [data-desk-widget]）；组件节点唯一，
   // 「添加」= 把节点移动到目标页（节点移动不重建，内部事件绑定保留）
   const WIDGET_IDS = ['deco', 'quote-row', 'checkin', 'apps', 'music', 'p2apps', 'memo-row', 'week', 'weekend', 'desk-clock', 'desk-calendar', 'desk-timer', 'desk-anniv', 'desk-period',
-    'app-chat', 'app-group-chat', 'app-home', 'app-mail', 'app-feed', 'app-calendar', 'app-memory', 'app-divination', 'app-note', 'app-music', 'app-stats', 'app-interact', 'app-checkin', 'p3apps', 'app-period', 'app-accounting', 'app-garden',     'app-tongpin', 'app-shenshou', 'app-water', 'app-eat', 'app-pomo', 'app-cjian', 'app-memo-arc', 'app-my-arc', 'app-room', 'app-piggy', 'app-memo'];
+    'app-chat', 'app-group-chat', 'app-home', 'app-mail', 'app-feed', 'app-calendar', 'app-memory', 'app-divination', 'app-note', 'app-music', 'app-stats', 'app-interact', 'app-checkin', 'p3apps', 'app-period', 'app-accounting', 'app-tongpin', 'app-shenshou', 'app-water', 'app-eat', 'app-pomo', 'app-cjian', 'app-memo-arc', 'app-my-arc', 'app-room', 'app-piggy', 'app-memo'];
   const WIDGET_NAMES = {
     deco: '纪念日卡', 'quote-row': '今日情话 / 已摸鱼', checkin: '打卡横幅', apps: '功能图标(整组)',
     music: '音乐播放器', p2apps: '第二页功能图标(整组)', 'memo-row': '今日备忘 / 心情', week: '本周日常', weekend: '摸鱼倒计时（周末）',
@@ -6751,7 +6751,7 @@ try {
     'app-chat': '聊天图标', 'app-group-chat': '群聊图标', 'app-home': '主页图标', 'app-mail': '信箱图标', 'app-feed': '朋友圈图标',
     'app-calendar': '日历图标', 'app-memory': '纪念图标', 'app-divination': '占卜图标', 'app-note': '收藏图标',
     'app-music': '音乐图标', 'app-stats': '聊天统计图标', 'app-interact': '提问记录图标', 'app-checkin': '寻踪图标',
-    'p3apps': '第三页功能图标(整组)', 'app-period': '经期记录图标', 'app-accounting': '记账图标', 'app-garden': '花园图标',     'app-tongpin': '同频图标', 'app-shenshou': '伸手图标', 'app-water': '喝水图标', 'app-eat': '吃什么图标', 'app-pomo': '番茄钟图标',
+    'p3apps': '第三页功能图标(整组)', 'app-period': '经期记录图标', 'app-accounting': '记账图标', 'app-tongpin': '同频图标', 'app-shenshou': '伸手图标', 'app-water': '喝水图标', 'app-eat': '吃什么图标', 'app-pomo': '番茄钟图标',
     'app-cjian': '此间图标', 'app-memo-arc': '梦角档案图标', 'app-my-arc': '我的档案图标', 'app-room': '房间图标', 'app-piggy': '存钱罐图标', 'app-memo': '备忘录图标',
   };
   // v3.7.x：装修模式组件库静态预览缩略图（glass 质感 + 真实 SVG 图标，不依赖真实数据/事件）
@@ -6789,7 +6789,7 @@ try {
     'app-chat': _appIcoPrev('聊天'), 'app-group-chat': _appIcoPrev('群聊'), 'app-home': _appIcoPrev('主页'), 'app-mail': _appIcoPrev('信箱'), 'app-feed': _appIcoPrev('朋友圈'),
     'app-calendar': _appIcoPrev('日历'), 'app-memory': _appIcoPrev('纪念'), 'app-divination': _appIcoPrev('占卜'), 'app-note': _appIcoPrev('收藏'),
     'app-music': _appIcoPrev('音乐'), 'app-stats': _appIcoPrev('统计'), 'app-interact': _appIcoPrev('提问'), 'app-checkin': _appIcoPrev('寻踪'),
-    'app-period': _appIcoPrev('经期'), 'app-accounting': _appIcoPrev('记账'), 'app-garden': _appIcoPrev('花园'),     'app-tongpin': _appIcoPrev('同频'), 'app-shenshou': _appIcoPrev('伸手'), 'app-water': _appIcoPrev('喝水'), 'app-eat': _appIcoPrev('吃什么'), 'app-pomo': _appIcoPrev('番茄钟'), 'p3apps': _appIcoPrev('经期'),
+    'app-period': _appIcoPrev('经期'), 'app-accounting': _appIcoPrev('记账'), 'app-tongpin': _appIcoPrev('同频'), 'app-shenshou': _appIcoPrev('伸手'), 'app-water': _appIcoPrev('喝水'), 'app-eat': _appIcoPrev('吃什么'), 'app-pomo': _appIcoPrev('番茄钟'), 'p3apps': _appIcoPrev('经期'),
     'app-cjian': _appIcoPrev('此间'), 'app-memo-arc': _appIcoPrev('梦角档案'), 'app-my-arc': _appIcoPrev('我的档案'), 'app-room': _appIcoPrev('房间'), 'app-piggy': _appIcoPrev('存钱罐'), 'app-memo': _appIcoPrev('备忘录'),
   };
   // 隐藏池：被移除的组件暂存（display:none），可从组件库重新添加
@@ -6894,7 +6894,7 @@ try {
     WIDGET_IDS.forEach(wid => {
       // v3.7.x：apps/p2apps 老兼容——之前 app-grid 没 data-desk-widget，老 layout 不含它们；
       // 加 data-desk-widget 后若按常规移池会把老用户的功能图标藏掉，故跳过池逻辑保持原位
-      // v3.26.x：p3apps 同因——第三页图标组（经期/记账/花园/喝水/吃什么/番茄钟）老 layout
+      // v3.26.x：p3apps 同因——第三页图标组（经期/记账/喝水/吃什么/番茄钟）老 layout
       // 不含它，按常规移池会让第三页整组功能图标消失，故同样跳过池逻辑保持原位
       if (wid === 'apps' || wid === 'p2apps' || wid === 'p3apps') return;
       const node = document.querySelector('[data-desk-widget="' + wid + '"]');
@@ -7027,19 +7027,19 @@ try {
   document.addEventListener('contact-switched', ensureMemoRowP3);
 
   // ===== v3.13.x：第二页改版迁移（仿 ensureMemoRowP3 先例） =====
-  // ① 功能图标组（p2apps：音乐/聊天统计/提问记录/寻踪/花园/此间 + 动态注入的同频/伸手）
+  // ① 功能图标组（p2apps：音乐/聊天统计/提问记录/寻踪/此间 + 动态注入的同频/伸手）
   //    默认位置改为「周末倒计时」（摸鱼组件）下方——template 已移；
   //    老用户 desk-layout 里 p2apps 排在 weekend 前面的自动换序到其后（DOM+存储同步改写），
   //    已在其后的不动；两组件不在同一页 / weekend 已被用户移除进池的尊重现状不强行挪。
-  // ② 第三页 p3apps 网格里的 花园/同频/伸手 图标归入第二页网格第二排（同频/伸手由 p2-features
+  // ② 第三页 p3apps 网格里的 同频/伸手 图标归入第二页网格第二排（同频/伸手由 p2-features
   //    注入时直接落第二页，见该文件；此处兜底搬运仍留在第三页网格内的默认位节点）。
   //    喝水已默认移至第三页，绝不再拖回第二页。只搬仍位于 .p3-grid 内的节点——
   //    用户手动拖出成独立组件 / 移除进隐藏池的尊重不找回。
   // 每联系人桌面独立（desk-layout 按桌面命名空间存储，切联系人各自触发）。
   function ensureP2SecondRowIcons() {
     // FIX 2026-09-13 #405：p3→p2 救回迁移只跑一次——原逻辑每次启动/切联系人都把仍在
-    // 第三页网格的花园/同频/伸手拽回第二页，用户故意把图标拖回第三页网格后刷新即被拽回
-    //（同 #380/#400 家族）。当前模板静态花园已在 p2-grid、同频/伸手由 p2-features 直落
+    // 第三页网格的同频/伸手拽回第二页，用户故意把图标拖回第三页网格后刷新即被拽回
+    //（同 #380/#400 家族）。当前模板静态同频/伸手由 p2-features 直落
     // p2-grid，本函数对存量用户已是空转兜底，首跑（无论是否实际搬动）打标记
     // p2icons-p3-mig=1，此后尊重用户摆放不再扫描拽回。
     if (store.get('p2icons-p3-mig') === '1') return;
@@ -7048,15 +7048,15 @@ try {
     const p3g = document.querySelector('.app-grid.p3-grid');
     if (!p2g) return;
     let moved = false;
-    ['app-tongpin', 'app-shenshou', 'app-garden'].forEach(wid => {
+    ['app-tongpin', 'app-shenshou'].forEach(wid => {
       const n = document.querySelector('[data-desk-widget="' + wid + '"]');
       if (!n || !p3g || n.parentNode !== p3g) return;
       p2g.appendChild(n); moved = true;
     });
     if (!moved) return;
-    // 归位后按新默认排序追加在已有图标之后：花园 此间 同频 伸手（此间为模板静态图标，
+    // 归位后按新默认排序追加在已有图标之后：此间 同频 伸手（此间为模板静态图标，
     // 在 p2-grid 内；喝水留在第三页）
-    ['app-garden', 'app-cjian', 'app-tongpin', 'app-shenshou'].forEach(wid => {
+    ['app-cjian', 'app-tongpin', 'app-shenshou'].forEach(wid => {
       const n = document.querySelector('[data-desk-widget="' + wid + '"]');
       if (n && n.parentNode === p2g) p2g.appendChild(n);
     });
@@ -10303,7 +10303,6 @@ bindAdjDrag(headTop, false); // #1534：拖标题行移动面板（与桌面美�
       if (/^(decision-|gdec-)/.test(base)) return '帮我决定';
       if (/^accounting-/.test(base)) return '记账';
       if (/^period-/.test(base)) return '经期';
-      if (/^(garden-|plant-)/.test(base)) return '花园';
       if (base === 'room-data') return '房间';
       if (/^drift-/.test(base)) return '漂流瓶';
       if (/^(gift-|giftbox|rp-|market-|wallet)/.test(base)) return '礼物/红包';

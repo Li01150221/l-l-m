@@ -2,7 +2,7 @@
 // 记录经期开始/结束、预测下次经期、判断周期阶段（经期/排卵期/安全期）
 // 数据 localStorage + IndexedDB 双写（键前缀 xy-home-v2:），纯本地无后端
 // v3.10.x 全局共享：经期记录属"本人生理数据"，所有联系人桌面共用一份
-//   全局键 xy-home-v2:period-*（参照 fish-log / garden-data-global 先例）。
+//   全局键 xy-home-v2:period-*（参照 fish-log 先例）。
 //   首次启动 migrateToGlobal 遍历各联系人旧键合并去重写入全局并清理旧键
 //   （period-migrated 标记幂等）。contacts.js EXCLUDE 已加 period-* 防
 //   migrateLegacy 误迁全局键进 default 桌面。

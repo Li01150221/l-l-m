@@ -2,14 +2,14 @@
 // 需求（用户 2026-09-17）：桌面上每个功能都要能「单独导出数据 / 导入数据 / 清空数据」，
 // 原来只有聊天、朋友圈、信箱三处零散实现（chat-settings.js 的 cs-export-msgs 三行、
 // feed.js 的 feed-clear-all、mail.js 的 mailExportData/mailImportFile/mailClearAll），
-// 其余功能（花园/房间/记账/经期/占卜/音乐/小游戏…）用户只能整库备份，不能只搬一个功能。
+// 其余功能（房间/记账/经期/占卜/音乐/小游戏…）用户只能整库备份，不能只搬一个功能。
 //
 // 做法：本文件集中登记「功能 → 存储键范围」，一套通用引擎对任意功能做导出/导入/清空，
 // 不逐个改各功能源码（避免 38 个功能文件各写一套 + 各功能的 store 边界漂移）。
 //   · 键空间解析：全站键只有三种形态——xy-home-v2:<后缀>（全局/默认桌面旧顶层键）、
 //     xy-home-v2:<cid>:<后缀>（联系人独立命名空间）、以及归属某个功能的动态后缀
 //     （cal-2026-09-17 / memo-2026-09-17 / music-file:<id> 等）。
-//   · 作用域 scope：desk＝只碰当前桌面（清空花园不影响另一个桌面）、global＝全局键
+//   · 作用域 scope：desk＝只碰当前桌面（清空房间不影响另一个桌面）、global＝全局键
 //     （所有桌面共用，如音乐/抉择）、both＝两类键都算该功能的数据。
 //   · 清空只删「本功能匹配到的键」，绝不碰媒体池 xy-home-v2:media:<hash>（跨功能共享，
 //     消息/动态里的 @@m: 令牌都指向它）与字体包 font-blob-<hash>（各桌面引用同一份）。
@@ -193,9 +193,6 @@
     { id: 'loc', name: '定位', group: '桌面功能', scope: 'desk', page: 'page-loc-cards',
       desc: '定位历史、气泡与特效开关、自动定位、定位组合',
       res: [/^loc-/, /^loc-auto/, /^loc-sense/] },
-    { id: 'garden', name: '花园', group: '桌面功能', scope: 'desk', page: 'page-garden',
-      desc: '种下的花与生长进度、收获记录',
-      res: [/^garden-/] },
     { id: 'cjian', name: '此间与梦角档案', group: '桌面功能', scope: 'both', page: 'page-cjian',
       desc: '此间状态与换家标记、成员名册、梦角档案（含时辰区间）',
       res: [/^cjian-/, /^narc-/] },
@@ -290,7 +287,6 @@
     pomo: '.pomo-body',
     checkin: '.cal-scroll',
     loc: '.gs-scroll',
-    garden: '.garden-scroll',
     cjian: '#cj-main',
     myarc: '.narc-scroll',
     drift: '.drift-scroll',

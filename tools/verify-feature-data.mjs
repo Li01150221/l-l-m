@@ -124,10 +124,10 @@ await evalJs('window.__mochiFdNoReload = true;'); // 只验数据写入/删除�
     var own = function (k, cid) { window.__activeCid = cid; var f = M.featureOfKey(k, cid); return f ? f.id : null; };
     var hash = '0123456789abcdef0123456789abcdef';
     var out = {
-      gardenDesk: own('xy-home-v2:default:garden-data', 'default'),
-      gardenTop: own('xy-home-v2:garden-data', 'default'),
-      gardenOther: own('xy-home-v2:ctest12345:garden-data', 'default'),
-      gardenOtherSelf: own('xy-home-v2:ctest12345:garden-data', 'ctest12345'),
+      roomDesk: own('xy-home-v2:default:room-data', 'default'),
+      roomTop: own('xy-home-v2:room-data', 'default'),
+      roomOther: own('xy-home-v2:ctest12345:room-data', 'default'),
+      roomOtherSelf: own('xy-home-v2:ctest12345:room-data', 'ctest12345'),
       water: own('xy-home-v2:default:water-today', 'default'),
       cjian: own('xy-home-v2:cjian-state', 'default'),
       decision: own('xy-home-v2:decision-history', 'default'),
@@ -144,12 +144,12 @@ await evalJs('window.__mochiFdNoReload = true;'); // 只验数据写入/删除�
     window.__activeCid = 'default';
     return JSON.stringify(out);
   })()`);
-  check('A1a 本桌面功能键归属正确（garden/water/日历 memo/备忘录）',
-    r && r.gardenDesk === 'garden' && r.gardenTop === 'garden' && r.water === 'water' && r.calendarMemo === 'calendar' && r.memoApp === 'memo',
-    JSON.stringify(r && { g: r.gardenDesk, t: r.gardenTop, w: r.water, m: r.calendarMemo, ma: r.memoApp }));
+  check('A1a 本桌面功能键归属正确（room/water/日历 memo/备忘录）',
+    r && r.roomDesk === 'room' && r.roomTop === 'room' && r.water === 'water' && r.calendarMemo === 'calendar' && r.memoApp === 'memo',
+    JSON.stringify(r && { g: r.roomDesk, t: r.roomTop, w: r.water, m: r.calendarMemo, ma: r.memoApp }));
   check('A1b 别桌面的键不归属当前桌面（清空不跨桌面）',
-    r && r.gardenOther === null && r.gardenOtherSelf === 'garden' && r.waterOtherDesk === null,
-    JSON.stringify(r && { o: r.gardenOther, os: r.gardenOtherSelf, wd: r.waterOtherDesk }));
+    r && r.roomOther === null && r.roomOtherSelf === 'room' && r.waterOtherDesk === null,
+    JSON.stringify(r && { o: r.roomOther, os: r.roomOtherSelf, wd: r.waterOtherDesk }));
   check('A1c 全局键在任何桌面都归属该功能（抉择/此间）',
     r && r.decision === 'decision' && r.decisionOtherDesk === 'decision' && r.cjian === 'cjian',
     JSON.stringify(r && { d: r.decision, dd: r.decisionOtherDesk }));
@@ -162,11 +162,11 @@ await evalJs('window.__mochiFdNoReload = true;'); // 只验数据写入/删除�
 
 // ---------- B 组：页面入口与渲染 ----------
 await evalJs("(function(){try{var cv=document.getElementById('splash-cover');if(cv)cv.hidden=true;}catch(e){}return true;})()");
-// 播种：本桌面花园 + 另一桌面花园 + 喝水 + 媒体池条目
+// 播种：本桌面房间 + 另一桌面房间 + 喝水 + 媒体池条目
 await evalJs(`(function(){
   var g = window.xyStore('xy-home-v2:default');
-  g.set('garden-data', JSON.stringify({ plants: [{ id: 'p1', sec: 60 }], note: '图 @@m:0123456789abcdef0123456789abcdef', st: {} }));
-  window.xyStore('xy-home-v2:ctest12345').set('garden-data', JSON.stringify({ plants: [{ id: 'other', sec: 10 }] }));
+  g.set('room-data', JSON.stringify({ plants: [{ id: 'p1', sec: 60 }], note: '图 @@m:0123456789abcdef0123456789abcdef', st: {} }));
+  window.xyStore('xy-home-v2:ctest12345').set('room-data', JSON.stringify({ plants: [{ id: 'other', sec: 10 }] }));
   g.set('water-today', '3');
   window.xyStore('xy-home-v2').set('media:0123456789abcdef0123456789abcdef', 'data:image/png;base64,AAAA');
   return true;
@@ -183,11 +183,11 @@ await sleep(2500);
 {
   const dom = await json(`(function(){
     var rows = document.querySelectorAll('#feature-data-body .fd-row');
-    var garden = document.querySelector('#feature-data-body .fd-row[data-fid="garden"]');
-    var cnt = garden ? garden.querySelector('[data-count]').textContent : '';
-    var btns = garden ? garden.querySelectorAll('.fd-btn').length : 0;
+    var room = document.querySelector('#feature-data-body .fd-row[data-fid="room"]');
+    var cnt = room ? room.querySelector('[data-count]').textContent : '';
+    var btns = room ? room.querySelectorAll('.fd-btn').length : 0;
     var groupTitles = document.querySelectorAll('#feature-data-body .fd-group-title').length;
-    var scopeTag = garden ? garden.querySelector('.fd-scope').textContent : '';
+    var scopeTag = room ? room.querySelector('.fd-scope').textContent : '';
     return JSON.stringify({ rows: rows.length, cnt: cnt, btns: btns, groups: groupTitles, scope: scopeTag,
       intro: (document.querySelector('#feature-data-body .fd-intro') || {}).textContent ? true : false });
   })()`);
@@ -196,7 +196,7 @@ await sleep(2500);
     JSON.stringify({ opened, rows: dom && dom.rows, groups: dom && dom.groups }));
   check('B2 每功能三按钮（导出/导入/清空）且带短作用范围标记',
     dom && dom.btns === 3 && dom.scope === '本桌面', JSON.stringify({ btns: dom && dom.btns, scope: dom && dom.scope }));
-  check('B3 计数显示本桌面数据量（花园 1 项）',
+  check('B3 计数显示本桌面数据量（房间 1 项）',
     dom && /1 项/.test(dom.cnt || ''), 'cnt=' + (dom && dom.cnt));
 }
 
@@ -204,7 +204,7 @@ await sleep(2500);
 await evalJs(`(function(){ window.__fdCap = null;
   window.mochiExportFile = function (json, fname, title) { window.__fdCap = { json: json, fname: fname, title: title }; return Promise.resolve('ok'); };
   return true; })()`);
-await evalJs(`(function(){ window.mochiFeatureData.exportFeature('garden'); return true; })()`);
+await evalJs(`(function(){ window.mochiFeatureData.exportFeature('room'); return true; })()`);
 await sleep(600);
 const expText = await evalJs("(function(){return document.getElementById('modal-static')?document.getElementById('modal-static').textContent:'';})()");
 await evalJs("(function(){var b=document.getElementById('modal-ok');if(b)b.click();return true;})()");
@@ -214,11 +214,11 @@ await sleep(700);
   let payload = null;
   try { payload = cap ? JSON.parse(cap.json) : null; } catch (e) {}
   check('C1 导出前弹窗说明含体积与作用范围（用户看得见导了什么）',
-    expText && /花园/.test(expText) && /作用范围/.test(expText) && /不会改动本机/.test(expText), String(expText).slice(0, 80));
-  check('C2 导出只含本功能键（别桌面花园键在内，喝水/聊天键不在）',
-    payload && payload.app === 'mochi-feature-data' && payload.feature === 'garden' &&
-    !!payload.keys['xy-home-v2:default:garden-data'] && !payload.keys['xy-home-v2:default:water-today'] &&
-    cap && /mochi花园_/.test(cap.fname),
+    expText && /房间/.test(expText) && /作用范围/.test(expText) && /不会改动本机/.test(expText), String(expText).slice(0, 80));
+  check('C2 导出只含本功能键（别桌面房间键在内，喝水/聊天键不在）',
+    payload && payload.app === 'mochi-feature-data' && payload.feature === 'room' &&
+    !!payload.keys['xy-home-v2:default:room-data'] && !payload.keys['xy-home-v2:default:water-today'] &&
+    cap && /mochi房间_/.test(cap.fname),
     JSON.stringify({ keys: payload && Object.keys(payload.keys), fname: cap && cap.fname }));
   check('C3 导出按内容带上值里引用到的媒体池条目（换机后图片不丢）',
     payload && !!payload.keys['xy-home-v2:media:0123456789abcdef0123456789abcdef'],
@@ -229,16 +229,16 @@ await sleep(700);
 {
   // 文件里混入聊天键与媒体池条目：聊天键必须被丢弃，媒体池条目必须写入
   const fileJson = JSON.stringify({
-    app: 'mochi-feature-data', version: '1.0', feature: 'garden', cid: 'default',
+    app: 'mochi-feature-data', version: '1.0', feature: 'room', cid: 'default',
     keys: {
-      'xy-home-v2:default:garden-data': JSON.stringify({ plants: [{ id: 'p9', sec: 999 }] }),
+      'xy-home-v2:default:room-data': JSON.stringify({ plants: [{ id: 'p9', sec: 999 }] }),
       'xy-home-v2:default:water-today': '77',
       'xy-home-v2:media:0123456789abcdef0123456789abcdef': 'data:image/png;base64,AAAA'
     }
   });
   await evalJs(`(function(){
-    window.__fdFile = new File([${JSON.stringify(fileJson)}], 'garden.json', { type: 'application/json' });
-    window.mochiFeatureData.importFile('garden', window.__fdFile);
+    window.__fdFile = new File([${JSON.stringify(fileJson)}], 'room.json', { type: 'application/json' });
+    window.mochiFeatureData.importFile('room', window.__fdFile);
     return true;
   })()`);
   await sleep(700);
@@ -250,52 +250,52 @@ await sleep(700);
   await sleep(1200);
   const after = await json(`(function(){
     var g = window.xyStore('xy-home-v2:default');
-    var raw = g.get('garden-data') || '';
+    var raw = g.get('room-data') || '';
     return JSON.stringify({
-      garden: raw, water: g.get('water-today'),
+      room: raw, water: g.get('water-today'),
       media: window.xyStore('xy-home-v2').get('media:0123456789abcdef0123456789abcdef') || '',
-      otherDeskGarden: window.xyStore('xy-home-v2:ctest12345').get('garden-data') || '',
+      otherDeskRoom: window.xyStore('xy-home-v2:ctest12345').get('room-data') || '',
       toast: (document.getElementById('cc-toast') || {}).textContent || ''
     });
   })()`);
   check('D1 导入前说明只算本功能数据（其他功能项已被忽略）',
-    impText && /花园」的 1 项数据/.test(impText) && /另有 1 项其他功能/.test(impText), String(impText).slice(0, 110));
+    impText && /房间」的 1 项数据/.test(impText) && /另有 1 项其他功能/.test(impText), String(impText).slice(0, 110));
   check('D2 导入写入本功能新值（替换模式覆盖旧数据）',
-    after && /p9/.test(after.garden || '') && !/p1"/.test(after.garden || ''), String(after && after.garden).slice(0, 70));
+    after && /p9/.test(after.room || '') && !/p1"/.test(after.room || ''), String(after && after.room).slice(0, 70));
   check('D3 文件里其他功能的键被过滤，未写回（喝水仍是 3）',
     after && after.water === '3', 'water=' + (after && after.water));
   check('D4 媒体池条目按内容写入，别桌面数据不受影响',
-    after && after.media === 'data:image/png;base64,AAAA' && /other/.test(after.otherDeskGarden || ''),
-    JSON.stringify({ media: (after && after.media || '').slice(0, 20), other: (after && after.otherDeskGarden || '').slice(0, 24) }));
+    after && after.media === 'data:image/png;base64,AAAA' && /other/.test(after.otherDeskRoom || ''),
+    JSON.stringify({ media: (after && after.media || '').slice(0, 20), other: (after && after.otherDeskRoom || '').slice(0, 24) }));
 }
 
 // ---------- E 组：清空（只删本功能 + 保留共享资源与其他桌面） ----------
-await evalJs(`(function(){ window.mochiFeatureData.clearFeature('garden'); return true; })()`);
+await evalJs(`(function(){ window.mochiFeatureData.clearFeature('room'); return true; })()`);
 await sleep(700);
 const clrText = await evalJs("(function(){return document.getElementById('modal-static')?document.getElementById('modal-static').textContent:'';})()");
 await evalJs("(function(){var b=document.getElementById('modal-ok');if(b)b.click();return true;})()");
 await sleep(1400);
 {
   const after = await json(`(function(){
-    var idb = window.idbGet('xy-home-v2:default:garden-data');
+    var idb = window.idbGet('xy-home-v2:default:room-data');
     return Promise.resolve(idb).then(function (v) {
       return JSON.stringify({
-        ls: window.xyStore('xy-home-v2:default').get('garden-data'),
+        ls: window.xyStore('xy-home-v2:default').get('room-data'),
         idb: v === null || v === undefined ? null : String(v),
         water: window.xyStore('xy-home-v2:default').get('water-today'),
         media: window.xyStore('xy-home-v2').get('media:0123456789abcdef0123456789abcdef') || '',
-        other: window.xyStore('xy-home-v2:ctest12345').get('garden-data') || '',
+        other: window.xyStore('xy-home-v2:ctest12345').get('room-data') || '',
         toast: (document.getElementById('cc-toast') || {}).textContent || ''
       });
     });
   })()`);
   check('E1 清空前确认弹窗点明范围与不可恢复',
-    clrText && /花园/.test(clrText) && /无法恢复/.test(clrText) && /当前桌面/.test(clrText), String(clrText).slice(0, 90));
+    clrText && /房间/.test(clrText) && /无法恢复/.test(clrText) && /当前桌面/.test(clrText), String(clrText).slice(0, 90));
   check('E2 清空后本功能键从 localStorage 与 IndexedDB 都删除',
     after && after.ls === null && after.idb === null, JSON.stringify({ ls: after && after.ls, idb: after && after.idb }));
   check('E3 清空不误删其他功能数据（喝水仍在）',
     after && after.water === '3', 'water=' + (after && after.water));
-  check('E4 清空不误删媒体池与别的桌面数据（图片/另一个桌面花园仍在）',
+  check('E4 清空不误删媒体池与别的桌面数据（图片/另一个桌面房间仍在）',
     after && after.media === 'data:image/png;base64,AAAA' && /other/.test(after.other || ''),
     JSON.stringify({ media: (after && after.media || '').slice(0, 20), other: (after && after.other || '').slice(0, 24) }));
 }

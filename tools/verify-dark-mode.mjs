@@ -131,7 +131,6 @@ await evalJs(`
   mk('<div class="feed-notice-panel"></div>');
   mk('<div class="market-tool"></div>');
   mk('<div class="ta-chime-note"></div>');
-  mk('<div class="garden-plot"></div>');
   mk('<div class="memo-inp"></div>');
   mk('<div id="page-group-chat"><div class="gc-members-panel"></div></div>');
   mk('<div class="chat-search-input"></div>');
@@ -153,7 +152,7 @@ const probe = JSON.parse(await evalJs(`(function(){var g=function(s){var el=docu
 return JSON.stringify({
   gc:g('.gc-settings-panel'),loc:g('.loc-panel'),dp:g('.dp-sheet'),tc:g('.tc-panel'),
   fn:g('.feed-notice-panel'),mk:g('.market-tool'),chime:g('.ta-chime-note'),
-  garden:g('.garden-plot'),memo:g('.memo-inp'),gcmp:(function(){var el=document.querySelector('#dk-probe .gc-members-panel');return el?getComputedStyle(el).backgroundColor:'';})(),
+  memo:g('.memo-inp'),gcmp:(function(){var el=document.querySelector('#dk-probe .gc-members-panel');return el?getComputedStyle(el).backgroundColor:'';})(),
   searchIn:(function(){var el=document.querySelector('#dk-probe .chat-search-input');return el?getComputedStyle(el).backgroundColor:'';})(),
   bub:(function(){var el=document.querySelector('#dk-probe .msg-in .msg-bubble');return el?(getComputedStyle(el).backgroundColor+'|'+getComputedStyle(el).color):'';})(),
   snakeOn:(function(){var el=document.querySelector('#dk-probe .snake-toggle.on');return el?getComputedStyle(el).color:'';})()
@@ -167,8 +166,7 @@ check('C4 TA小问题面板深底', isDarkish(probe.tc), probe.tc);
 check('C5 朋友圈通知面板深底', isDarkish(probe.fn), probe.fn);
 check('C6 礼物市场工具条深底', isDarkish(probe.mk), probe.mk);
 check('C7 TA身边浮字卡深底', isDarkish(probe.chime), probe.chime);
-check('C8 花园地块深底(garden.css 后加载仍被覆盖)', isDarkish(probe.garden), probe.garden);
-check('C9 备忘输入深底(memo.css 后加载仍被覆盖)', isDarkish(probe.memo), probe.memo);
+check('C8 备忘输入深底(memo.css 后加载仍被覆盖)', isDarkish(probe.memo), probe.memo);
 check('C10 群聊成员面板深底', isDarkish(probe.gcmp), probe.gcmp);
 check('C11 聊天搜索框深底(原 #f6f6f6 bug 已修)', isDarkish(probe.searchIn), probe.searchIn);
 {
@@ -229,7 +227,7 @@ check('D6 再次切回深色：变量即时重算(MutationObserver 生效)', /^#
 // ---- E. 静态防线：dark.css 禁止 CSS 原生嵌套（#258）----
 // 嵌套需 Chromium 112+/iOS 16.5+；老内核把嵌套规则整段丢弃=浅色白底扁平规则独存
 // +文字色被扁平变量翻白 = 「白卡白字看不见」。dark.css 全部规则必须为展平的
-// [data-theme="dark"] 前缀选择器（与 garden/memo.css 镜像链约定一致）。
+// [data-theme="dark"] 前缀选择器（与 memo.css 镜像链约定一致）。
 const artifact = readFileSync(join(root, 'index.html'), 'utf8');
 check('E1 产物含展平的拍一拍深色规则([data-theme] #poke-list .cc-item)', artifact.includes('[data-theme="dark"] #poke-list .cc-item'));
 check('E2 产物无原生嵌套深色块(老内核兼容，#258)', !/\[data-theme="dark"\] \{\s*[\r\n]+\s*[.#\[]/.test(artifact));

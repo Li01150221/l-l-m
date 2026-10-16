@@ -24,7 +24,7 @@ if (a < 0 || b < 0 || a >= b) { console.error('抽取失败：找不到 writeImp
 const seg = src.slice(a, b).replace(/\n  \}\s*$/, '\n');
 
 const CC_TYPES = ['text', 'kaomoji', 'emoji', 'sticker', 'image', 'poke', 'voice'];
-const CC_ALL_TYPES = CC_TYPES.concat(['fish', 'eat', 'period', 'water', 'garden', 'sync', 'reach', 'cjian', 'room', 'piggy', 'drift', 'interact', 'music']);
+const CC_ALL_TYPES = CC_TYPES.concat(['fish', 'eat', 'period', 'water', 'sync', 'reach', 'cjian', 'room', 'piggy', 'drift', 'interact', 'music']);
 const EMPTY = () => { const o = {}; CC_ALL_TYPES.forEach(t => { o[t] = []; }); return o; };
 
 function harness({ scope = 'own', cur = 'text', groupsInit } = {}) {

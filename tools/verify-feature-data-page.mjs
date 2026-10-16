@@ -5,7 +5,7 @@
 //   B 注入扫描：所有登记了 page 且没有自带三行入口的功能，其页面内必须有 data-fbar 卡
 //     （卡必须是那个 .page 的后代——页面 hidden 时随之隐藏，不会跑到桌面首页）；
 //   C 不重复：已自带导出/导入/清空的功能页（聊天设置/信箱/朋友圈）里不得再出现第二套；
-//   D 真实点选：进花园页 → 点卡上「导出数据」→ 导出弹窗（含功能名与作用范围）；
+//   D 真实点选：进喝水页 → 点卡上「导出数据」→ 导出弹窗（含功能名与作用范围）；
 //   E 真实点选：点「清空数据」→ 确认弹窗点明不可恢复；取消后数据仍在；
 //   F 零 JS 异常。
 // 需要已构建产物；用法：MOCHI_ROOT=<构建目录> node tools/verify-feature-data-page.mjs
@@ -135,8 +135,8 @@ const sweep = await json(`(function(){
     withPage: feats.filter(function(f){return !!f.page;}).length,
     skippedOwn: feats.filter(function(f){return !!f.page && !!f.btns;}).map(function(f){return f.id;}) });
 })()`);
-check('B1 每个该有的功能页里都有数据管理卡（缺失 0，25 处）',
-  sweep && sweep.missing.length === 0 && sweep.inside >= 25,
+check('B1 每个该有的功能页里都有数据管理卡（缺失 0，24 处）',
+  sweep && sweep.missing.length === 0 && sweep.inside >= 24,
   JSON.stringify({ inside: sweep && sweep.inside, missing: sweep && sweep.missing }));
 check('B2 卡在其所在 .page 内（页面隐藏时随之隐藏，不会跑到桌面首页）',
   sweep && sweep.missing.length === 0 && sweep.reports.every(function (r) { return r.indexOf('→') > 0; }),
@@ -144,7 +144,7 @@ check('B2 卡在其所在 .page 内（页面隐藏时随之隐藏，不会跑到
 console.log('     注入明细（' + (sweep && sweep.inside) + ' 处）：' + ((sweep && sweep.reports) || []).join(' | '));
 check('B3 卡上三枚按钮齐全（导出/导入/清空）',
   await evalJs(`(function(){
-    var bar = document.querySelector('[data-fbar="garden"]');
+    var bar = document.querySelector('[data-fbar="water"]');
     if (!bar) return false;
     var ops = bar.querySelectorAll('.fd-btn');
     if (ops.length !== 3) return false;
@@ -209,42 +209,44 @@ check('B3 卡上三枚按钮齐全（导出/导入/清空）',
     String(await evalJs(`(function(){return ['cs-export-msgs','mail-export','feed-clear-all','cc-export'].map(function(i){return i+'='+!!document.getElementById(i);}).join(' ');})()`)));
 }
 
-// ---------- D 组：真实点选——进花园页 → 卡上「导出数据」 ----------
+// ---------- D 组：真实点选——进喝水页 → 卡上「导出数据」 ----------
 {
-  // 播种花园数据 + 点桌面图标进花园页（走真实入口，不用 DOM 直点卡）
+  // 播种喝水数据 + 点桌面图标进喝水页（走真实入口，不用 DOM 直点卡）
   await evalJs(`(function(){
-    try { window.xyStore('xy-home-v2:default').set('garden-data', JSON.stringify({ plants: [{ id: 'g1', sec: 60 }] })); } catch (e) {}
+    var d = new Date();
+    var today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    try { window.xyStore('xy-home-v2:default').set('water-today', JSON.stringify({ date: today, count: 5 })); } catch (e) {}
     return true;
   })()`);
   await sleep(300);
   const opened = await evalJs(`(function(){
-    var icon = document.querySelector('.app[data-app="garden"]');
+    var icon = document.querySelector('.app[data-app="water"]');
     if (!icon) return 'noicon';
     icon.click();
-    var page = document.getElementById('page-garden');
+    var page = document.getElementById('page-water');
     return (page && !page.hidden) ? 'ok' : 'nopage';
   })()`);
   await sleep(600);
   const vis = await json(`(function(){
-    var bar = document.querySelector('[data-fbar="garden"]');
-    var page = document.getElementById('page-garden');
+    var bar = document.querySelector('[data-fbar="water"]');
+    var page = document.getElementById('page-water');
     return JSON.stringify({
       opened: !!(page && !page.hidden),
       barVisible: !!(bar && bar.offsetParent !== null),
       cnt: (bar && bar.querySelector('[data-fcount]') ? bar.querySelector('[data-fcount]').textContent : '')
     });
   })()`);
-  check('D1 点桌面花园图标进入花园页，且页内数据卡真实可见',
+  check('D1 点桌面喝水图标进入喝水页，且页内数据卡真实可见',
     opened === 'ok' && vis && vis.opened === true && vis.barVisible === true,
     JSON.stringify({ opened, vis }));
   check('D2 卡上计数显示本功能数据量（不是一直停在「统计中…」）',
-    vis && /1\s*项/.test(vis.cnt || ''), 'cnt=' + (vis && vis.cnt));
+    vis && /\d+\s*项/.test(vis.cnt || ''), 'cnt=' + (vis && vis.cnt));
 
   await evalJs(`(function(){ window.__fdCap = null;
     window.mochiExportFile = function (j, fname, title) { window.__fdCap = { json: j, fname: fname }; return Promise.resolve('ok'); };
     return true; })()`);
   await evalJs(`(function(){
-    var bar = document.querySelector('[data-fbar="garden"]');
+    var bar = document.querySelector('[data-fbar="water"]');
     bar.querySelector('.fd-btn[data-op="export"]').click();
     return true;
   })()`);
@@ -256,28 +258,28 @@ check('B3 卡上三枚按钮齐全（导出/导入/清空）',
   let payload = null;
   try { payload = cap ? JSON.parse(cap.json) : null; } catch (e) {}
   check('D3 功能页内点「导出数据」＝走集中页同一条导出引擎（弹窗含功能名+作用范围，文件只含本功能键）',
-    expText && /花园/.test(expText) && /作用范围/.test(expText) &&
-    payload && payload.feature === 'garden' && !!payload.keys['xy-home-v2:default:garden-data'],
+    expText && /喝水/.test(expText) && /作用范围/.test(expText) &&
+    payload && payload.feature === 'water' && !!payload.keys['xy-home-v2:default:water-today'],
     JSON.stringify({ modal: String(expText).slice(0, 40), keys: payload && Object.keys(payload.keys) }));
 }
 
 // ---------- E 组：真实点选——卡上「清空数据」 ----------
 {
   await evalJs(`(function(){
-    var bar = document.querySelector('[data-fbar="garden"]');
+    var bar = document.querySelector('[data-fbar="water"]');
     bar.querySelector('.fd-btn[data-op="clear"]').click();
     return true;
   })()`);
   await sleep(700);
   const clrText = await evalJs("(function(){return document.getElementById('modal-static')?document.getElementById('modal-static').textContent:'';})()");
   check('E1 功能页内点「清空数据」＝确认弹窗点明范围与不可恢复',
-    clrText && /花园/.test(clrText) && /无法恢复/.test(clrText) && /当前桌面/.test(clrText),
+    clrText && /喝水/.test(clrText) && /无法恢复/.test(clrText) && /当前桌面/.test(clrText),
     String(clrText).slice(0, 70));
   // 取消（不确认）：数据必须原样保留
   await evalJs("(function(){var b=document.querySelector('.modal-cancel,#modal-cancel');if(b)b.click();return true;})()");
   await sleep(500);
-  const kept = await evalJs("(function(){try{return window.xyStore('xy-home-v2:default').get('garden-data')||'';}catch(e){return '';}})()");
-  check('E2 取消后本功能数据原样保留（未有半删副作用）', /g1/.test(kept || ''), String(kept).slice(0, 40));
+  const kept = await evalJs("(function(){try{return window.xyStore('xy-home-v2:default').get('water-today')||'';}catch(e){return '';}})()");
+  check('E2 取消后本功能数据原样保留（未有半删副作用）', !!(kept && kept.length > 2), String(kept).slice(0, 40));
 }
 
 // ---------- F 组：零异常 ----------

@@ -151,7 +151,7 @@ async function boot(tag, broken) {
 const RECOMPUTE = "(function(){" +
   "var D=window.DEFAULT_CARD_DATA||{};" +
   "var BASE=['main','kaomoji','emoji','touch'];" +
-  "var FUNC=['fish','eat','period','water','garden','sync','reach','cjian','room','piggy','drift','interact','music'];" +
+  "var FUNC=['fish','eat','period','water','sync','reach','cjian','room','piggy','drift','interact','music'];" +
   "var sum=function(ks){var n=0;ks.forEach(function(k){(D[k]||[]).forEach(function(g){n+=(g&&g[1]?g[1].length:0);});});return n;};" +
   "return JSON.stringify({base:sum(BASE),func:sum(FUNC),dict:sum(['dict']),dk:sum(['deskcheck']),all:sum(BASE.concat(FUNC,['dict','deskcheck']))});" +
   "})()";

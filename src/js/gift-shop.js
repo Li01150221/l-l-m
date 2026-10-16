@@ -115,10 +115,10 @@
       if (el) el.textContent = walletText();
     });
   }
-  // v3.15.x：小游戏/花园等联动发放心意币的统一入口——dMy/dTa 为变动分值，
+  // v3.15.x：小游戏等联动发放心意币的统一入口——dMy/dTa 为变动分值，
   // 累加进共用账本 gift-wallet（自动沿用旧键迁移种子）；返回更新后余额，供调用方拼提示
   // v3.16.x：新增第三参 src（来源标签，如「双人打砖块」）——传入时同步记入主页赚钱流水，
-  // 游戏互动/花园一律双方同步同额（dMy=dTa=real），流水里我和 TA 各记一笔
+  // 游戏互动一律双方同步同额（dMy=dTa=real），流水里我和 TA 各记一笔
   // v3.17.x 规则：玩游戏只有奖励机制，不存在"我赢他钱/他赢我钱"的转移——凡带 src 的
   // 发放场景，dMy/dTa 一律钳到 ≥0，任何一方为负直接归零。主动消耗（发红包/买礼物）不走
   // 本函数（直接改 wallet.myBalance/systemBalance），不受此守门影响，仍可正常扣减。
@@ -135,7 +135,7 @@
     return { myBalance: w.myBalance, systemBalance: w.systemBalance };
   };
   // v3.16.x：心意币流水账（按联系人桌面前缀隔离，主页「心意币赚钱/申请记录」读取）。
-  // kind='earn' 写 records-coin-earn（游戏/花园赚钱），kind='ask' 写 records-coin-ask（向 Mochi 申请）。
+  // kind='earn' 写 records-coin-earn（游戏赚钱），kind='ask' 写 records-coin-ask（向 Mochi 申请）。
   // myFen/taFen = 我和 TA 各自入账分值（可一方为 0）；src 为来源/渠道中文标签。
   function coinLedgerLoad(kind) {
     try {
@@ -229,7 +229,7 @@
   const CAT_COLOR = { '花束': '#fce4ec', '甜品': '#fff3e0', '饮品': '#ffe0b2', '美食': '#fff9c4', '饰品': '#f3e5f5', '星空': '#e8eaf6', '两个世界': '#e0f7fa', '出行': '#e1f5fe', '娱乐': '#e1bee7', '关怀': '#e0f2f1', '情侣用品': '#fce4ec', '日常用品': '#f1f8e9', '药品医护': '#ffebee', '节日节令': '#fff8e1', '美妆个护': '#fce4ec' };
   window.GIFT_CAT_COLOR = CAT_COLOR;
   // v3.15.x 二调：价格带对齐红包金额体系（¥5.2/13.14/52/77.77/131.4/334.4/520/888.88/999.99/1314/5200）——
-  // 零花档（≤¥15）= 一局小游戏的量级；日常档 ¥16~99 = 一两天游戏+花园收入；
+  // 零花档（≤¥15）= 一局小游戏的量级；日常档 ¥16~99 = 一两天游戏收入；
   // 轻奢/大礼档（¥131~1314）与镇店档（¥5200）对应红包中大额特殊金额，作为攒币目标。
   const DEF_GIFTS = [
     { id: 'g_rose', name: '玫瑰', emoji: '🌹', price: 52.00, cat: '花束', wish: '送你一束玫瑰，像见你那天的风' },

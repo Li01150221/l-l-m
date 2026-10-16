@@ -42,7 +42,7 @@ ok(shelp.includes("sel: '#row-guidebook'"), 'S4 新手引导登记了功能说�
 ok(fhub.includes("go: ['#row-changelog']") && fhub.includes("go: ['#row-privacy']"), 'S5 功能大全收录关于段新入口（feature-hub.js）');
 
 // ===== 行为：自组装页 =====
-const cssFiles = ['base.css', 'home.css', 'chat-main.css', 'chat-pages.css', 'market.css', 'group-chat.css', 'setting.css', 'tabbar.css', 'dark.css', 'garden.css', 'memo.css', 'memo-arc.css', 'room.css'];
+const cssFiles = ['base.css', 'home.css', 'chat-main.css', 'chat-pages.css', 'market.css', 'group-chat.css', 'setting.css', 'tabbar.css', 'dark.css', 'memo.css', 'memo-arc.css', 'room.css'];
 const jsFiles = ['idb.js', 'contacts.js', 'clock.js', 'tabs.js', 'desktop-slider.js', 'quote-cards.js', 'personalize.js', 'settings-help.js', 'onboarding.js'];
 let html = tpl;
 const styles = cssFiles.map((f) => readSrc('css/' + f)).join('\n');

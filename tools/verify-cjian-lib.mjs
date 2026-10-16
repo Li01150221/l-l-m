@@ -1,6 +1,6 @@
 // ===== 专项：此间（梦角世界）字卡库【系统预设字卡→此间】分组 + 感知播报同源联动 =====
 // 用法：node tools/verify-cjian-lib.mjs
-// 背景（用户反馈）：喝水/房间/同频/伸手/花园 等功能分类在【系统预设字卡】里找不到查看入口，
+// 背景（用户反馈）：喝水/房间/同频/伸手 等功能分类在【系统预设字卡】里找不到查看入口，
 //   且「此间」从未入库——本轮把全部功能池 tab 连排最前并新增「此间」分组：
 //   DEFAULT_CARD_DATA.cjian 四组（在场感知/空闲状态 供查看；感知·气息/感知·落空 为
 //   点「感应」时的随机播报句），cjian.js 经 getLibPool('cjian',分组,兜底) 抽取 +
@@ -38,10 +38,10 @@ function check(desc, ok, detail) {
 
   const tplSrc = readFileSync(join(root, 'src', 'template.html'), 'utf8');
   // v3.16.x：功能触发字卡已从「聊天默认字卡」拆到独立页 page-fun-cards（#fc-tabs），
-  // 摸鱼/吃饭/经期/喝水/花园/同频/伸手/此间/房间/存钱罐/漂流瓶/互动回应 全量预置
+  // 摸鱼/吃饭/经期/喝水/同频/伸手/此间/房间/存钱罐/漂流瓶/互动回应 全量预置
   const fcTabs = (tplSrc.match(/<div class="card-tabs" id="fc-tabs">([\s\S]*?)<\/div>/) || [])[1] || '';
   const fcOrder = (fcTabs.match(/data-type="([^"]+)"/g) || []).map(s => s.replace(/data-type="/, '').replace(/"/, ''));
-  const wantOrder = ['fish', 'eat', 'period', 'water', 'garden', 'sync', 'reach', 'cjian', 'room', 'piggy', 'drift', 'interact'];
+  const wantOrder = ['fish', 'eat', 'period', 'water', 'sync', 'reach', 'cjian', 'room', 'piggy', 'drift', 'interact'];
   check('A4 功能类 tab 独立成页（#fc-tabs）且顺序正确（摸鱼…存钱罐，漂流瓶，互动回应末位）',
     fcOrder.join(',') === wantOrder.join(','), { fcOrder: fcOrder });
   check('A5 三类改名仍在（摸鱼/吃饭/经期 短标签）',
@@ -157,7 +157,7 @@ await sleep(700);
 const badge = JSON.parse(await evalJs(`(function(){
   var D=window.DEFAULT_CARD_DATA||{};
   var BASE=['main','kaomoji','emoji','touch'];
-  var FUNC=['fish','eat','period','water','garden','sync','reach','cjian','room','piggy','drift','interact'];
+  var FUNC=['fish','eat','period','water','sync','reach','cjian','room','piggy','drift','interact'];
   function sum(keys){var n=0;keys.forEach(function(k){(D[k]||[]).forEach(function(g){n+=(g[1]||[]).length;});});return n;}
   var el=document.querySelector('#li-default-cards .t');
   var fel=document.getElementById('fc-lib-count');

@@ -141,14 +141,14 @@ ok('B1 全新环境横幅计数＝目录条目数（N=total−已到达，与 se
   bar.n !== null && bar.n >= 1 && total - Object.keys(seen).length === bar.n, 'total=' + total + ' seen=' + Object.keys(seen).length + ' n=' + bar.n);
 
 // ---------- B2：桌面图标点击＝标记同选择器全部条目，计数同步下降且刷新仍在 ----------
-await evalJs("document.querySelector('.app[data-app=\"garden\"]').click(); return true;");
+await evalJs("document.querySelector('.app[data-app=\"room\"]').click(); return true;");
 await sleep(700);
 await evalJs("var bs=document.querySelectorAll('[id$=\"-back\"]'); for (var i=0;i<bs.length;i++){ try{ bs[i].click(); }catch(e){} } document.getElementById('row-featurehub').click(); return true;");
 await sleep(700);
 const bar2 = await barInfo();
 seen = await seenObj();
 ok('B2a 点桌面图标即写 fhub-seen（同选择器多条目一起标）',
-  !!seen['花园（桌面图标）'] && !!seen['花园'], JSON.stringify(Object.keys(seen)));
+  !!seen['房间（桌面图标）'] && !!seen['房间'], JSON.stringify(Object.keys(seen)));
 ok('B2b 横幅计数恰下降（＝本次新标记条数）且角标同步',
   bar.n - bar2.n === 2 && bar2.badge === bar2.n + ' 个没试过', 'before=' + bar.n + ' after=' + bar2.n + ' badge=' + bar2.badge);
 await openCold(true);

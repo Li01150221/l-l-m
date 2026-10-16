@@ -27,8 +27,8 @@ const chromePath = candidates.find((p) => { try { return statSync(p).isFile(); }
 if (!chromePath) { console.error('找不到 Chrome/Edge'); process.exit(1); }
 
 const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.png': 'image/png' };
-const cssFiles = ['base.css', 'home.css', 'chat-main.css', 'chat-pages.css', 'market.css', 'group-chat.css', 'setting.css', 'tabbar.css', 'dark.css', 'garden.css', 'memo.css'];
-const jsFiles = ['idb.js', 'contacts.js', 'clock.js', 'tabs.js', 'desktop-slider.js', 'quote-cards.js', 'personalize.js', 'chat.js', 'group-chat.js', 'chatcard.js', 'chat-settings.js', 'reply-settings.js', 'fav-settings.js', 'default-cards-data.js', 'default-cards.js', 'mood-followup-data.js', 'mood-reply-cards.js', 'music-player.js', 'calendar.js', 'divination.js', 'avatar-lib.js', 'ta-ask.js', 'ck-question.js', 'bg-keep.js', 'records.js', 'call.js', 'mail.js', 'feed.js', 'p2-features.js', 'gift-shop.js', 'memo-app.js', 'period.js', 'accounting.js', 'garden.js', 'decision.js', 'pong.js', 'snake-game.js', 'sfx.js', 'fullscreen.js', 'data-backup.js', 'pwa.js', 'mobile-adapt.js'];
+const cssFiles = ['base.css', 'home.css', 'chat-main.css', 'chat-pages.css', 'market.css', 'group-chat.css', 'setting.css', 'tabbar.css', 'dark.css', 'memo.css'];
+const jsFiles = ['idb.js', 'contacts.js', 'clock.js', 'tabs.js', 'desktop-slider.js', 'quote-cards.js', 'personalize.js', 'chat.js', 'group-chat.js', 'chatcard.js', 'chat-settings.js', 'reply-settings.js', 'fav-settings.js', 'default-cards-data.js', 'default-cards.js', 'mood-followup-data.js', 'mood-reply-cards.js', 'music-player.js', 'calendar.js', 'divination.js', 'avatar-lib.js', 'ta-ask.js', 'ck-question.js', 'bg-keep.js', 'records.js', 'call.js', 'mail.js', 'feed.js', 'p2-features.js', 'gift-shop.js', 'memo-app.js', 'period.js', 'accounting.js', 'decision.js', 'pong.js', 'snake-game.js', 'sfx.js', 'fullscreen.js', 'data-backup.js', 'pwa.js', 'mobile-adapt.js'];
 let testHtml = readFileSync(join(root, 'src/template.html'), 'utf8');
 testHtml = testHtml.replace('/*__STYLES__*/', cssFiles.map((f) => readFileSync(join(root, 'src/css', f), 'utf8')).join('\n'));
 testHtml = testHtml.replace('/*__SCRIPTS__*/', jsFiles.map((f) => '(function () { try {\n' + readFileSync(join(root, 'src/js', f), 'utf8') + '\n} catch (__e) { try { console.error("[JS] ' + f + '", __e && __e.message || __e); } catch (x) {} if (window.__jsErrors) window.__jsErrors.push(String(__e && __e.message || __e)); } })();').join('\n'));
@@ -157,10 +157,6 @@ try {
   ok('逐张开关写入 dc-off-fish:* 且可恢复', offTest && offTest.ok && offTest.saved && offTest.key === 'xy-home-v2:default:dc-off-fish:' + offTest.txt, offTest);
   await evalJs("document.getElementById('page-fun-cards').hidden = true; true");
 
-  console.log('\n== T8 花园/同频/伸手/喝水/存钱罐 预设池 ==');
-  const pools = await evalJs("({ tabs: ['garden','sync','reach','water','piggy'].map(function(k){ return !!document.querySelector('#fc-tabs [data-type=\"'+k+'\"]'); }).every(Boolean), g: window.getLibPool('garden','梦角悄悄话',[]).length, s: window.getLibPool('sync','TA 此刻',[]).length, r: window.getLibPool('reach','悄悄话',[]).length, w: window.getLibPool('water','提醒模板',[]).length, wt: window.getLibPool('water','TA 提醒句式',[]).length, p: window.getLibPool('piggy','存入碎碎念',[]).length })");
-  ok('五个新 tab 全部注入', pools && pools.tabs === true, pools);
-  ok('池数据齐全（园7/同8/伸6/水4/句式4/罐5）', pools && pools.g === 7 && pools.s === 8 && pools.r === 6 && pools.w === 4 && pools.wt === 4 && pools.p === 5, pools);
   // v3.26.x：预设字卡列表改视口虚拟窗口（DOM 只保留视口附近约 24 行，整类 36 行不再
   // 一次全渲染）→ 改为逐分组筛选累加统计（每组 ≤9 张必定落在窗口内）
   const waterTab = await evalJs(`(async function(){

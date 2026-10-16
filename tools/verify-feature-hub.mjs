@@ -1,6 +1,6 @@
 // ===== 验证 #305：功能大全页（feature-hub.js）=====
 // 内存拼装 src（与 build.mjs 同序、不写产物）→ 无头 Chrome 实测：分组/条目渲染数、
-// 搜索过滤与恢复、设置行进入、链式跳转两类（桌面图标 page-garden / 聊天面板 chat-rps-panel）、
+// 搜索过滤与恢复、设置行进入、链式跳转两类（桌面图标 page-room / 聊天面板 chat-rps-panel）、
 // where 条目位置提示、返回设置页。不依赖构建产物，构建前后都可跑。
 // 用法：node tools/verify-feature-hub.mjs（需本机 Chrome/Edge）。
 import { spawn } from 'node:child_process';
@@ -105,10 +105,10 @@ await sleep(80);
 const vis2 = await ev(`[...document.querySelectorAll('#fhub-body .set-row')].filter(r=>r.style.display!=='none').length`);
 A('A4 清空搜索恢复到 A1 全量（往返等式，不写死条数）', vis2 === rowCount, '恢复 ' + vis2 + ' 条 / A1 ' + rowCount + ' 条');
 
-// A5 链式跳转·桌面图标类（花园）——按首行名称精确匹配（描述里含「花园」的字卡行不应误命中）
-await ev(`[...document.querySelectorAll('#fhub-body .set-row')].find(r=>{const t=r.querySelector('.txt'); return t&&t.firstChild&&t.firstChild.textContent.trim()==='花园';}).click()`);
+// A5 链式跳转·桌面图标类（房间）——按行名精确匹配（描述里含「房间」的字卡行不应误命中）
+await ev(`[...document.querySelectorAll('#fhub-body .set-row')].find(r=>{const t=r.querySelector('.txt'); return t&&t.firstChild&&t.firstChild.textContent.trim()==='房间（桌面图标）';}).click()`);
 await sleep(200);
-A('A5 跳转花园页', await ev(`!document.getElementById('page-garden').hidden && document.getElementById('page-featurehub').hidden`));
+A('A5 跳转房间页', await ev(`!document.getElementById('page-room').hidden && document.getElementById('page-featurehub').hidden`));
 
 // A6 链式跳转·聊天面板类（猜拳）——按首行名称精确匹配（v3.27.x 起「现在让 TA 邀请一次」等条目描述也含「猜拳」，模糊匹配会误命中）
 await ev(`document.getElementById('row-featurehub').click()`);

@@ -342,7 +342,7 @@ await nav(); await dismiss(); await ready();
   // 隔离没放松：别桌面的键仍然不进当前桌面
   const iso = {
     a: await claim('xy-home-v2:default:chat-msgs', 'czzzzz'),
-    b: await claim('xy-home-v2:default:garden-data', 'czzzzz'),
+    b: await claim('xy-home-v2:default:room-data', 'czzzzz'),
     c: await claim('xy-home-v2:czzzzz:chat-msgs', 'czzzzz'),
     d: await claim('xy-home-v2:czzzzz:music-playlists', 'czzzzz'),
     e: await claim('xy-home-v2:default:music-playlists', 'czzzzz'),
@@ -451,7 +451,7 @@ await nav(); await dismiss(); await ready();
   const iso2 = {
     a: await claim('xy-home-v2:default:chat-msgs', 'czzzzz'),      // 别人的桌面数据仍不许进来
     b: await claim('xy-home-v2:czzzzz:chat-msgs', 'czzzzz'),
-    c: await claim('xy-home-v2:default:garden-data', 'czzzzz'),
+    c: await claim('xy-home-v2:default:room-data', 'czzzzz'),
     d: await claim('xy-home-v2:default:my-emoji-groups', 'czzzzz') // default 桌面上的 per-desktop 键也不该被当成共享
   };
   ok('C5b 改判没把隔离放松（default 桌面的私有键不进联系人桌面视角）',
@@ -587,7 +587,7 @@ await seedViaModule('xy-home-v2', "s.set('music-file:sm_body', 'data:audio/mpeg;
     r2: await claim('xy-home-v2:rp-wallet', 'default'),
     r3: await claim('xy-home-v2:default:cs-lbl-partner', 'default'),
     r4: await claim('xy-home-v2:decision-history', 'czzzzz'),
-    r5: await claim('xy-home-v2:default:garden-data', 'default'),
+    r5: await claim('xy-home-v2:default:room-data', 'default'),
     r6: await claim('xy-home-v2:media:0123456789abcdef0123456789abcdef', 'default')
   };
   const NEWFAM = /:music-|group-chat-msgs|group-chat-enabled|memo-app|pomo-|applock|desk-msg-en|fav-ta-|theme-mode|accent-color|bg-keepalive|bg-notify|call-active|tabbar-|tab-icon-|mc-|mh-|rc-|ckq-|checkin|ti-last-id|partner-gender|divination-desk-pin|group-chat-desk-pin|ask-think-secs|today-mood|:memo$|ver-update-notify/;
@@ -601,7 +601,7 @@ await seedViaModule('xy-home-v2', "s.set('music-file:sm_body', 'data:audio/mpeg;
     (a.nobody || []).every((k) => !NEWFAM.test(k)),
     'cid=' + a.cid + ' total=' + a.total);
   ok('E3 邻居归属：records-avatar→identity／cs-lbl-partner→identity／decision-history→decision 一字未动；rp-wallet 自 #1346 起归 gift（旧表挂在 chat 名下，chat 一翻 both 就会把心意币账本抢进聊天，见登记表批注）',
-    o.r1 === 'identity' && o.r2 === 'gift' && o.r3 === 'identity' && o.r4 === 'decision' && o.r5 === 'garden' && o.r6 === null,
+    o.r1 === 'identity' && o.r2 === 'gift' && o.r3 === 'identity' && o.r4 === 'decision' && o.r5 === 'room' && o.r6 === null,
     JSON.stringify(o));
 }
 

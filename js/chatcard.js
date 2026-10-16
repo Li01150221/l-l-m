@@ -135,7 +135,7 @@ ccTokenizeGiantMedia(ownPoolCache, 'own');
 return ownPoolCache;
 }
 const CC_TYPES = ['text', 'kaomoji', 'emoji', 'sticker', 'image', 'poke', 'voice'];
-const CC_FUNC_KEYS = ['fish', 'eat', 'period', 'water', 'garden', 'sync', 'reach', 'cjian', 'room', 'piggy', 'drift', 'interact', 'music',
+const CC_FUNC_KEYS = ['fish', 'eat', 'period', 'water', 'sync', 'reach', 'cjian', 'room', 'piggy', 'drift', 'interact', 'music',
 'mjfree']; // #317 梦角自由造句：程序生成的重造句卡（dream-free.js），管理页可查看/删除，不进聊天通用池
 const CC_ALL_TYPES = CC_TYPES.concat(CC_FUNC_KEYS);
 const CC_FUN_COUNT_KEYS = CC_FUNC_KEYS.filter(k => k !== 'mjfree');
@@ -2045,7 +2045,7 @@ if (ccExport) {
 const EXPORT_CATS = [
 ['text', '主字卡'], ['kaomoji', '颜文字'], ['emoji', 'emoji'],
 ['sticker', '表情包'], ['image', '图片'], ['poke', '拍一拍'], ['voice', '语音'],
-['fish', '摸鱼'], ['eat', '吃饭'], ['period', '经期'], ['water', '喝水'], ['garden', '花园'],
+['fish', '摸鱼'], ['eat', '吃饭'], ['period', '经期'], ['water', '喝水'],
 ['sync', '同频'], ['reach', '伸手'], ['cjian', '此间'], ['room', '房间'], ['piggy', '存钱罐'],
 ['drift', '漂流瓶'], ['interact', '互动回应'], ['music', '音乐'],
 ['mjfree', '梦角自由造句']
@@ -2162,7 +2162,7 @@ ccExportOffer(data,
 }
 const ccImportData = document.getElementById('cc-import-data');
 if (ccImportData) {
-const CAT_NAMES = { text: '主字卡', kaomoji: '颜文字', emoji: 'emoji', sticker: '表情包', image: '图片', poke: '拍一拍', voice: '语音', fish: '摸鱼', eat: '吃饭', period: '经期', water: '喝水', garden: '花园', sync: '同频', reach: '伸手', cjian: '此间', room: '房间', piggy: '存钱罐', drift: '漂流瓶', interact: '互动回应', music: '音乐', mjfree: '梦角自由造句' };
+const CAT_NAMES = { text: '主字卡', kaomoji: '颜文字', emoji: 'emoji', sticker: '表情包', image: '图片', poke: '拍一拍', voice: '语音', fish: '摸鱼', eat: '吃饭', period: '经期', water: '喝水', sync: '同频', reach: '伸手', cjian: '此间', room: '房间', piggy: '存钱罐', drift: '漂流瓶', interact: '互动回应', music: '音乐', mjfree: '梦角自由造句' };
 ccImportData.addEventListener('click', () => {
 if (window.openModal) {
 const curName = CAT_NAMES[cur] || '当前分类';
@@ -2602,7 +2602,7 @@ inc[t].forEach(n => { if (typeof n === 'string' && o[t].indexOf(n) < 0) o[t].pus
 });
 st.set(key, JSON.stringify(o));
 }
-const CC_FULL_FUN_TYPES = ['fish', 'eat', 'period', 'water', 'garden', 'sync', 'reach', 'cjian', 'room', 'piggy', 'drift', 'interact', 'music'];
+const CC_FULL_FUN_TYPES = ['fish', 'eat', 'period', 'water', 'sync', 'reach', 'cjian', 'room', 'piggy', 'drift', 'interact', 'music'];
 function ccFullPickCc(o, keepFun) {
 const out = {};
 CC_ALL_TYPES.forEach(t => {
@@ -2627,7 +2627,7 @@ liCcFullExport.addEventListener('click', () => {
 if (!window.openModal) { ccFullDoExport('all'); return; }
 window.openModal('导出自定义字卡', '', (mode) => { if (mode) ccFullDoExport(mode); }, {
 noInput: true,
-staticText: '选择导出范围（四档）：\n· 公用聊天字卡：全桌面共享（不含互动功能字卡），含分组与停用开关\n· 专属聊天字卡：只含当前桌面联系人的字卡（不含互动功能字卡），含分组与停用开关；寻踪日常 / 今日情话 / TA 六类题库（询问 / 小问题 / 好奇 / 吐槽 / 查岗 / 邀请）随本档导出\n· 互动功能字卡（单独）：摸鱼 / 吃饭 / 经期 / 喝水 / 花园 / 同频 / 伸手 / 此间 / 房间 / 存钱罐 / 漂流瓶 / 互动回应 / 音乐——公用与专属两个库都导，含停用开关；不用这些功能可忽略本档\n· 全量导出：以上全部\n注意：「专属」「互动功能字卡（专属库部分）」换机恢复时，请切到对应联系人桌面再导入；导出文件不代替 设置→数据备份 的整包备份',
+staticText: '选择导出范围（四档）：\n· 公用聊天字卡：全桌面共享（不含互动功能字卡），含分组与停用开关\n· 专属聊天字卡：只含当前桌面联系人的字卡（不含互动功能字卡），含分组与停用开关；寻踪日常 / 今日情话 / TA 六类题库（询问 / 小问题 / 好奇 / 吐槽 / 查岗 / 邀请）随本档导出\n· 互动功能字卡（单独）：摸鱼 / 吃饭 / 经期 / 喝水 / 同频 / 伸手 / 此间 / 房间 / 存钱罐 / 漂流瓶 / 互动回应 / 音乐——公用与专属两个库都导，含停用开关；不用这些功能可忽略本档\n· 全量导出：以上全部\n注意：「专属」「互动功能字卡（专属库部分）」换机恢复时，请切到对应联系人桌面再导入；导出文件不代替 设置→数据备份 的整包备份',
 pills: [
 { label: '公用聊天字卡', value: 'pub' },
 { label: '专属聊天字卡', value: 'own' },

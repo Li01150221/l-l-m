@@ -12,7 +12,7 @@ const root = normalize(dirname(fileURLToPath(import.meta.url)) + '/..');
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const read = (f) => readFileSync(join(root, 'src', f), 'utf8');
 
-const cssFiles = ['base.css', 'home.css', 'chat-main.css', 'chat-pages.css', 'market.css', 'group-chat.css', 'setting.css', 'tabbar.css', 'dark.css', 'garden.css', 'memo.css', 'memo-arc.css', 'room.css'];
+const cssFiles = ['base.css', 'home.css', 'chat-main.css', 'chat-pages.css', 'market.css', 'group-chat.css', 'setting.css', 'tabbar.css', 'dark.css', 'memo.css', 'memo-arc.css', 'room.css'];
 const jsFiles = ['idb.js', 'contacts.js', 'clock.js', 'tabs.js', 'desktop-slider.js', 'quote-cards.js', 'personalize.js', 'group-chat.js', 'decision.js', 'group-decision.js'];
 let html = readFileSync(join(root, 'src', 'template.html'), 'utf8');
 const styles = cssFiles.map((f) => read(join('css', f))).join('\n');

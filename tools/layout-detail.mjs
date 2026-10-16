@@ -26,11 +26,11 @@ await evalJs("(function(){var s=document.getElementById('splash');if(s&&!s.class
 await sleep(900);
 await evalJs("(function(){var b=document.getElementById('splash-confirm-ok');if(b)b.click();return true;})()");
 await sleep(800);
-await evalJs("(function(){var b=document.querySelector('.app[data-app=\"garden\"]');if(b){b.click();return true;}return false;})()");
+await evalJs("(function(){var b=document.querySelector('.app[data-app=\"room\"]');if(b){b.click();return true;}return false;})()");
 await sleep(1000);
 for (var k = 0; k < 5; k++) { await evalJs("(function(){var ms=document.querySelectorAll('[class*=modal],[class*=overlay]');ms.forEach(function(m){if(m&&m.style)m.style.display='none';});return true;})()"); await sleep(200); }
 
-const info = await evalJs("(function(){function rect(el){var b=el.getBoundingClientRect();return{x:Math.round(b.x),y:Math.round(b.y),w:Math.round(b.width),h:Math.round(b.height),bottom:Math.round(b.bottom),right:Math.round(b.right)};}var tabs=Array.from(document.querySelectorAll('.garden-tab')).map(rect);var plots=Array.from(document.querySelectorAll('.garden-plot')).map(rect);var tools=Array.from(document.querySelectorAll('.garden-tool')).map(rect);var scroll=document.querySelector('.garden-scroll');var ph=document.querySelector('.phone');return JSON.stringify({phone:rect(ph),scroll:rect(scroll),tabs:tabs,plots:plots,tools:tools,plotCount:plots.length});})()");
+const info = await evalJs("(function(){function rect(el){var b=el.getBoundingClientRect();return{x:Math.round(b.x),y:Math.round(b.y),w:Math.round(b.width),h:Math.round(b.height),bottom:Math.round(b.bottom),right:Math.round(b.right)};}var chips=Array.from(document.querySelectorAll('.r-chip')).map(rect);var furn=Array.from(document.querySelectorAll('.r-furn')).map(rect);var tools=Array.from(document.querySelectorAll('.r-bar button')).map(rect);var stage=document.querySelector('.room-stage');var ph=document.querySelector('.phone');return JSON.stringify({phone:rect(ph),stage:rect(stage),chips:chips,furn:furn,tools:tools,furnCount:furn.length});})()");
 console.log(info);
 try { if (ws) ws.close(); } catch (e) {}
 try { chrome.kill(); } catch (e) {}

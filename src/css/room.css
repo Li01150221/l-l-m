@@ -241,14 +241,6 @@
 .r-pool-f { animation: rPoolIn .5s ease-out, rFlicker 1.7s ease-in-out infinite; }
 @keyframes rPoolIn { from { opacity: 0; transform: translate(-50%, -50%) scale(.6); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
 
-/* 花瓶插花徽章（花园联动） */
-.r-bloom {
-  position: absolute; top: -9px; right: -7px;
-  font-size: 13px; text-decoration: none; line-height: 1;
-  animation: rBloomPop .5s cubic-bezier(.2,1.6,.4,1);
-}
-@keyframes rBloomPop { from { transform: scale(0) rotate(-40deg); } to { transform: scale(1) rotate(0); } }
-
 /* ---- 梦角 ---- */
 #room-ta {
   position: absolute; z-index: 7;
