@@ -3430,15 +3430,21 @@ askListRender(roEl, h, KEY4, '吐槽', function (x) {
 return '<div class="tc-li-q">' + escG(x.roast) + '</div><div class="tc-li-line">你：' + escG(x.my) + '</div><div class="tc-li-line">' + (window.taFit ? window.taFit('TA：') : 'TA：') + taReplyShow(x.reply) + '</div><div class="tc-li-time">' + fmtDT(x.ts) + '</div>';
 });
 }
-const inEl = document.getElementById('ar-invite');
-if (inEl) {
-const h = allDeskHistories('invite-ask-history');
-askListRender(inEl, h, 'invite-ask-history', '邀请/问问', function (x) {
+const inviteRow = function (x) {
 return '<div class="tc-li-q">' +
 (x.type === 'invite' ? '邀请：' : '问：') + String(x.q || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;') + '</div>' +
 '<div class="tc-li-line">' + (window.taFit ? window.taFit('TA：') : 'TA：') + escG(window.taFit ? window.taFit(window.askCardReplyClean ? window.askCardReplyClean(x.a || '') : (x.a || '')) : (window.askCardReplyClean ? window.askCardReplyClean(x.a || '') : (x.a || ''))) + '</div>' +
 '<div class="tc-li-time">' + fmtDT(x.ts) + '</div>';
-});
+};
+const inEl = document.getElementById('ar-invite');
+if (inEl) {
+const h = allDeskHistories('invite-ask-history');
+askListRender(inEl, h.filter(function (x) { return x && x.type === 'invite'; }), 'invite-ask-history', '邀请', inviteRow);
+}
+const qaEl = document.getElementById('ar-askq');
+if (qaEl) {
+const h = allDeskHistories('invite-ask-history');
+askListRender(qaEl, h.filter(function (x) { return !(x && x.type === 'invite'); }), 'invite-ask-history', '问问TA', inviteRow);
 }
 };
 function clearDeskHistories(key) {
@@ -3451,6 +3457,19 @@ if (Array.isArray(d)) { deskWrite(cid, key, '[]'); return; }
 if (!d || typeof d !== 'object') return;
 d.history = [];
 try { deskWrite(cid, key, JSON.stringify(d)); } catch (e) {}
+});
+}
+function clearDeskHistoriesMatch(key, match) {
+deskCids().forEach(function (cid) {
+const raw = deskRaw(cid, key);
+if (!raw) return;
+let d = null;
+try { d = typeof raw === 'string' ? JSON.parse(raw) : raw; } catch (e) { return; }
+const arr = Array.isArray(d) ? d : (d && Array.isArray(d.history) ? d.history : null);
+if (!arr) return;
+const keep = arr.filter(function (x) { return !match(x); });
+if (Array.isArray(d)) { deskWrite(cid, key, JSON.stringify(keep)); }
+else { d.history = keep; deskWrite(cid, key, JSON.stringify(d)); }
 });
 }
 function refreshAskRecordsIfOpen() {
@@ -3475,17 +3494,20 @@ clearBind('ar-ask-clear', KEY, '询问');
 clearBind('ar-choose-clear', KEY2, '小问题');
 clearBind('ar-curious-clear', KEY3, '好奇');
 clearBind('ar-roast-clear', KEY4, '吐槽');
-const arInviteClear = document.getElementById('ar-invite-clear');
-if (arInviteClear) {
-arInviteClear.addEventListener('click', () => {
+const clearByType = (id, match, label) => {
+const btn = document.getElementById(id);
+if (!btn) return;
+btn.addEventListener('click', () => {
 if (window.openModal) {
-window.openModal('清空全部桌面的邀请/问问记录？', '', () => {
-clearDeskHistories('invite-ask-history');
+window.openModal('清空全部桌面的' + label + '记录？', '', () => {
+clearDeskHistoriesMatch('invite-ask-history', match);
 window.renderAskRecords();
 }, { noInput: true });
 }
 });
-}
+};
+clearByType('ar-invite-clear', function (x) { return x && x.type === 'invite'; }, '邀请');
+clearByType('ar-askq-clear', function (x) { return !(x && x.type === 'invite'); }, '问问TA');
 document.querySelectorAll('#page-interact .fav-tab').forEach(tab => {
 tab.addEventListener('click', () => {
 document.querySelectorAll('#page-interact .fav-tab').forEach(x => x.classList.toggle('sel', x === tab));

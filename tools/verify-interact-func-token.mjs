@@ -113,7 +113,7 @@ ok('G10 群聊拍一拍短语池过滤（gcPokeActions 同口径）', /x\.indexO
 const p2Src = readFileSync(join(root, 'src/js/p2-features.js'), 'utf8');
 ok('H1 taReplyShow 清洗+转义助手存在', /function taReplyShow\(s\) \{[\s\S]*?askCardReplyClean[\s\S]*?escG\(/.test(taSrc));
 ok('H2 记录/收藏列表回应列接线 taReplyShow（≥5 处）', (taSrc.match(/taReplyShow\((f|x)\.reply\)/g) || []).length >= 5);
-ok('H3 邀请/问问记录答案列清洗', /askCardReplyClean \? window\.askCardReplyClean\(x\.a \|\| ''\)/.test(taSrc));
+ok('H3 邀请/问问TA记录答案列清洗', /askCardReplyClean \? window\.askCardReplyClean\(x\.a \|\| ''\)/.test(taSrc));
 ok('H4 统计卡集补嵌套令牌+图链守卫', p2Src.indexOf("c.indexOf('@@m:') < 0 && !/^https?:\\/\\//i.test(c)") >= 0);
 ok('H5 常用文字榜剔除混排令牌消息', p2Src.indexOf("if (m.text.indexOf('@@m:') >= 0) return;") >= 0);
 ok('H6 撤回无快照兜底走内嵌令牌助手', /window\.mochiInlineTextHtml \? window\.mochiInlineTextHtml\(quoteDisplayFit\(text, rec\.side\)\) : escTxtBr/.test(chatSrc));

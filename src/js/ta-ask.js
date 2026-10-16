@@ -3965,16 +3965,25 @@ window.openTCPanel = openTCPanel;
         return '<div class="tc-li-q">' + escG(x.roast) + '</div><div class="tc-li-line">你：' + escG(x.my) + '</div><div class="tc-li-line">' + (window.taFit ? window.taFit('TA：') : 'TA：') + taReplyShow(x.reply) + '</div><div class="tc-li-time">' + fmtDT(x.ts) + '</div>';
       });
     }
-    // 邀请 / 问问 TA（我的提问 + 联系人答案）
+    // 邀请（我发出的邀请）与 问问 TA（我向 TA 的提问）拆成两个独立 tab：数据源仍是同一键
+    // invite-ask-history，按 x.type 分流（invite 一类 / 其余一类），行内容共用 inviteRow。
+    const inviteRow = function (x) {
+      return '<div class="tc-li-q">' +
+        (x.type === 'invite' ? '邀请：' : '问：') + String(x.q || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;') + '</div>' +
+        '<div class="tc-li-line">' + (window.taFit ? window.taFit('TA：') : 'TA：') + escG(window.taFit ? window.taFit(window.askCardReplyClean ? window.askCardReplyClean(x.a || '') : (x.a || '')) : (window.askCardReplyClean ? window.askCardReplyClean(x.a || '') : (x.a || ''))) + '</div>' +
+        '<div class="tc-li-time">' + fmtDT(x.ts) + '</div>';
+    };
+    // 邀请
     const inEl = document.getElementById('ar-invite');
     if (inEl) {
       const h = allDeskHistories('invite-ask-history');
-      askListRender(inEl, h, 'invite-ask-history', '邀请/问问', function (x) {
-        return '<div class="tc-li-q">' +
-          (x.type === 'invite' ? '邀请：' : '问：') + String(x.q || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;') + '</div>' +
-          '<div class="tc-li-line">' + (window.taFit ? window.taFit('TA：') : 'TA：') + escG(window.taFit ? window.taFit(window.askCardReplyClean ? window.askCardReplyClean(x.a || '') : (x.a || '')) : (window.askCardReplyClean ? window.askCardReplyClean(x.a || '') : (x.a || ''))) + '</div>' +
-          '<div class="tc-li-time">' + fmtDT(x.ts) + '</div>';
-      });
+      askListRender(inEl, h.filter(function (x) { return x && x.type === 'invite'; }), 'invite-ask-history', '邀请', inviteRow);
+    }
+    // 问问 TA
+    const qaEl = document.getElementById('ar-askq');
+    if (qaEl) {
+      const h = allDeskHistories('invite-ask-history');
+      askListRender(qaEl, h.filter(function (x) { return !(x && x.type === 'invite'); }), 'invite-ask-history', '问问TA', inviteRow);
     }
   };
   // 清空各桌面记录：读改写保留题库/设置/分组，只清 history（或裸数组本身）
@@ -3988,6 +3997,21 @@ window.openTCPanel = openTCPanel;
       if (!d || typeof d !== 'object') return;
       d.history = [];
       try { deskWrite(cid, key, JSON.stringify(d)); } catch (e) {}
+    });
+  }
+  // 只清同键里满足 match 的那部分（其余原样保留）——「邀请」「问问TA」两 tab 各自清自己那一类，
+  // 跨桌面口径与 clearDeskHistories 一致（列表是全桌面汇总，清空必须同口径，否则清完别桌又冒出来）
+  function clearDeskHistoriesMatch(key, match) {
+    deskCids().forEach(function (cid) {
+      const raw = deskRaw(cid, key);
+      if (!raw) return;
+      let d = null;
+      try { d = typeof raw === 'string' ? JSON.parse(raw) : raw; } catch (e) { return; }
+      const arr = Array.isArray(d) ? d : (d && Array.isArray(d.history) ? d.history : null);
+      if (!arr) return;
+      const keep = arr.filter(function (x) { return !match(x); });
+      if (Array.isArray(d)) { deskWrite(cid, key, JSON.stringify(keep)); }
+      else { d.history = keep; deskWrite(cid, key, JSON.stringify(d)); }
     });
   }
   // 记录写入后即时刷新（仅当提问记录页正开着——TA 在后台自动触发时也能同步上屏）
@@ -4015,20 +4039,23 @@ window.openTCPanel = openTCPanel;
   clearBind('ar-choose-clear', KEY2, '小问题');
   clearBind('ar-curious-clear', KEY3, '好奇');
   clearBind('ar-roast-clear', KEY4, '吐槽');
-  // 邀请/问问清空
-  const arInviteClear = document.getElementById('ar-invite-clear');
-  if (arInviteClear) {
-    arInviteClear.addEventListener('click', () => {
+  // 邀请 / 问问 TA 清空：同一键 invite-ask-history 里两类，各自只清自己那一类（跨桌面口径同 clearDeskHistories）
+  const clearByType = (id, match, label) => {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    btn.addEventListener('click', () => {
       if (window.openModal) {
-        window.openModal('清空全部桌面的邀请/问问记录？', '', () => {
-          clearDeskHistories('invite-ask-history');
+        window.openModal('清空全部桌面的' + label + '记录？', '', () => {
+          clearDeskHistoriesMatch('invite-ask-history', match);
           window.renderAskRecords();
         }, { noInput: true });
       }
     });
-  }
+  };
+  clearByType('ar-invite-clear', function (x) { return x && x.type === 'invite'; }, '邀请');
+  clearByType('ar-askq-clear', function (x) { return !(x && x.type === 'invite'); }, '问问TA');
 
-  // 提问记录：横排 4 个分类 tab 切换
+  // 提问记录：横排 6 个分类 tab 切换
   document.querySelectorAll('#page-interact .fav-tab').forEach(tab => {
     tab.addEventListener('click', () => {
       document.querySelectorAll('#page-interact .fav-tab').forEach(x => x.classList.toggle('sel', x === tab));

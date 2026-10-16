@@ -6,7 +6,7 @@
 // 用户反馈（Redmi Note 12 Turbo / Chrome，v3.26.721，其他机型同报）：
 //   「联系人提的问题和吐槽都不能在主页的【提问记录】里同步更新；主页里的记录也没能同步更新」
 // 根因（零机型分支，纯逻辑）：提问记录页 5 个分类里，只有「TA的询问」做了跨桌面汇总，
-//   小问题/好奇/吐槽/邀请·问问 仍 `tcLoad().history` 一类「只读当前桌面命名空间」。
+//   小问题/好奇/吐槽/邀请、问问TA 仍 `tcLoad().history` 一类「只读当前桌面命名空间」。
 //   而记录按设计写在【发生所在联系人桌面】⇒ 在联系人桌面产生的吐槽/小问题/好奇/邀请
 //   切回主页（default）一律看不到＝用户所说的「不同步」。
 // 修复：五个分类统一走 allDeskHistories()（各桌面合并 + ts 倒序），清空同口径清全桌面。
@@ -224,21 +224,28 @@ await sleep(200);
 const askOnDefault = await panel('ar-ask');
 check('A4 「TA的询问」原有跨桌面汇总不回归（负向：不因本次改动失效）', askOnDefault.n >= 1 && askOnDefault.list.join('|').indexOf('询问甲题') >= 0, JSON.stringify(askOnDefault));
 
-// ============ B 组：小问题 / 好奇 / 邀请·问问 三个分类同口径 ============
+// ============ B 组：小问题 / 好奇 / 邀请 / 问问TA 四个分类同口径 ============
 const bSeed = [
   { q: '小问题甲题', my: '选项一', reply: '好呀', match: '✦ 刚好想到了一起', ts: Date.now() - 60000 },
   { q: '好奇甲题', my: '我的回答', reply: '我记住啦', ts: Date.now() - 50000 }
 ];
 await seedDesk(cidA, 'ta-choose', [bSeed[0]]);
 await seedDesk(cidA, 'ta-curious', [bSeed[1]]);
-await setDesk(cidA, 'invite-ask-history', JSON.stringify([{ type: 'invite', q: '邀请甲内容', a: '接受', ts: Date.now() - 40000 }]));
+// 「邀请」「问问TA」拆成两个 tab 后仍是同一键 invite-ask-history，按 x.type 分流；
+// 播种两条（一条 invite、一条非 invite）以验证两 tab 各自只显示自己那一类。
+await setDesk(cidA, 'invite-ask-history', JSON.stringify([
+  { type: 'invite', q: '邀请甲内容', a: '接受', ts: Date.now() - 40000 },
+  { type: 'ask', q: '问问甲内容', a: '这样呀', ts: Date.now() - 30000 }
+]));
 await openRecords();
 const chOnDefault = await panel('ar-choose');
 check('B1 主页可见联系人桌面 A 的小问题记录', chOnDefault.n >= 1 && chOnDefault.list.join('|').indexOf('小问题甲题') >= 0, JSON.stringify(chOnDefault));
 const cuOnDefault = await panel('ar-curious');
 check('B2 主页可见联系人桌面 A 的好奇记录', cuOnDefault.n >= 1 && cuOnDefault.list.join('|').indexOf('好奇甲题') >= 0, JSON.stringify(cuOnDefault));
 const inOnDefault = await panel('ar-invite');
-check('B3 主页可见联系人桌面 A 的邀请/问问记录', inOnDefault.n >= 1 && inOnDefault.list.join('|').indexOf('邀请甲内容') >= 0, JSON.stringify(inOnDefault));
+check('B3 主页【邀请】tab 只显示 type=invite 的记录（可见 A 的邀请甲内容）', inOnDefault.n === 1 && inOnDefault.list.join('|').indexOf('邀请甲内容') >= 0 && inOnDefault.list.join('|').indexOf('问问甲内容') < 0, JSON.stringify(inOnDefault));
+const qaOnDefault = await panel('ar-askq');
+check('B3b 主页【问问TA】tab 只显示非 invite 的记录（可见 A 的问问甲内容，且不含邀请甲内容）', qaOnDefault.n === 1 && qaOnDefault.list.join('|').indexOf('问问甲内容') >= 0 && qaOnDefault.list.join('|').indexOf('邀请甲内容') < 0, JSON.stringify(qaOnDefault));
 
 // 反向：切到 A 也能看到 default 桌面产生的记录（双向可见，不是单向聚合）
 await seedDesk('default', 'ta-roast', [{ roast: '主页桌面吐槽', my: '我的回话', reply: '行吧', cat: 'light', ts: Date.now() - 30000 }]);
@@ -275,6 +282,27 @@ const afterQs = await deskQuestions(cidA, 'ta-roast');
 check('C5 清空只清记录，题库/设置不被误伤（读改写保留）', afterQs === beforeQs && afterQs > 0, 'before=' + beforeQs + ' after=' + afterQs);
 const roastAfterClear = await panel('ar-roast');
 check('C6 清空后列表即时显示为空态', roastAfterClear.n === 0, JSON.stringify(roastAfterClear));
+
+// C7/C8 「邀请」「问问TA」拆成两个 tab 后，清空各自只清自己那一类（同键另一类跨桌面原样保留）
+await evalJs(`window.renderAskRecords(); true`);
+await sleep(200);
+await evalJs(`document.getElementById('ar-invite-clear').click(); true`);
+await sleep(400);
+await evalJs(`document.getElementById('modal-ok').click(); true`);
+await sleep(600);
+await evalJs(`window.renderAskRecords(); true`);
+await sleep(200);
+const invAfter = await panel('ar-invite');
+const qaAfter = await panel('ar-askq');
+check('C7 清「邀请」只清邀请：邀请 tab 空、问问TA 记录仍在（同键另一类不被误伤）', invAfter.n === 0 && qaAfter.n === 1 && qaAfter.list.join('|').indexOf('问问甲内容') >= 0, 'inv=' + JSON.stringify(invAfter) + ' qa=' + JSON.stringify(qaAfter));
+await evalJs(`document.getElementById('ar-askq-clear').click(); true`);
+await sleep(400);
+await evalJs(`document.getElementById('modal-ok').click(); true`);
+await sleep(600);
+await evalJs(`window.renderAskRecords(); true`);
+await sleep(200);
+const qaFinal = await panel('ar-askq');
+check('C8 清「问问TA」后该 tab 空（两 tab 各清各的，互不影响）', qaFinal.n === 0, JSON.stringify(qaFinal));
 
 // ============ D 组：边界 ============
 // D1 老档回退：default 桌面的记录只存在旧顶层键时，在别的桌面也应看得到

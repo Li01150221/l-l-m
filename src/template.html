@@ -2738,7 +2738,7 @@
           <details class="lic-grp">
             <summary><span class="lg-num">21</span><span class="lg-name">记录统计</span><span class="lg-count">6</span></summary>
             <div class="lg-body">
-          <div class="lic-li">桌面【提问记录】统计历史：提问记录、TA 的询问、TA 的小问题、TA 的好奇、TA 的吐槽、我的邀请 / 问问</div>
+          <div class="lic-li">桌面【提问记录】统计历史：TA 的询问、TA 的小问题、TA 的好奇、TA 的吐槽、我的邀请、问问TA</div>
           <div class="lic-li">桌面【主页】多 tab 统计：联系人换头像、通话记录、每日摸鱼值 / 每日打工值、摸鱼抓包（我抓到 TA / 被 TA 抓到 双向记录）、TA 的关心（查岗 / 经期 / 喝水 / 吃饭 / 番茄陪伴聚合）、心意币红包 / 赚钱 / 申请记录</div>
           <div class="lic-li">联系人今日情话、我的备忘、我的心情的历史可在【日历】里按天切换查看</div>
           <div class="lic-li">桌面【聊天统计】统计：相处记录（第一次聊天时间、最近聊天时间、聊天消息条数、文字数量、收藏记录）、聊天记录（消息比例、最常聊天时间段、最常聊天日期、平均每日消息、最长连续聊天、单日最高消息）、情绪表达（文字字卡 / 情绪 / 心意 / 交流意图使用次数排行）</div>
@@ -4545,7 +4545,8 @@
     <button class="fav-tab" data-tab="choose">TA的小问题</button>
     <button class="fav-tab" data-tab="curious">TA的好奇</button>
     <button class="fav-tab" data-tab="roast">TA的吐槽</button>
-    <button class="fav-tab" data-tab="invite">邀请/问问</button>
+    <button class="fav-tab" data-tab="invite">邀请</button>
+    <button class="fav-tab" data-tab="askq">问问TA</button>
   </div>
   <div class="cal-scroll">
     <div class="cal-card glass" data-panel="ask">
@@ -4569,9 +4570,14 @@
       <button class="mem-add" id="ar-roast-clear">清空吐槽记录</button>
     </div>
     <div class="cal-card glass" data-panel="invite" hidden>
-      <div class="cal-card-title">邀请 / 问问 TA</div>
+      <div class="cal-card-title">邀请</div>
       <div id="ar-invite"></div>
-      <button class="mem-add" id="ar-invite-clear">清空邀请/问问记录</button>
+      <button class="mem-add" id="ar-invite-clear">清空邀请记录</button>
+    </div>
+    <div class="cal-card glass" data-panel="askq" hidden>
+      <div class="cal-card-title">问问TA</div>
+      <div id="ar-askq"></div>
+      <button class="mem-add" id="ar-askq-clear">清空问问TA记录</button>
     </div>
   </div>
 </div>
