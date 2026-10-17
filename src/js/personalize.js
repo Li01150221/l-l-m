@@ -238,6 +238,7 @@ try {
         // FIX 2026-09-28 #1358a：桌面「我 / TA」两格小字同病——只在脚本执行期拿一次同步读数画过，
         //   昵称只剩 IndexedDB 一份的设备上那一发读到 null，整场停在模板字面量。列进这份清单。
         try { paintDeskNames(); } catch (e) {} // #1358a 这一行在「回填完成后重绘」清单里：删掉它＝库里那一份昵称整场不上屏
+        try { paintDeskBrand(); } catch (e) {} // 同款：库里那份自定义状态栏文字随回填后重绘（只存 IDB 时同步读拿不到）
         setTimeout(function () {
           try { refreshDeskVisuals(); } catch (e) {}
         }, 1800);
@@ -1006,6 +1007,36 @@ try {
   }
   bindLabel('lbl-user', 'lbl-user');
   bindLabel('lbl-partner', 'lbl-partner');
+
+  // ===== 桌面状态栏左上角文字（用户直派「把固定显示的 Mochi 改成别的」→ 做成可自定义）=====
+  // 状态栏是全站一层、不属于某个桌面 ⇒ 存全局键 desk-brand（xy-home-v2 命名空间），换联系人桌面不变。
+  // 空/未设＝默认 Mochi（改空即恢复默认）。改完即时刷新状态栏，无需重启；回填完成后清单里再画一次
+  //（同 #1358a 口径：库里的值只存 IndexedDB 时，脚本执行期那一发同步读拿不到）。
+  function brandText() {
+    const v = gStore.get('desk-brand');
+    return (v && v.trim()) ? v : 'Mochi';
+  }
+  function paintDeskBrand() {
+    const el = document.getElementById('desk-brand');
+    if (el) el.textContent = brandText();
+    const val = document.getElementById('desk-brand-val');
+    if (val) val.textContent = gStore.get('desk-brand') || '默认（Mochi）';
+  }
+  function bindDeskBrand() {
+    const row = document.getElementById('row-desk-brand');
+    if (!row) return;
+    paintDeskBrand();
+    row.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (!window.openModal) return;
+      window.openModal('桌面左上角文字', gStore.get('desk-brand') || '', function (v) {
+        const val = (v || '').trim();
+        if (val) gStore.set('desk-brand', val); else gStore.remove('desk-brand');
+        paintDeskBrand();
+      }, { maxlength: 16 });
+    });
+  }
+  try { bindDeskBrand(); } catch (e) {}
   // FIX 2026-09-28 #1358b：称呼（他/她/TA）改完，主页那格小字当场跟随——旧写法只有切一次桌面才重画，
   //   用户所见＝「设置了但是没用」。事件由 contacts.js 的称呼设置弹窗派发（detail.id＝归属桌面），
   //   只画当前桌面那一格，别的桌面等它自己切过来时按同一口径画。

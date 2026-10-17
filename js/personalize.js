@@ -137,6 +137,7 @@ try { applyBgVisibility(); } catch (e) {}
 try { refreshDeskVisuals(); } catch (e) {}
 try { rescueDeskVisuals(); } catch (e) {}
 try { paintDeskNames(); } catch (e) {} // #1358a 这一行在「回填完成后重绘」清单里：删掉它＝库里那一份昵称整场不上屏
+try { paintDeskBrand(); } catch (e) {} // 同款：库里那份自定义状态栏文字随回填后重绘（只存 IDB 时同步读拿不到）
 setTimeout(function () {
 try { refreshDeskVisuals(); } catch (e) {}
 }, 1800);
@@ -711,6 +712,31 @@ if (newEff !== oldEff) { try { if (window.chatSysNickChanged) window.chatSysNick
 }
 bindLabel('lbl-user', 'lbl-user');
 bindLabel('lbl-partner', 'lbl-partner');
+function brandText() {
+const v = gStore.get('desk-brand');
+return (v && v.trim()) ? v : 'Mochi';
+}
+function paintDeskBrand() {
+const el = document.getElementById('desk-brand');
+if (el) el.textContent = brandText();
+const val = document.getElementById('desk-brand-val');
+if (val) val.textContent = gStore.get('desk-brand') || '默认（Mochi）';
+}
+function bindDeskBrand() {
+const row = document.getElementById('row-desk-brand');
+if (!row) return;
+paintDeskBrand();
+row.addEventListener('click', function (e) {
+e.stopPropagation();
+if (!window.openModal) return;
+window.openModal('桌面左上角文字', gStore.get('desk-brand') || '', function (v) {
+const val = (v || '').trim();
+if (val) gStore.set('desk-brand', val); else gStore.remove('desk-brand');
+paintDeskBrand();
+}, { maxlength: 16 });
+});
+}
+try { bindDeskBrand(); } catch (e) {}
 try {
 document.addEventListener('ta-word-changed', function (ev) {
 const id = ev && ev.detail && ev.detail.id;

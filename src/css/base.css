@@ -1151,7 +1151,7 @@ html.ios-cover-top .phone .statusbar {
    =「聊天记录一直跳、一直闪」（红米 K80 Chrome 等多机型）。chat.js 解钉（用户手动
    滚动）时挂本类开回锚定、回钉贴底时摘除——#199 防对打只涉及钉住态，语义不变。 */
 .chat-body.scroll-anchor-auto { overflow-anchor: auto; }
-.statusbar .brand { font-weight:800; letter-spacing:.5px; }
+.statusbar .brand { font-weight:800; letter-spacing:.5px; max-width:60%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .statusbar .sb-right { display:flex; align-items:center; gap:8px; }
 .statusbar .icons { display:flex; gap:6px; align-items:center; }
 

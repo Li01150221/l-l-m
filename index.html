@@ -662,7 +662,7 @@ padding-top:max(calc(14px + var(--mochi-safe-top, 0px)), 14px);
 }
 .chat-body { overflow-anchor: none; }
 .chat-body.scroll-anchor-auto { overflow-anchor: auto; }
-.statusbar .brand { font-weight:800; letter-spacing:.5px; }
+.statusbar .brand { font-weight:800; letter-spacing:.5px; max-width:60%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .statusbar .sb-right { display:flex; align-items:center; gap:8px; }
 .statusbar .icons { display:flex; gap:6px; align-items:center; }
 .page { flex:1; display:flex; flex-direction:column; overflow-y:auto; z-index:2; padding-bottom:4px; }
@@ -10284,7 +10284,7 @@ font-family:inherit; padding:4px 2px; cursor:pointer; -webkit-tap-highlight-colo
            （名称+版号 / 部署时间+实时秒 / 版本检测行）收成一行；检测行随 ver-check.js 退役删除。
            data-build-ts / data-version 两属性保留：device.js 诊断、bg-keep 自检、pwa.js 旧包检测
            仍只读属性（诊断版本号走 data-version 兜底，device.js 两处缓存原生支持）。 -->
-      <div class="splash-ver" id="splash-ver" data-build-ts="1792221633450" data-version="v8.68">
+      <div class="splash-ver" id="splash-ver" data-build-ts="1792226617321" data-version="v8.68">
         <span class="sv-app">Mochi 字卡传讯 已完结停更</span>
       </div>
       <!-- v3.5.120：数据（IndexedDB 回填）加载完成前不显示「点击进入」按钮，
@@ -10315,7 +10315,7 @@ font-family:inherit; padding:4px 2px; cursor:pointer; -webkit-tap-highlight-colo
   <div class="phone">
       <div class="phone-bg-mask"></div>
       <div class="statusbar">
-        <span class="brand">Mochi</span>
+        <span class="brand" id="desk-brand">Mochi</span>
         <div class="sb-right">
           <span id="clock">9:41</span>
           <div class="icons">
@@ -11419,6 +11419,15 @@ font-family:inherit; padding:4px 2px; cursor:pointer; -webkit-tap-highlight-colo
           <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-6 8-6s8 2 8 6"/></svg></div>
           <div class="txt">联系人 / 桌面</div>
           <div class="val" id="contacts-val"></div>
+          <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>
+        </div>
+        <!-- 桌面状态栏左上角文字（用户直派「把固定显示的 Mochi 改成别的」→ 做成可自定义）：
+             状态栏是全站一层、不属于某个桌面，故存全局键 desk-brand（xy-home-v2），换联系人桌面不变；
+             空/未设＝默认 Mochi。接线在 personalize.js（paintDeskBrand/bindDeskBrand）。 -->
+        <div class="set-row" id="row-desk-brand">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6V4h16v2"/><path d="M9 4h6"/><path d="M12 4v16"/><path d="M9 20h6"/></svg></div>
+          <div class="txt">桌面左上角文字<span class="sub">手机顶部状态栏左上角那行字（默认 Mochi），改成你喜欢的字；留空即恢复默认</span></div>
+          <div class="val" id="desk-brand-val"></div>
           <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>
         </div>
         <div class="set-row" id="sf-group-chat-row">
@@ -21965,4 +21974,4 @@ window.__mochiBootRetry = function () { try { location.reload(); } catch (e) {} 
 </body>
 </html>
 
-<!-- __MOCHI_EOF__ mvc2hiui -->
+<!-- __MOCHI_EOF__ mvc5gcfd -->

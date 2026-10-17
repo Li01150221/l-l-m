@@ -396,7 +396,7 @@
   <div class="phone">
       <div class="phone-bg-mask"></div>
       <div class="statusbar">
-        <span class="brand">Mochi</span>
+        <span class="brand" id="desk-brand">Mochi</span>
         <div class="sb-right">
           <span id="clock">9:41</span>
           <div class="icons">
@@ -1500,6 +1500,15 @@
           <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-6 8-6s8 2 8 6"/></svg></div>
           <div class="txt">联系人 / 桌面</div>
           <div class="val" id="contacts-val"></div>
+          <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>
+        </div>
+        <!-- 桌面状态栏左上角文字（用户直派「把固定显示的 Mochi 改成别的」→ 做成可自定义）：
+             状态栏是全站一层、不属于某个桌面，故存全局键 desk-brand（xy-home-v2），换联系人桌面不变；
+             空/未设＝默认 Mochi。接线在 personalize.js（paintDeskBrand/bindDeskBrand）。 -->
+        <div class="set-row" id="row-desk-brand">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6V4h16v2"/><path d="M9 4h6"/><path d="M12 4v16"/><path d="M9 20h6"/></svg></div>
+          <div class="txt">桌面左上角文字<span class="sub">手机顶部状态栏左上角那行字（默认 Mochi），改成你喜欢的字；留空即恢复默认</span></div>
+          <div class="val" id="desk-brand-val"></div>
           <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>
         </div>
         <div class="set-row" id="sf-group-chat-row">
