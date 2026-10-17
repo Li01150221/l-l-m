@@ -585,6 +585,313 @@ done({ ok: true, added: added, skipped: skipped, vip: vip, miss: miss });
 if (addedIds.length) enrichImportedDurations(id, addedIds);
 });
 }
+const NEA = {
+gStore: window.xyStore ? window.xyStore('xy-home-v2') : null,
+keyBase: 'netease-api-base',
+keyCookie: 'netease-cookie',
+keyUser: 'netease-user',
+};
+function neaBase() { return (NEA.gStore ? NEA.gStore.get(NEA.keyBase) : '') || ''; }
+function neaSetBase(v) { if (NEA.gStore) NEA.gStore.set(NEA.keyBase, v); }
+function neaCookie() { return (NEA.gStore ? NEA.gStore.get(NEA.keyCookie) : '') || ''; }
+function neaSetCookie(v) { if (NEA.gStore) { if (v) NEA.gStore.set(NEA.keyCookie, v); else NEA.gStore.remove(NEA.keyCookie); } }
+function neaUser() {
+if (!NEA.gStore) return null;
+try { const v = JSON.parse(NEA.gStore.get(NEA.keyUser) || 'null'); return v && typeof v === 'object' ? v : null; } catch (e) { return null; }
+}
+function neaSetUser(v) { if (NEA.gStore) { if (v) NEA.gStore.set(NEA.keyUser, JSON.stringify(v)); else NEA.gStore.remove(NEA.keyUser); } }
+function neaNormBase(s) {
+let b = String(s || '').trim();
+if (!b) return '';
+if (/^https?:\/\//i.test(b)) b = b.replace(/^http:\/\//i, 'https://');
+else b = 'https://' + b;
+return b.replace(/\/+$/, '');
+}
+function neaFetch(path, cb) {
+const base = neaBase();
+if (!base) { cb && cb(null, '未配置后端地址'); return; }
+const sep = path.indexOf('?') >= 0 ? '&' : '?';
+const cookie = encodeURIComponent(neaCookie());
+const url = base + path + sep + 'cookie=' + cookie;
+let controller;
+try { controller = new AbortController(); } catch (e) { controller = null; }
+const timer = setTimeout(() => { try { controller && controller.abort(); } catch (e) {} }, 15000);
+fetch(url, controller ? { signal: controller.signal } : undefined)
+.then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+.then(j => { clearTimeout(timer); cb && cb(j, null); })
+.catch(e => { clearTimeout(timer); cb && cb(null, String(e && e.message || e)); });
+}
+function neaTracksFromSongs(songs) {
+const list = [];
+(songs || []).forEach(s => {
+if (!s || !s.id) return;
+list.push({
+neteaseId: String(s.id),
+name: s.name || '',
+artist: ((s.ar || []).map(a => a && a.name).filter(Boolean).join('/')),
+cover: String((s.al && s.al.picUrl) || '').replace(/^http:\/\//i, 'https://'),
+url: neteaseMetingUrl(s.id),
+duration: s.dt ? Math.round(s.dt / 1000) : 0,
+fee: s.fee
+});
+});
+return list;
+}
+function neaAddTracks(tracks, targetPl, plIdForDur, done) {
+if (typeof plIdForDur === 'function') { done = plIdForDur; plIdForDur = null; }
+const plId = targetPl || 'default';
+const now = Date.now();
+let added = 0, skipped = 0, vip = 0;
+const addedIds = [];
+tracks.forEach((t, i) => {
+if (t.neteaseId && library.some(m => m.neteaseId === t.neteaseId)) { skipped++; return; }
+if (t.fee === 1 || t.fee === 4) { vip++; return; }
+const nid = 'sm_nea_' + now + '_' + i + '_' + Math.random().toString(36).substr(2, 4);
+library.push({ id: nid, neteaseId: t.neteaseId, name: t.name || '网易云音乐-' + (t.neteaseId || i), artist: t.artist || '', cover: t.cover || '', url: t.url, source: 'url', duration: t.duration || 0, playlistId: plId, addedAt: now });
+addedIds.push(nid);
+added++;
+});
+if (addedIds.length) {
+saveLibrary(); renderPage();
+if (plIdForDur) enrichImportedDurations(String(plIdForDur), addedIds);
+else addedIds.forEach(id => { const m = findTrack(id); if (m && !m.duration) enqueueDurProbe(m); });
+}
+done && done({ added: added, skipped: skipped, vip: vip });
+}
+function neaLoadPlaylistTracks(plId, cb) {
+neaFetch('/playlist/track/all?id=' + encodeURIComponent(String(plId)) + '&limit=1000&offset=0', (j, err) => {
+if (err || !j || !Array.isArray(j.songs)) { cb && cb(null, err || '接口未返回歌曲'); return; }
+cb && cb(neaTracksFromSongs(j.songs), null);
+});
+}
+function neaLoadLikedTracks(uid, cb) {
+neaFetch('/likelist?uid=' + encodeURIComponent(String(uid)), (j, err) => {
+if (err || !j || !Array.isArray(j.ids)) { cb && cb(null, err || '接口未返回喜欢列表'); return; }
+const ids = j.ids;
+if (!ids.length) { cb && cb([], null); return; }
+const all = [];
+const batch = 500;
+let i = 0;
+const next = () => {
+if (i >= ids.length) { cb && cb(all, null); return; }
+const part = ids.slice(i, i + batch);
+i += batch;
+neaFetch('/song/detail?ids=' + encodeURIComponent(part.join(',')), (dj, derr) => {
+if (derr || !dj || !Array.isArray(dj.songs)) { cb && cb(null, derr || '歌曲详情接口失败'); return; }
+neaTracksFromSongs(dj.songs).forEach(t => all.push(t));
+next();
+});
+};
+next();
+});
+}
+function neaLoadUserPlaylists(uid, cb) {
+neaFetch('/user/playlist?uid=' + encodeURIComponent(String(uid)) + '&limit=1000&offset=0', (j, err) => {
+if (err || !j || !Array.isArray(j.playlist)) { cb && cb(null, err || '接口未返回歌单'); return; }
+cb && cb(j.playlist, null);
+});
+}
+function neaFetchUserProfile(cb) {
+neaFetch('/login/status', (j, err) => {
+if (err || !j || !j.data) { cb && cb(null, err || '未取到登录状态'); return; }
+const p = j.data.profile || j.data.account || null;
+if (!p) { cb && cb(null, '未登录'); return; }
+cb && cb({ uid: p.userId || p.id, nickname: p.nickname || '', avatarUrl: (p.avatarUrl || '').replace(/^http:\/\//i, 'https://') }, null);
+});
+}
+function neaCheckLogin(cb) {
+if (!neaCookie()) { neaSetUser(null); cb && cb(false); return; }
+neaFetchUserProfile((u, err) => {
+if (err || !u) { neaSetCookie(''); neaSetUser(null); cb && cb(false); return; }
+neaSetUser(u); cb && cb(true);
+});
+}
+function neaQrLogin(onUpdate) {
+let stop = false;
+let pollTimer = null;
+const api = {
+stop() { stop = true; if (pollTimer) { clearTimeout(pollTimer); pollTimer = null; } }
+};
+neaFetch('/login/qr/key', (kj, kerr) => {
+if (stop) return;
+if (kerr || !kj || !kj.data || !kj.data.unikey) { onUpdate && onUpdate({ phase: 'err', msg: kerr || '获取二维码失败' }); return; }
+const key = kj.data.unikey;
+neaFetch('/login/qr/create?key=' + encodeURIComponent(key) + '&qrimg=true', (cj, cerr) => {
+if (stop) return;
+if (cerr || !cj || !cj.data || !cj.data.qrimg) { onUpdate && onUpdate({ phase: 'err', msg: cerr || '生成二维码失败' }); return; }
+onUpdate && onUpdate({ phase: 'qr', qrimg: cj.data.qrimg });
+const poll = () => {
+if (stop) return;
+neaFetch('/login/qr/check?key=' + encodeURIComponent(key), (ch, cherr) => {
+if (stop) return;
+if (cherr) { pollTimer = setTimeout(poll, 2000); return; }
+const code = ch && ch.code;
+if (code === 800) { onUpdate && onUpdate({ phase: 'wait' }); pollTimer = setTimeout(poll, 2000); }
+else if (code === 801) { onUpdate && onUpdate({ phase: 'scanned' }); pollTimer = setTimeout(poll, 2000); }
+else if (code === 802) {
+const ck = (ch && ch.cookie) || '';
+if (!ck) { onUpdate && onUpdate({ phase: 'err', msg: '登录成功但未取到 cookie' }); return; }
+neaSetCookie(ck);
+neaFetchUserProfile((u, uerr) => {
+if (stop) return;
+if (uerr || !u) { onUpdate && onUpdate({ phase: 'err', msg: uerr || '登录成功但取用户信息失败' }); return; }
+neaSetUser(u);
+onUpdate && onUpdate({ phase: 'ok', user: u });
+});
+}
+else if (code === 803) { onUpdate && onUpdate({ phase: 'expired' }); }
+else { pollTimer = setTimeout(poll, 2000); }
+});
+};
+pollTimer = setTimeout(poll, 2000);
+});
+});
+return api;
+}
+let neaPanelApi = null;   // 当前 qr 登录控制器
+let neaLoadedPls = null;  // 已加载的用户歌单缓存
+function openNeteaseAccount() {
+if (!window.openTCPanel) return;
+if (neaPanelApi) { try { neaPanelApi.stop(); } catch (e) {} neaPanelApi = null; }
+neaLoadedPls = null;
+const base = neaBase();
+const user = neaUser();
+let render = (state) => {
+const st = state || {};
+let body = '';
+body += '<div class="sm-form">' +
+'<div class="sm-fld"><label>后端地址（NeteaseCloudMusicApi）</label>' +
+'<input class="tc-input" id="nea-base" placeholder="https://你的-api.vercel.app" value="' + esc(base) + '">' +
+'<div class="sm-fld-hint">需要你自己部署一个 NeteaseCloudMusicApi 后端（开源免费）。<br><a href="https://vercel.com/new/clone?repository-url=https://github.com/Binaryify/NeteaseCloudMusicApi" target="_blank" rel="noopener" style="color:var(--brand,#3b82f6);text-decoration:underline">点此一键部署到 Vercel</a>，部署后把生成的域名（如 https://xxx.vercel.app）填到上面输入框。<br>不填这个无法登录（浏览器直连网易云会被跨域挡住）。</div></div>';
+if (!base) {
+body += '<div class="sm-fld-hint" style="color:var(--danger-ink,#a32d2d)">请先填后端地址并保存，再登录。</div>';
+} else if (!user) {
+if (st.phase === 'qr' && st.qrimg) {
+body += '<div style="text-align:center;padding:12px 0"><img src="' + esc(st.qrimg) + '" style="width:200px;height:200px;border-radius:8px" alt="登录二维码"></div>';
+body += '<div style="text-align:center;opacity:.8">' + (st.phase === 'scanned' ? '已扫码，请在手机上确认' : (st.phase === 'wait' ? '请用网易云音乐 App 扫码' : '正在生成二维码…')) + '</div>';
+body += '<div style="text-align:center;margin-top:8px"><button class="cc-tool" id="nea-refresh-qr">刷新二维码</button></div>';
+} else if (st.phase === 'err') {
+body += '<div style="text-align:center;padding:20px 0;color:var(--danger-ink,#a32d2d)">' + esc(st.msg || '登录失败') + '</div>';
+body += '<div style="text-align:center"><button class="cc-tool" id="nea-retry">重试</button></div>';
+} else if (st.phase === 'expired') {
+body += '<div style="text-align:center;padding:20px 0">二维码已过期</div>';
+body += '<div style="text-align:center"><button class="cc-tool" id="nea-retry">重新扫码</button></div>';
+} else {
+body += '<div style="text-align:center;padding:24px 0;opacity:.7">点击下方按钮开始扫码登录</div>';
+body += '<div style="text-align:center"><button class="cc-tool" id="nea-start-login">扫码登录网易云</button></div>';
+}
+} else {
+body += '<div style="display:flex;align-items:center;gap:10px;padding:8px 0">' +
+'<img src="' + esc(user.avatarUrl || '') + '" style="width:40px;height:40px;border-radius:50%" onerror="this.style.display=\'none\'">' +
+'<div style="flex:1"><div style="font-weight:600">' + esc(user.nickname || '已登录') + '</div>' +
+'<div style="font-size:12px;opacity:.7">已登录网易云账号</div></div>' +
+'<button class="cc-tool" id="nea-logout">退出登录</button></div>';
+body += '<div id="nea-liked-row" class="sm-fld" style="border-top:1px solid var(--line);padding-top:10px">' +
+'<button class="cc-tool" id="nea-import-liked">导入「我喜欢的音乐」</button> ' +
+'<span id="nea-liked-status" style="font-size:12px;opacity:.7"></span></div>';
+body += '<div class="sm-fld"><label>我的歌单</label><div id="nea-pls" style="max-height:260px;overflow:auto">' + (neaLoadedPls ? '' : '<div style="opacity:.6">加载中…</div>') + '</div></div>';
+}
+body += '</div>';
+body += '<div class="mail-actions"><button class="cc-tool" id="nea-cancel">关闭</button>' +
+(base && !user ? '<button class="cc-tool" id="nea-save-base">保存地址</button>' : '') +
+(!base ? '' : '') + '</div>';
+window.openTCPanel('网易云账号', body);
+const bind = (id, fn) => { const el = document.getElementById(id); if (el) el.addEventListener('click', fn); };
+bind('nea-cancel', () => { if (neaPanelApi) { neaPanelApi.stop(); neaPanelApi = null; } document.getElementById('tc-mask').hidden = true; });
+const baseEl = document.getElementById('nea-base');
+const saveBase = () => {
+const v = neaNormBase(baseEl ? baseEl.value : '');
+if (!v) { toast('请输入后端地址'); return; }
+neaSetBase(v);
+toast('后端地址已保存');
+neaSetCookie(''); neaSetUser(null);
+if (neaPanelApi) { neaPanelApi.stop(); neaPanelApi = null; }
+render({ phase: 'init' });
+};
+bind('nea-save-base', saveBase);
+bind('nea-start-login', () => { if (baseEl && neaNormBase(baseEl.value) !== neaBase()) saveBase(); startQr(); });
+bind('nea-refresh-qr', () => { startQr(); });
+bind('nea-retry', () => { startQr(); });
+bind('nea-logout', () => {
+neaSetCookie(''); neaSetUser(null); neaLoadedPls = null;
+if (neaPanelApi) { neaPanelApi.stop(); neaPanelApi = null; }
+render({ phase: 'init' });
+toast('已退出登录');
+});
+bind('nea-import-liked', () => { importLiked(); });
+if (user && neaLoadedPls === null) loadPlaylistsInto();
+};
+const startQr = () => {
+if (neaPanelApi) { neaPanelApi.stop(); neaPanelApi = null; }
+render({ phase: 'qr', qrimg: '' });
+neaPanelApi = neaQrLogin((st) => {
+if (st.phase === 'qr') render({ phase: 'qr', qrimg: st.qrimg });
+else if (st.phase === 'wait') { /* keep showing qr */ }
+else if (st.phase === 'scanned') { /* keep showing qr, text updates in render */ render({ phase: 'qr', qrimg: (st && st.qrimg) || currentQrImg() }); }
+else if (st.phase === 'ok') { neaPanelApi = null; render({ phase: 'loggedin' }); toast('登录成功'); }
+else if (st.phase === 'err' || st.phase === 'expired') { neaPanelApi = null; render({ phase: st.phase, msg: st.msg }); }
+});
+};
+let _curQr = '';
+const _origRender = render;
+function currentQrImg() { return _curQr; }
+function renderWrap(st) {
+if (st && st.qrimg) _curQr = st.qrimg;
+_origRender(st);
+}
+render = renderWrap;
+function loadPlaylistsInto() {
+const u = neaUser();
+if (!u) return;
+neaLoadUserPlaylists(u.uid, (pls, err) => {
+if (err || !pls) { const el = document.getElementById('nea-pls'); if (el) el.innerHTML = '<div style="opacity:.6;color:var(--danger-ink,#a32d2d)">加载失败：' + esc(err) + '</div>'; return; }
+neaLoadedPls = pls;
+const el = document.getElementById('nea-pls');
+if (!el) return;
+if (!pls.length) { el.innerHTML = '<div style="opacity:.6">暂无歌单</div>'; return; }
+el.innerHTML = pls.map(p => {
+const cover = String(p.coverImgUrl || '').replace(/^http:\/\//i, 'https://');
+return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--line)">' +
+'<img src="' + esc(cover) + '" style="width:36px;height:36px;border-radius:6px" onerror="this.style.display=\'none\'">' +
+'<div style="flex:1;min-width:0"><div style="font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(p.name || '') + '</div>' +
+'<div style="font-size:12px;opacity:.6">' + (p.trackCount || 0) + ' 首</div></div>' +
+'<button class="cc-tool" data-nea-plid="' + esc(p.id) + '" data-nea-plname="' + esc(p.name || '') + '">导入</button></div>';
+}).join('');
+el.querySelectorAll('[data-nea-plid]').forEach(btn => {
+btn.addEventListener('click', () => importPlaylist(btn.getAttribute('data-nea-plid'), btn.getAttribute('data-nea-plname')));
+});
+});
+}
+function importPlaylist(plId, plName) {
+toast('正在导入「' + (plName || '歌单') + '」…');
+neaLoadPlaylistTracks(plId, (tracks, err) => {
+if (err || !tracks) { toast('导入失败：' + (err || '无歌曲')); return; }
+neaAddTracks(tracks, 'default', plId, (r) => {
+let msg = '已导入 ' + r.added + ' 首';
+if (r.skipped) msg += '（跳过已有 ' + r.skipped + ' 首）';
+if (r.vip) msg += '（VIP 歌曲 ' + r.vip + ' 首未导入）';
+toast(msg);
+});
+});
+}
+function importLiked() {
+const u = neaUser();
+if (!u) return;
+const st = document.getElementById('nea-liked-status');
+if (st) st.textContent = '导入中…';
+neaLoadLikedTracks(u.uid, (tracks, err) => {
+if (err || !tracks) { if (st) st.textContent = '失败'; toast('导入失败：' + (err || '无歌曲')); return; }
+neaAddTracks(tracks, 'default', (r) => {
+let msg = '已导入 ' + r.added + ' 首';
+if (r.skipped) msg += '（跳过已有 ' + r.skipped + ' 首）';
+if (r.vip) msg += '（VIP 歌曲 ' + r.vip + ' 首未导入）';
+if (st) st.textContent = '已导入 ' + r.added + ' 首';
+toast(msg);
+});
+});
+}
+render({ phase: 'init' });
+}
 function removeBatchVipSongs(tracks) {
 if (!tracks || !tracks.length) return;
 const vipIds = tracks.map(m => m.id);
@@ -3984,6 +4291,8 @@ const batchMgmt = document.getElementById('music-batch-manage');
 if (batchMgmt) batchMgmt.addEventListener('click', () => { if (musicBatch) exitBatch(); else enterBatch(); });
 const vipClean = document.getElementById('music-vip-clean');
 if (vipClean) vipClean.addEventListener('click', openVipClean);
+const neaBtn = document.getElementById('music-netease-account');
+if (neaBtn) neaBtn.addEventListener('click', openNeteaseAccount);
 const setBtn = document.getElementById('music-set');
 if (setBtn) setBtn.addEventListener('click', openSettings);
 const playBtn = document.getElementById('sm-play');
