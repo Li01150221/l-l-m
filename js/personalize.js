@@ -5564,6 +5564,7 @@ if (lay.some(page => (page || []).indexOf('desk-period') >= 0)) return; // 已�
 let dpRemoved = false;
 try { dpRemoved = store.get('desk-period-removed') === '1'; } catch (e) {}
 if (dpRemoved) return;
+if (node.closest && node.closest('#desk-widget-pool')) return;
 if (deskPageCount() >= DESK_PAGE_MAX) return; // 达上限不加页
 store.set('desk-page-count', String(deskPageCount() + 1));
 buildDeskPages();

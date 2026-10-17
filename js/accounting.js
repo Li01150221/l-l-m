@@ -852,11 +852,17 @@ var box = document.getElementById('desktop-pages');
 var p3 = document.querySelector('[data-desk-widget="p3apps"]');
 if (!box || !p3) return;
 if (p3.closest && p3.closest('.page-slide') && !p3.closest('#desk-widget-pool')) return;
+var n;
 try {
 var s = window.activeStore();
-var n = parseInt(s.get('desk-page-count'), 10);
-if (isNaN(n) || n < 3) s.set('desk-page-count', '3');
-} catch (e) {}
+var raw = s.get('desk-page-count');
+n = parseInt(raw, 10);
+if (isNaN(n)) {
+s.set('desk-page-count', '3');
+n = 3;
+}
+} catch (e) { n = 3; }
+if (n < 3) return;
 var slides = box.querySelectorAll('.page-slide');
 var third;
 if (slides.length >= 3) {

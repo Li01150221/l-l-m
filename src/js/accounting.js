@@ -937,12 +937,22 @@
     var box = document.getElementById('desktop-pages');
     var p3 = document.querySelector('[data-desk-widget="p3apps"]');
     if (!box || !p3) return;
+    // p3apps 已经在某一页上：不需要处理
     if (p3.closest && p3.closest('.page-slide') && !p3.closest('#desk-widget-pool')) return;
+    var n;
     try {
       var s = window.activeStore();
-      var n = parseInt(s.get('desk-page-count'), 10);
-      if (isNaN(n) || n < 3) s.set('desk-page-count', '3');
-    } catch (e) {}
+      var raw = s.get('desk-page-count');
+      n = parseInt(raw, 10);
+      if (isNaN(n)) {
+        // 新用户未设置过页数：保持模板默认三页（第三页有经期/备忘/p3apps 等内容）
+        s.set('desk-page-count', '3');
+        n = 3;
+      }
+    } catch (e) { n = 3; }
+    // 用户主动删到两页（n < 3）时 p3apps 留在隐藏池，可从装修库整组找回；
+    // 不再强制占第三页。
+    if (n < 3) return;
     var slides = box.querySelectorAll('.page-slide');
     var third;
     if (slides.length >= 3) {
