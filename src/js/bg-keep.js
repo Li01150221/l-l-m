@@ -1722,6 +1722,14 @@
   //   window.plus 存在（套壳内）→ 用 plus.push.createMessage 发一条系统本地通知（可进锁屏/通知栏）。
   // 判据只认 [plus 在场]，浏览器/PWA 里 plus 恒为 undefined ⇒ 本旁路整段不执行，行为与改动前一字不差
   //（这也是那批通知回归脚本不受影响的原因）。纯自用套壳、不上架应用商店。
+  //===== 套壳原生推送总开关（用户直派 2026-10-17「先暂时关一下，等我想开再打开」）=====
+  // 现状：套壳打包未勾选 Push 模块，而 plus 在场的本机每次后台弹通知都会调
+  // plus.push.createMessage → 触发 DCloud 运行时的「打包时未添加push模块」错误框
+  //（用户实报「这个老弹出来，很烦」）。
+  // 置 false ⇒ 只停掉「真正调用 plus.push」那一步：通知判定/权限视图其余逻辑一字不动，
+  // 套壳内后台通知开关照旧显示（不新挂提示）；浏览器/PWA 无 plus 本就不走这里，零影响。
+  // 恢复：重新云打包并勾选「Push(消息推送)」，再把下面这行改回 true 即可。
+  window.__mochiShellPush = false;
   function nativePushAvailable() {
     try { return !!(window.plus && window.plus.push && typeof window.plus.push.createMessage === 'function'); } catch (e) { return false; }
   }
@@ -1740,6 +1748,8 @@
         if (!nativePushAvailable() && (!('Notification' in window) || Notification.permission !== 'granted')) { note('none'); resolve(false); return; }
         // 壳子里没有 Web Notification API：直接把这一发交给 plus 原生通知（否则下面 SW/页面通道必然落空）
         if (nativePushAvailable()) {
+          // 总开关关闭（默认）：不调 plus.push，免弹「打包时未添加push模块」错误框（见上方开关注释）
+          if (!window.__mochiShellPush) { note('none'); resolve(false); return; }
           try {
             plus.push.createMessage(String(opts.body || ''), '', { title: String(title || ''), cover: true, sound: 'system', when: new Date() });
             note('plus'); resolve(true);

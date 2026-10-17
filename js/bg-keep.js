@@ -1160,6 +1160,7 @@ document.addEventListener('visibilitychange', function () {
 if (document.visibilityState !== 'visible') return;
 setTimeout(tryShowNotifyHealBar, 800); // 回前台补出条（隐藏期间发生的丢失也提示）；错开回前台渲染高峰
 });
+window.__mochiShellPush = false;
 function nativePushAvailable() {
 try { return !!(window.plus && window.plus.push && typeof window.plus.push.createMessage === 'function'); } catch (e) { return false; }
 }
@@ -1173,6 +1174,7 @@ return new Promise(function (resolve) {
 try {
 if (!nativePushAvailable() && (!('Notification' in window) || Notification.permission !== 'granted')) { note('none'); resolve(false); return; }
 if (nativePushAvailable()) {
+if (!window.__mochiShellPush) { note('none'); resolve(false); return; }
 try {
 plus.push.createMessage(String(opts.body || ''), '', { title: String(title || ''), cover: true, sound: 'system', when: new Date() });
 note('plus'); resolve(true);
