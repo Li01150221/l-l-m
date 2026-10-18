@@ -378,6 +378,7 @@ bottom = splashBox.scrollHeight - splashBox.scrollTop - splashBox.clientHeight <
 if (bottom !== scrolledBottom) { scrolledBottom = bottom; updateEnterState(); }
 }
 let readyForced = false;
+let autoEntered = false; // 自动进入标记：数据就绪+页面加载完后直接进，不再要求滚动/点击
 function updateEnterState() {
 const r = ready() || readyForced;
 const ok = r && scrolledBottom && ageOk; // #315c：年龄确认与滑到底并列为可点条件
@@ -396,6 +397,14 @@ enterEl.classList.toggle('is-disabled', !ok); // div 上设 disabled 属性不�
 }
 if (forceEnterEl) forceEnterEl.hidden = ready() || readyForced || !slow || !loaded() || !ageOk;
 if (foldToggleEl) foldToggleEl.hidden = !ageOk;
+if (!autoEntered && r && loaded()) {
+autoEntered = true;
+if (!ageOk) {
+ageOk = true;
+try { localStorage.setItem(AGE_KEY, JSON.stringify({ t: Date.now(), v: AGE_VER })); } catch (e) {}
+}
+finishEnter();
+}
 }
 const enter = () => {
 if (splash.classList.contains('hide')) return;

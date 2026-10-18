@@ -531,6 +531,7 @@
   // 未就绪时 readyForced=true：进入门控按已就绪放行（仍要求滑到底），点进入走
   // forceEnter 同款「数据仍在加载」提示；数据随后真就绪时 ready() 优先、标志自动失效。
   let readyForced = false;
+  let autoEntered = false; // 自动进入标记：数据就绪+页面加载完后直接进，不再要求滚动/点击
   function updateEnterState() {
     const r = ready() || readyForced;
     const ok = r && scrolledBottom && ageOk; // #315c：年龄确认与滑到底并列为可点条件
@@ -554,6 +555,16 @@
     // 仍要进入：仅在「页面已加载完成 + 较慢且未真就绪 + 已确认年满18」时显示，真就绪后隐藏
     if (forceEnterEl) forceEnterEl.hidden = ready() || readyForced || !slow || !loaded() || !ageOk;
     if (foldToggleEl) foldToggleEl.hidden = !ageOk;
+    // 自动进入：数据就绪且页面加载完成后直接进入应用，跳过滚动到底/年龄勾选/点击确认/强制公告页
+    // （用户要求关闭开屏点击流程）。年龄确认自动落盘，避免下次再弹。
+    if (!autoEntered && r && loaded()) {
+      autoEntered = true;
+      if (!ageOk) {
+        ageOk = true;
+        try { localStorage.setItem(AGE_KEY, JSON.stringify({ t: Date.now(), v: AGE_VER })); } catch (e) {}
+      }
+      finishEnter();
+    }
   }
   const enter = () => {
     if (splash.classList.contains('hide')) return;
