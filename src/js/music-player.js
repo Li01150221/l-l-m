@@ -935,33 +935,45 @@
       cb && cb(neaTracksFromSongs(j.data), null);
     });
   }
-  // 把一批 FM 曲目入库并追加到播放队列；清理旧 FM 曲目（保留当前正在播的），避免库无限增长。
-  function addFmTracksToQueue(tracks) {
-    const cur = findTrack(currentId);
-    library = library.filter(m => m.playlistId !== 'fm' || (cur && m.id === cur.id));
+  // 清理库中 FM 曲目：仅保留 keepIds（正在播/待播）里的，其余移除，避免库无限增长。
+  // 注意：只在一次续拉开始时清一次——若每轮都清会把上一轮刚入库的歌删掉，
+  // 导致播放队列里的 id 全部悬空、待播列表渲染为空（v3.x bug）。
+  function pruneFmTracks(keepIds) {
+    const keep = {};
+    (keepIds || []).forEach(id => { if (id) keep[id] = true; });
+    const before = library.length;
+    library = library.filter(m => m.playlistId !== 'fm' || keep[m.id]);
+    if (library.length !== before) saveLibrary();
+  }
+  // 把一批 FM 曲目入库；同 neteaseId 且已在库中的 FM 曲目复用其 id（便于回填队列），
+  // 已是用户歌单里的重复曲目则跳过。返回本批对应的曲目 id 列表。
+  function addFmTracksToLibrary(tracks) {
     const now = Date.now();
-    const newIds = [];
+    const ids = [];
     (tracks || []).forEach((t, i) => {
-      if (t.neteaseId && library.some(m => m.neteaseId === t.neteaseId)) return;
       if (t.fee === 1 || t.fee === 4) return; // VIP/付费歌网页外链播不了，跳过
+      if (t.neteaseId) {
+        const exist = library.find(m => m.neteaseId === t.neteaseId);
+        if (exist) { if (exist.playlistId === 'fm') ids.push(exist.id); return; }
+      }
       const nid = 'sm_fm_' + now + '_' + i + '_' + Math.random().toString(36).substr(2, 4);
       library.push({ id: nid, neteaseId: t.neteaseId, name: t.name || '网易云音乐-' + (t.neteaseId || i), artist: t.artist || '', cover: t.cover || '', url: t.url, source: 'url', duration: t.duration || 0, playlistId: 'fm', addedAt: now });
-      newIds.push(nid);
+      ids.push(nid);
     });
-    if (newIds.length) { saveLibrary(); try { renderPage(); } catch (e) {} }
-    return newIds;
+    if (ids.length) { saveLibrary(); try { renderPage(); } catch (e) {} }
+    return ids;
   }
-  // 多轮拉取，攒够 target 首非 VIP 曲目再回调（最多 FM_MAX_ROUNDS 轮）
+  // 多轮拉取，攒够 target 首非 VIP 曲目再回调（最多 FM_MAX_ROUNDS 轮，跨轮按 id 去重）
   function loadFmTracksUntil(target, cb) {
-    let rounds = 0, allIds = [];
+    let rounds = 0;
+    const seen = {}, result = [];
     function attempt() {
       rounds++;
       neaLoadFmTracks((tracks, err) => {
-        if (err || !tracks || !tracks.length) { cb && cb(allIds, err); return; }
-        const ids = addFmTracksToQueue(tracks);
-        allIds = allIds.concat(ids);
-        if (allIds.length >= target || rounds >= FM_MAX_ROUNDS) {
-          cb && cb(allIds, allIds.length ? null : '本批推荐全是 VIP 歌曲');
+        if (err || !tracks || !tracks.length) { cb && cb(result, err); return; }
+        addFmTracksToLibrary(tracks).forEach(id => { if (!seen[id]) { seen[id] = true; result.push(id); } });
+        if (result.length >= target || rounds >= FM_MAX_ROUNDS) {
+          cb && cb(result, result.length ? null : '本批推荐全是 VIP 歌曲');
         } else {
           attempt();
         }
@@ -971,13 +983,17 @@
   }
   function refillFmQueue() {
     if (!roamActive || fmRefilling) return;
-    fmRefilling = true;
     const need = FM_TARGET - playQueue.length;
-    if (need <= 0) { fmRefilling = false; return; }
+    if (need <= 0) return;
+    fmRefilling = true;
     loadFmTracksUntil(need, (ids, err) => {
       fmRefilling = false;
       if (!ids || !ids.length) return;
-      ids.forEach(id => playQueue.push(id));
+      ids.forEach(id => { if (id !== currentId && playQueue.indexOf(id) < 0) playQueue.push(id); });
+      // 入库并把新曲目加入队列后再清理：保留正在播的和待播的（含刚加入的新曲目），
+      // 移除已播完的。必须在异步回调里做——next() 是「先 shift 再 refill」，
+      // 同步清理会把刚取出的那首一并删掉，导致 playTrack 找不到歌而卡住。
+      pruneFmTracks([currentId].concat(playQueue));
       try { renderQueueBadge(); } catch (e) {}
     });
   }
@@ -987,13 +1003,15 @@
     roamActive = true;
     playQueue = [];
     fmRefilling = false;
+    // 清掉上一次漫游残留的 FM 曲目（保留正在播的那首，避免播放中断）
+    pruneFmTracks([currentId]);
     loadFmTracksUntil(FM_TARGET, (ids, err) => {
       if (!ids || !ids.length) { toast(err || '没有获取到推荐歌曲'); roamActive = false; return; }
-      ids.forEach(id => playQueue.push(id));
+      ids.forEach(id => { if (id !== currentId) playQueue.push(id); });
       try { renderPage(); renderQueueBadge(); } catch (e) {}
+      if (!playQueue.length) { toast('本批推荐全是 VIP 歌曲，已自动跳过，再试一次'); roamActive = false; return; }
       toast('漫游模式已开启');
-      const first = playQueue.shift();
-      playTrack(first);
+      playTrack(playQueue.shift());
     });
   }
   function stopRoamMode() {

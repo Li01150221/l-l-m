@@ -724,31 +724,39 @@ if (err || !j || !Array.isArray(j.data)) { cb && cb(null, err || '接口未返�
 cb && cb(neaTracksFromSongs(j.data), null);
 });
 }
-function addFmTracksToQueue(tracks) {
-const cur = findTrack(currentId);
-library = library.filter(m => m.playlistId !== 'fm' || (cur && m.id === cur.id));
+function pruneFmTracks(keepIds) {
+const keep = {};
+(keepIds || []).forEach(id => { if (id) keep[id] = true; });
+const before = library.length;
+library = library.filter(m => m.playlistId !== 'fm' || keep[m.id]);
+if (library.length !== before) saveLibrary();
+}
+function addFmTracksToLibrary(tracks) {
 const now = Date.now();
-const newIds = [];
+const ids = [];
 (tracks || []).forEach((t, i) => {
-if (t.neteaseId && library.some(m => m.neteaseId === t.neteaseId)) return;
 if (t.fee === 1 || t.fee === 4) return; // VIP/付费歌网页外链播不了，跳过
+if (t.neteaseId) {
+const exist = library.find(m => m.neteaseId === t.neteaseId);
+if (exist) { if (exist.playlistId === 'fm') ids.push(exist.id); return; }
+}
 const nid = 'sm_fm_' + now + '_' + i + '_' + Math.random().toString(36).substr(2, 4);
 library.push({ id: nid, neteaseId: t.neteaseId, name: t.name || '网易云音乐-' + (t.neteaseId || i), artist: t.artist || '', cover: t.cover || '', url: t.url, source: 'url', duration: t.duration || 0, playlistId: 'fm', addedAt: now });
-newIds.push(nid);
+ids.push(nid);
 });
-if (newIds.length) { saveLibrary(); try { renderPage(); } catch (e) {} }
-return newIds;
+if (ids.length) { saveLibrary(); try { renderPage(); } catch (e) {} }
+return ids;
 }
 function loadFmTracksUntil(target, cb) {
-let rounds = 0, allIds = [];
+let rounds = 0;
+const seen = {}, result = [];
 function attempt() {
 rounds++;
 neaLoadFmTracks((tracks, err) => {
-if (err || !tracks || !tracks.length) { cb && cb(allIds, err); return; }
-const ids = addFmTracksToQueue(tracks);
-allIds = allIds.concat(ids);
-if (allIds.length >= target || rounds >= FM_MAX_ROUNDS) {
-cb && cb(allIds, allIds.length ? null : '本批推荐全是 VIP 歌曲');
+if (err || !tracks || !tracks.length) { cb && cb(result, err); return; }
+addFmTracksToLibrary(tracks).forEach(id => { if (!seen[id]) { seen[id] = true; result.push(id); } });
+if (result.length >= target || rounds >= FM_MAX_ROUNDS) {
+cb && cb(result, result.length ? null : '本批推荐全是 VIP 歌曲');
 } else {
 attempt();
 }
@@ -758,13 +766,14 @@ attempt();
 }
 function refillFmQueue() {
 if (!roamActive || fmRefilling) return;
-fmRefilling = true;
 const need = FM_TARGET - playQueue.length;
-if (need <= 0) { fmRefilling = false; return; }
+if (need <= 0) return;
+fmRefilling = true;
 loadFmTracksUntil(need, (ids, err) => {
 fmRefilling = false;
 if (!ids || !ids.length) return;
-ids.forEach(id => playQueue.push(id));
+ids.forEach(id => { if (id !== currentId && playQueue.indexOf(id) < 0) playQueue.push(id); });
+pruneFmTracks([currentId].concat(playQueue));
 try { renderQueueBadge(); } catch (e) {}
 });
 }
@@ -774,13 +783,14 @@ if (!neaCookie()) { toast('请先登录网易云账号'); try { openNeteaseAccou
 roamActive = true;
 playQueue = [];
 fmRefilling = false;
+pruneFmTracks([currentId]);
 loadFmTracksUntil(FM_TARGET, (ids, err) => {
 if (!ids || !ids.length) { toast(err || '没有获取到推荐歌曲'); roamActive = false; return; }
-ids.forEach(id => playQueue.push(id));
+ids.forEach(id => { if (id !== currentId) playQueue.push(id); });
 try { renderPage(); renderQueueBadge(); } catch (e) {}
+if (!playQueue.length) { toast('本批推荐全是 VIP 歌曲，已自动跳过，再试一次'); roamActive = false; return; }
 toast('漫游模式已开启');
-const first = playQueue.shift();
-playTrack(first);
+playTrack(playQueue.shift());
 });
 }
 function stopRoamMode() {
