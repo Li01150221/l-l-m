@@ -715,6 +715,9 @@ cb && cb(j.playlist, null);
 }
 let roamActive = false;
 let fmRefilling = false;
+const FM_TARGET = 10;
+const FM_REFILL_AT = 5;
+const FM_MAX_ROUNDS = 6;
 function neaLoadFmTracks(cb) {
 neaFetch('/personal_fm', (j, err) => {
 if (err || !j || !Array.isArray(j.data)) { cb && cb(null, err || '接口未返回推荐歌曲'); return; }
@@ -736,13 +739,31 @@ newIds.push(nid);
 if (newIds.length) { saveLibrary(); try { renderPage(); } catch (e) {} }
 return newIds;
 }
+function loadFmTracksUntil(target, cb) {
+let rounds = 0, allIds = [];
+function attempt() {
+rounds++;
+neaLoadFmTracks((tracks, err) => {
+if (err || !tracks || !tracks.length) { cb && cb(allIds, err); return; }
+const ids = addFmTracksToQueue(tracks);
+allIds = allIds.concat(ids);
+if (allIds.length >= target || rounds >= FM_MAX_ROUNDS) {
+cb && cb(allIds, allIds.length ? null : '本批推荐全是 VIP 歌曲');
+} else {
+attempt();
+}
+});
+}
+attempt();
+}
 function refillFmQueue() {
 if (!roamActive || fmRefilling) return;
 fmRefilling = true;
-neaLoadFmTracks((tracks, err) => {
+const need = FM_TARGET - playQueue.length;
+if (need <= 0) { fmRefilling = false; return; }
+loadFmTracksUntil(need, (ids, err) => {
 fmRefilling = false;
-if (err || !tracks || !tracks.length) return;
-const ids = addFmTracksToQueue(tracks);
+if (!ids || !ids.length) return;
 ids.forEach(id => playQueue.push(id));
 try { renderQueueBadge(); } catch (e) {}
 });
@@ -753,19 +774,13 @@ if (!neaCookie()) { toast('请先登录网易云账号'); try { openNeteaseAccou
 roamActive = true;
 playQueue = [];
 fmRefilling = false;
-neaLoadFmTracks((tracks, err) => {
-if (err || !tracks || !tracks.length) { toast(err || '没有获取到推荐歌曲'); roamActive = false; return; }
-const ids = addFmTracksToQueue(tracks);
+loadFmTracksUntil(FM_TARGET, (ids, err) => {
+if (!ids || !ids.length) { toast(err || '没有获取到推荐歌曲'); roamActive = false; return; }
 ids.forEach(id => playQueue.push(id));
 try { renderPage(); renderQueueBadge(); } catch (e) {}
-if (playQueue.length) {
 toast('漫游模式已开启');
 const first = playQueue.shift();
 playTrack(first);
-} else {
-toast('本批推荐全是 VIP 歌曲，已自动跳过，再试一次');
-roamActive = false;
-}
 });
 }
 function stopRoamMode() {
@@ -3196,7 +3211,7 @@ markFloatSource(fromWidget);
 while (playQueue.length) {
 const qid = playQueue.shift();
 if (findTrack(qid)) {
-if (roamActive && playQueue.length < 2) refillFmQueue();
+if (roamActive && playQueue.length < FM_REFILL_AT) refillFmQueue();
 playTrack(qid); return;
 }
 }
