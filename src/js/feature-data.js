@@ -202,9 +202,7 @@
     { id: 'myarc', name: '我的档案', group: '桌面功能', scope: 'both', page: 'page-my-arc',
       desc: '我的档案资料与共享给 TA 的部分',
       res: [/^myarc/] },
-    { id: 'room', name: '房间', group: '桌面功能', scope: 'desk', page: 'page-room',
-      desc: '房间摆放与装修、家具位置',
-      res: [/^room-/] },
+    // 房间（双人小屋）入口已移除，数据管理条目同步撤下；room.js/room.css 保留但不可达
     { id: 'drift', name: '漂流瓶', group: '桌面功能', scope: 'desk', page: 'page-drift',
       desc: '我扔出/收到的漂流瓶与回复',
       res: [/^drift-/] },

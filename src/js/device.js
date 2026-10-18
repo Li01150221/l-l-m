@@ -4078,7 +4078,6 @@ window.mochiViewportForm = function (sig) {
     { n: '寻踪打卡', app: 'checkin', page: 'page-checkin', open: true },   // #1279 图标开的是寻踪页 page-checkin（不是字卡库题库页）。#1403 起删掉 gated 那句：总开关不再拦这一页（关掉后页面照开、页顶写明「已禁用」），留着它＝真出故障时诊断会拿「总开关已关闭」当借口，正是 #1279 要治的那一型凭空原因
     { n: '占卜', app: 'divination', page: 'page-divine', open: true },
     { n: '此间', app: 'cjian', page: 'page-cjian', open: true },
-    { n: '房间', app: 'room', page: 'page-room', open: true },
     { n: '经期记录', app: 'period', page: 'page-period', open: true, audit: function (pg) {
       // #1266：阶段填色断言——暗色整段压平（特异度打架）时浅色读数正常、旧自检全绿，
       // 用户实报「填色的图标无法显示」自检却查不出。判据只取计算样式两个结构事实：
