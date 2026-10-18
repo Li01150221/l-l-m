@@ -960,10 +960,12 @@
     if (!window.openTCPanel) return;
     if (neaPanelApi) { try { neaPanelApi.stop(); } catch (e) {} neaPanelApi = null; }
     neaLoadedPls = null;
-    const base = neaBase();
-    const user = neaUser();
     let render = (state) => {
       const st = state || {};
+      // 每次渲染实时读取：保存地址 / 登录成功后面板必须立刻反映最新状态
+      //（原来是打开面板时只读一次的常量，保存后仍判「未配置」、登录后仍判「未登录」）
+      const base = neaBase();
+      const user = neaUser();
       let body = '';
       // 顶部：后端地址（始终可改）
       body += '<div class="sm-form">' +
@@ -1004,8 +1006,8 @@
       }
       body += '</div>';
       body += '<div class="mail-actions"><button class="cc-tool" id="nea-cancel">关闭</button>' +
-        (base && !user ? '<button class="cc-tool" id="nea-save-base">保存地址</button>' : '') +
-        (!base ? '' : '') + '</div>';
+        (!user ? '<button class="cc-tool" id="nea-save-base">保存地址</button>' : '') +
+        '</div>';
       window.openTCPanel('网易云账号', body);
       // 绑定
       const bind = (id, fn) => { const el = document.getElementById(id); if (el) el.addEventListener('click', fn); };
@@ -1022,6 +1024,8 @@
         render({ phase: 'init' });
       };
       bind('nea-save-base', saveBase);
+      // 输入框回车＝保存（用户填完地址直接按回车也能生效）
+      if (baseEl) baseEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); saveBase(); } });
       bind('nea-start-login', () => { if (baseEl && neaNormBase(baseEl.value) !== neaBase()) saveBase(); startQr(); });
       bind('nea-refresh-qr', () => { startQr(); });
       bind('nea-retry', () => { startQr(); });

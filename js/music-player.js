@@ -754,10 +754,10 @@ function openNeteaseAccount() {
 if (!window.openTCPanel) return;
 if (neaPanelApi) { try { neaPanelApi.stop(); } catch (e) {} neaPanelApi = null; }
 neaLoadedPls = null;
-const base = neaBase();
-const user = neaUser();
 let render = (state) => {
 const st = state || {};
+const base = neaBase();
+const user = neaUser();
 let body = '';
 body += '<div class="sm-form">' +
 '<div class="sm-fld"><label>后端地址（NeteaseCloudMusicApi）</label>' +
@@ -793,8 +793,8 @@ body += '<div class="sm-fld"><label>我的歌单</label><div id="nea-pls" style=
 }
 body += '</div>';
 body += '<div class="mail-actions"><button class="cc-tool" id="nea-cancel">关闭</button>' +
-(base && !user ? '<button class="cc-tool" id="nea-save-base">保存地址</button>' : '') +
-(!base ? '' : '') + '</div>';
+(!user ? '<button class="cc-tool" id="nea-save-base">保存地址</button>' : '') +
+'</div>';
 window.openTCPanel('网易云账号', body);
 const bind = (id, fn) => { const el = document.getElementById(id); if (el) el.addEventListener('click', fn); };
 bind('nea-cancel', () => { if (neaPanelApi) { neaPanelApi.stop(); neaPanelApi = null; } document.getElementById('tc-mask').hidden = true; });
@@ -809,6 +809,7 @@ if (neaPanelApi) { neaPanelApi.stop(); neaPanelApi = null; }
 render({ phase: 'init' });
 };
 bind('nea-save-base', saveBase);
+if (baseEl) baseEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); saveBase(); } });
 bind('nea-start-login', () => { if (baseEl && neaNormBase(baseEl.value) !== neaBase()) saveBase(); startQr(); });
 bind('nea-refresh-qr', () => { startQr(); });
 bind('nea-retry', () => { startQr(); });
