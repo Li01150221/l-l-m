@@ -766,12 +766,20 @@ body += '<div class="sm-form">' +
 if (!base) {
 body += '<div class="sm-fld-hint" style="color:var(--danger-ink,#a32d2d)">请先填后端地址并保存，再登录。</div>';
 } else if (!user) {
-if (st.phase === 'qr' && st.qrimg) {
-body += '<div style="text-align:center;padding:12px 0"><img src="' + esc(st.qrimg) + '" style="width:200px;height:200px;border-radius:8px" alt="登录二维码"></div>';
-body += '<div style="text-align:center;opacity:.8">' + (st.phase === 'scanned' ? '已扫码，请在手机上确认' : (st.phase === 'wait' ? '请用网易云音乐 App 扫码' : '正在生成二维码…')) + '</div>';
+const qimg = st.qrimg || _curQr;
+if (st.phase === 'qr' || st.phase === 'wait' || st.phase === 'scanned') {
+if (qimg) {
+const tip = st.phase === 'scanned' ? '已扫码，请在手机上确认登录'
+: (st.phase === 'wait' ? '请用「网易云音乐」App 扫码' : '正在生成二维码…');
+body += '<div style="text-align:center;padding:12px 0"><img src="' + esc(qimg) + '" style="width:200px;height:200px;border-radius:8px" alt="登录二维码"></div>';
+body += '<div style="text-align:center;opacity:.8">' + tip + '</div>';
 body += '<div style="text-align:center;margin-top:8px"><button class="cc-tool" id="nea-refresh-qr">刷新二维码</button></div>';
+} else {
+body += '<div style="text-align:center;padding:24px 0;opacity:.7">正在连接后端，生成二维码…</div>';
+}
 } else if (st.phase === 'err') {
-body += '<div style="text-align:center;padding:20px 0;color:var(--danger-ink,#a32d2d)">' + esc(st.msg || '登录失败') + '</div>';
+body += '<div style="text-align:center;padding:16px 0;color:var(--danger-ink,#a32d2d);word-break:break-all">' + esc(st.msg || '登录失败') + '</div>';
+body += '<div style="text-align:center;padding:0 0 10px;font-size:12px;opacity:.7">若提示连接失败/超时，多半是上面的后端地址填错、或那台后端没有部署成功。</div>';
 body += '<div style="text-align:center"><button class="cc-tool" id="nea-retry">重试</button></div>';
 } else if (st.phase === 'expired') {
 body += '<div style="text-align:center;padding:20px 0">二维码已过期</div>';
@@ -827,15 +835,14 @@ if (neaPanelApi) { neaPanelApi.stop(); neaPanelApi = null; }
 render({ phase: 'qr', qrimg: '' });
 neaPanelApi = neaQrLogin((st) => {
 if (st.phase === 'qr') render({ phase: 'qr', qrimg: st.qrimg });
-else if (st.phase === 'wait') { /* keep showing qr */ }
-else if (st.phase === 'scanned') { /* keep showing qr, text updates in render */ render({ phase: 'qr', qrimg: (st && st.qrimg) || currentQrImg() }); }
+else if (st.phase === 'wait') render({ phase: 'wait' });
+else if (st.phase === 'scanned') render({ phase: 'scanned' });
 else if (st.phase === 'ok') { neaPanelApi = null; render({ phase: 'loggedin' }); toast('登录成功'); }
 else if (st.phase === 'err' || st.phase === 'expired') { neaPanelApi = null; render({ phase: st.phase, msg: st.msg }); }
 });
 };
 let _curQr = '';
 const _origRender = render;
-function currentQrImg() { return _curQr; }
 function renderWrap(st) {
 if (st && st.qrimg) _curQr = st.qrimg;
 _origRender(st);
