@@ -766,6 +766,7 @@ attempt();
 }
 function refillFmQueue() {
 if (!roamActive || fmRefilling) return;
+cleanPlayQueue();
 const need = FM_TARGET - playQueue.length;
 if (need <= 0) return;
 fmRefilling = true;
@@ -2050,9 +2051,10 @@ wrap.hidden = !library.length;
 const chip = (key, name, count) =>
 '<button class="mlf-chip' + (libFilter === key ? ' sel' : '') + '" data-mlf="' + key + '">' +
 '<span class="mlf-name">' + name + '</span><span class="mlf-cnt">' + count + '</span></button>';
+const qCount = playQueue.filter(function (id) { return findTrack(id); }).length;
 let html = '<button class="mlf-chip mlf-queue" id="sm-lib-queue" title="查看播放队列">' +
 '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h9"/></svg>' +
-'<span class="mlf-name">播放列表</span>' + (playQueue.length ? '<span class="mlf-cnt">' + playQueue.length + '</span>' : '') + '</button>';
+'<span class="mlf-name">播放列表</span>' + (qCount ? '<span class="mlf-cnt">' + qCount + '</span>' : '') + '</button>';
 html += chip('all', '全部音乐', library.length);
 if (unclassified.length) html += chip('default', '未分类音乐', unclassified.length);
 html += playlists.map(p => chip(p.id, esc(p.name), library.filter(m => m.playlistId === p.id).length)).join('');
@@ -3074,6 +3076,11 @@ playQueue.push(id);
 renderQueueBadge();
 }
 function renderQueueBadge() {}
+function cleanPlayQueue() {
+const before = playQueue.length;
+playQueue = playQueue.filter(function (id) { return findTrack(id); });
+return playQueue.length !== before;
+}
 const qd = { active: null, timer: null, dragging: false, section: null, sx: 0, sy: 0, notMoved: false, bound: false, suppressClick: false };
 function qdBindGlobals() {
 if (qd.bound) return; qd.bound = true;
@@ -3164,6 +3171,7 @@ tcb.scrollTop = Math.max(0, Math.min(top, tcb.scrollHeight - tcb.clientHeight));
 }
 function openQueuePanel() {
 if (!window.openTCPanel) return;
+if (cleanPlayQueue()) { try { renderLibFilter(); } catch (e) {} }
 const rowFor = (m, extra, withRm) => '<div class="sm-song' + (extra || '') + '" data-qid="' + m.id + '">' + songIcoHtml(m) +
 '<div class="sm-song-info"><div class="sm-song-name">' + esc(m.name || '未知歌曲') + '</div>' +
 '<div class="sm-song-sub">' + esc(m.artist || '未知歌手') + '</div></div>' +

@@ -983,6 +983,9 @@
   }
   function refillFmQueue() {
     if (!roamActive || fmRefilling) return;
+    // 续拉前先清掉悬空 id，否则 need 按 playQueue.length（含无效项）算会偏少，
+    // 实际可播曲目不足却不再补，漫游流就断了。
+    cleanPlayQueue();
     const need = FM_TARGET - playQueue.length;
     if (need <= 0) return;
     fmRefilling = true;
@@ -2487,9 +2490,11 @@
     const chip = (key, name, count) =>
       '<button class="mlf-chip' + (libFilter === key ? ' sel' : '') + '" data-mlf="' + key + '">' +
       '<span class="mlf-name">' + name + '</span><span class="mlf-cnt">' + count + '</span></button>';
+    // 角标只统计 library 中实际存在的曲目，避免悬空 id 导致计数与待播列表行数不一致
+    const qCount = playQueue.filter(function (id) { return findTrack(id); }).length;
     let html = '<button class="mlf-chip mlf-queue" id="sm-lib-queue" title="查看播放队列">' +
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h9"/></svg>' +
-      '<span class="mlf-name">播放列表</span>' + (playQueue.length ? '<span class="mlf-cnt">' + playQueue.length + '</span>' : '') + '</button>';
+      '<span class="mlf-name">播放列表</span>' + (qCount ? '<span class="mlf-cnt">' + qCount + '</span>' : '') + '</button>';
     html += chip('all', '全部音乐', library.length);
     if (unclassified.length) html += chip('default', '未分类音乐', unclassified.length);
     html += playlists.map(p => chip(p.id, esc(p.name), library.filter(m => m.playlistId === p.id).length)).join('');
@@ -3848,6 +3853,14 @@
   }
   // v3.x：队列数量黑色小圆点角标已按用户要求移除，保留调用点以兼容后续扩展
   function renderQueueBadge() {}
+  // 清理播放队列中 library 已不存在的悬空 id（漫游 FM 曲目被 pruneFmTracks / VIP 清理
+  // / 手动删除后，playQueue 里残留的 id 会让角标计数与待播列表实际行数不一致）。
+  // 返回是否清理过条目，便于调用方决定是否刷新角标。
+  function cleanPlayQueue() {
+    const before = playQueue.length;
+    playQueue = playQueue.filter(function (id) { return findTrack(id); });
+    return playQueue.length !== before;
+  }
   // ================= 播放列表面板：长按拖动排序 + 自动定位当前歌 =================
   const qd = { active: null, timer: null, dragging: false, section: null, sx: 0, sy: 0, notMoved: false, bound: false, suppressClick: false };
   function qdBindGlobals() {
@@ -3939,6 +3952,8 @@
   }
   function openQueuePanel() {
     if (!window.openTCPanel) return;
+    // 先清掉 library 已不存在的悬空 id，保证角标计数与待播列表行数一致
+    if (cleanPlayQueue()) { try { renderLibFilter(); } catch (e) {} }
     const rowFor = (m, extra, withRm) => '<div class="sm-song' + (extra || '') + '" data-qid="' + m.id + '">' + songIcoHtml(m) +
       '<div class="sm-song-info"><div class="sm-song-name">' + esc(m.name || '未知歌曲') + '</div>' +
       '<div class="sm-song-sub">' + esc(m.artist || '未知歌手') + '</div></div>' +
