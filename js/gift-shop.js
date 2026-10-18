@@ -1793,39 +1793,11 @@ a.innerHTML = '<div class="app-ico">' + svg + '</div><div class="app-name">' + n
 return a;
 }
 function injectDeskApps(pairs) {
-const st = store();
-let layArr = null;
-try { if (st) layArr = JSON.parse(st.get('desk-layout') || 'null'); } catch (e) {}
-const hasLayout = Array.isArray(layArr);
-const ids = pairs.map(function (p) { return p.id; });
-const alreadyInLay = hasLayout && layArr.some(function (pg) { return (pg || []).some(function (w) { return ids.indexOf(w) >= 0; }); });
-let placed = false;
-if (hasLayout && !alreadyInLay) {
-const pagesBox = document.getElementById('desktop-pages');
-if (pagesBox) {
-const curCnt = pagesBox.querySelectorAll('.page-slide').length;
-if (curCnt < 5) {
-const slide = document.createElement('div');
-slide.className = 'page-slide desk-page';
-slide.dataset.desk = String(curCnt);
-const grid = document.createElement('div');
-grid.className = 'app-grid';
-pairs.forEach(function (p) { grid.appendChild(p.el); });
-slide.appendChild(grid);
-pagesBox.appendChild(slide);
-try { st.set('desk-page-count', String(curCnt + 1)); layArr.push(ids.slice()); st.set('desk-layout', JSON.stringify(layArr)); } catch (e) {}
-try { if (window.deskRebuild) window.deskRebuild(); } catch (e) {}
-placed = true;
-}
-}
-}
-if (!placed) {
 pairs.forEach(function (p) {
 const p3 = document.querySelector('.app-grid.p3-grid');
 if (p3) p3.appendChild(p.el); else { const p2 = document.querySelector('.app-grid.p2-grid'); if (p2) p2.appendChild(p.el); }
 });
 try { if (window.applyDeskLayout) window.applyDeskLayout(); } catch (e) {}
-}
 }
 function buildMarketPage(host) {
 marketPage = document.createElement('div');

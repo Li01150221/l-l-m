@@ -2165,45 +2165,16 @@
     return a;
   }
 
-  // v3.6.x 市集+心意柜成组注入。上限必须与 personalize.js DESK_PAGE_MAX(5) 一致：
-  // 曾用 <6 在满 5 页桌面新建第 6 页 → mochi-restore-done 后 buildDeskPages 钳回 5 页
-  // 删尾页把图标扫进隐藏池，且 app-market 不在 WIDGET_IDS 白名单永远无法找回（刷新也消失）。
-  // 兜底走 memo-app 同款模式：无条件 append 进 .app-grid.p3-grid 当前所在位置
-  // （哪怕整组暂在隐藏池，冷启动收缩后由 accounting.js ensureP3 找回归位）。
+  // v3.2x：桌面固定两页，市集/心意柜图标不再新建页——无条件 append 进 .app-grid.p3-grid
+  // 当前所在位置（该网格现常驻隐藏池，图标随之留池，可从装修模式组件库找回）；已装修
+  // 用户的 desk-layout 由随后 applyDeskLayout 归位。原「新建页」分支随桌面固定两页移除
+  //（app-market 不在 WIDGET_IDS 白名单，新建页被回收进池后会永久消失，故本就走兜底）。
   function injectDeskApps(pairs) {
-    const st = store();
-    let layArr = null;
-    try { if (st) layArr = JSON.parse(st.get('desk-layout') || 'null'); } catch (e) {}
-    const hasLayout = Array.isArray(layArr);
-    const ids = pairs.map(function (p) { return p.id; });
-    const alreadyInLay = hasLayout && layArr.some(function (pg) { return (pg || []).some(function (w) { return ids.indexOf(w) >= 0; }); });
-    let placed = false;
-    if (hasLayout && !alreadyInLay) {
-      const pagesBox = document.getElementById('desktop-pages');
-      if (pagesBox) {
-        const curCnt = pagesBox.querySelectorAll('.page-slide').length;
-        if (curCnt < 5) {
-          const slide = document.createElement('div');
-          slide.className = 'page-slide desk-page';
-          slide.dataset.desk = String(curCnt);
-          const grid = document.createElement('div');
-          grid.className = 'app-grid';
-          pairs.forEach(function (p) { grid.appendChild(p.el); });
-          slide.appendChild(grid);
-          pagesBox.appendChild(slide);
-          try { st.set('desk-page-count', String(curCnt + 1)); layArr.push(ids.slice()); st.set('desk-layout', JSON.stringify(layArr)); } catch (e) {}
-          try { if (window.deskRebuild) window.deskRebuild(); } catch (e) {}
-          placed = true;
-        }
-      }
-    }
-    if (!placed) {
-      pairs.forEach(function (p) {
-        const p3 = document.querySelector('.app-grid.p3-grid');
-        if (p3) p3.appendChild(p.el); else { const p2 = document.querySelector('.app-grid.p2-grid'); if (p2) p2.appendChild(p.el); }
-      });
-      try { if (window.applyDeskLayout) window.applyDeskLayout(); } catch (e) {}
-    }
+    pairs.forEach(function (p) {
+      const p3 = document.querySelector('.app-grid.p3-grid');
+      if (p3) p3.appendChild(p.el); else { const p2 = document.querySelector('.app-grid.p2-grid'); if (p2) p2.appendChild(p.el); }
+    });
+    try { if (window.applyDeskLayout) window.applyDeskLayout(); } catch (e) {}
   }
 
   function buildMarketPage(host) {

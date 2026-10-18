@@ -1,7 +1,7 @@
-// ===== 功能：记账（桌面第三页） =====
+// ===== 功能：记账（桌面装修库组件） =====
 // 记录收支、分类管理、按月/周/年统计、按日分组列表、编辑、图表、分类排行、预算、搜索
 // 数据 localStorage + IndexedDB 双写（键前缀 xy-home-v2:），纯本地无后端
-// 启动时自动确保桌面第三页存在（首次），把记账图标露出来
+// v3.2x：桌面固定两页——记账图标随第三页图标组（p3apps）常驻隐藏池，装修库可加回
 // 数据兼容：键名 accounting-records/accounting-categories 永不变，旧记录经 migrateRecs 惰性补字段
 (function () {
   var G = 'xy-home-v2';
@@ -933,43 +933,11 @@
     } catch (e) {}
   });
 
-  function ensureP3() {
-    var box = document.getElementById('desktop-pages');
-    var p3 = document.querySelector('[data-desk-widget="p3apps"]');
-    if (!box || !p3) return;
-    // p3apps 已经在某一页上：不需要处理
-    if (p3.closest && p3.closest('.page-slide') && !p3.closest('#desk-widget-pool')) return;
-    var n;
-    try {
-      var s = window.activeStore();
-      var raw = s.get('desk-page-count');
-      n = parseInt(raw, 10);
-      if (isNaN(n)) {
-        // 新用户未设置过页数：保持模板默认三页（第三页有经期/备忘/p3apps 等内容）
-        s.set('desk-page-count', '3');
-        n = 3;
-      }
-    } catch (e) { n = 3; }
-    // 用户主动删到两页（n < 3）时 p3apps 留在隐藏池，可从装修库整组找回；
-    // 不再强制占第三页。
-    if (n < 3) return;
-    var slides = box.querySelectorAll('.page-slide');
-    var third;
-    if (slides.length >= 3) {
-      third = slides[2];
-    } else {
-      third = document.createElement('div');
-      third.className = 'page-slide desk-page third';
-      third.setAttribute('data-desk', '2');
-      box.appendChild(third);
-    }
-    var hint = third.querySelector('.desk-page-hint');
-    var addBtn = third.querySelector('.desk-page-add');
-    if (hint && hint.parentNode) hint.parentNode.removeChild(hint);
-    if (addBtn && addBtn.parentNode) addBtn.parentNode.removeChild(addBtn);
-    third.appendChild(p3);
-    if (window.deskRebuild) window.deskRebuild();
-  }
+  // v3.2x：桌面固定两页——ensureP3 不再补建第三页。原实现会为新用户把页数写成 3 并
+  // 新建第三页放回 p3apps，是「第三页老是冒出来」的主因。现保留同名空函数以兼容调用方
+  // （buildDeskPages 的 setTimeout 兜底仍会调 window.ensureP3）；p3apps / 经期卡 /
+  // 备忘心情行等原第三页组件常驻隐藏池，可从装修模式组件库整组找回。
+  function ensureP3() {}
   window.ensureP3 = ensureP3;
   if (window.__mochiDataReady) ensureP3();
   else {

@@ -847,39 +847,7 @@ if (!page.hidden) render(); else hydrateAll();
 rmSyncRow();
 } catch (e) {}
 });
-function ensureP3() {
-var box = document.getElementById('desktop-pages');
-var p3 = document.querySelector('[data-desk-widget="p3apps"]');
-if (!box || !p3) return;
-if (p3.closest && p3.closest('.page-slide') && !p3.closest('#desk-widget-pool')) return;
-var n;
-try {
-var s = window.activeStore();
-var raw = s.get('desk-page-count');
-n = parseInt(raw, 10);
-if (isNaN(n)) {
-s.set('desk-page-count', '3');
-n = 3;
-}
-} catch (e) { n = 3; }
-if (n < 3) return;
-var slides = box.querySelectorAll('.page-slide');
-var third;
-if (slides.length >= 3) {
-third = slides[2];
-} else {
-third = document.createElement('div');
-third.className = 'page-slide desk-page third';
-third.setAttribute('data-desk', '2');
-box.appendChild(third);
-}
-var hint = third.querySelector('.desk-page-hint');
-var addBtn = third.querySelector('.desk-page-add');
-if (hint && hint.parentNode) hint.parentNode.removeChild(hint);
-if (addBtn && addBtn.parentNode) addBtn.parentNode.removeChild(addBtn);
-third.appendChild(p3);
-if (window.deskRebuild) window.deskRebuild();
-}
+function ensureP3() {}
 window.ensureP3 = ensureP3;
 if (window.__mochiDataReady) ensureP3();
 else {

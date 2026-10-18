@@ -6322,8 +6322,10 @@ try {
   const pagesVal = document.getElementById('desk-pages-val');
   const delPageRow = document.getElementById('row-desk-del-page');
   const pageBgsBox = document.getElementById('desk-page-bgs');
-  const DESK_PAGE_MAX = 5;
-  // 前两页是核心页（情侣空间 + 音乐播放器），只可增删第 3 页及以后的空白页
+  // v3.2x：桌面固定两页（核心页 = 情侣空间 + 音乐播放器）。原先可增删的第 3 页及以后
+  // 全部取消——第三页不再自动补位，其组件（经期卡 / 备忘心情行 / p3apps 图标组）常驻
+  // 隐藏池，可从装修模式组件库随时整组找回。MAX=MIN=2 ⇒ 增/删页入口自然失效。
+  const DESK_PAGE_MAX = 2;
   const DESK_PAGE_MIN = 2;
   const deskPageCount = () => {
     const v = parseInt(store.get('desk-page-count'), 10);
@@ -6405,6 +6407,10 @@ try {
       if (v) { const p = JSON.parse(v); if (Array.isArray(p)) a = p; }
     } catch (e) {}
     if (!a) return null;
+    // v3.2x：桌面固定降为两页——旧的多页布局（3~5 页）裁到前两页继续生效（保留用户
+    // 在第 1/2 页的排布），被裁掉页上的组件随后由 applyDeskLayout 移入隐藏池可找回；
+    // 不再整体判为「校验失败」清键（那会把用户前两页的装修一并丢掉）。
+    if (a.length > DESK_PAGE_MAX) a = a.slice(0, DESK_PAGE_MAX);
     const seen = {};
     const ok = a.length >= DESK_PAGE_MIN && a.length <= DESK_PAGE_MAX &&
       a.some(function (page) { return Array.isArray(page) && page.length > 0; }) &&
@@ -6584,7 +6590,8 @@ try {
   const syncPagesUI = () => {
     const n = deskPageCount();
     if (pagesVal) pagesVal.textContent = '共 ' + n + ' 页';
-    if (delPageRow) delPageRow.hidden = n <= 1;
+    // v3.2x：桌面固定两页，删除最后一页入口恒定隐藏（MIN=MAX=2，无从删起）
+    if (delPageRow) delPageRow.hidden = true;
     if (!pageBgsBox) return;
     pageBgsBox.innerHTML = '';
     for (let i = 0; i < n; i++) {
@@ -6686,7 +6693,7 @@ try {
     resetDeskRow.addEventListener('click', () => {
       // v3.26.x：预选中唯一「确定恢复默认」pill——noInput 弹窗只点底部「确定」时
       // fire() 传 pillVal=null → 静默不执行（反馈"点了没反应"）。与删除方案同因同修。
-      const ctl = window.openModal('恢复默认桌面', '将恢复桌面卡片布局与页数，桌面恢复为默认三页（每页已设置的背景图与图标不受影响）。确定继续？', (v) => {
+      const ctl = window.openModal('恢复默认桌面', '将恢复桌面卡片布局与页数，桌面恢复为默认两页（每页已设置的背景图与图标不受影响）。确定继续？', (v) => {
         if (v !== '1') return;
         // 恢复默认桌面：彻底回到系统默认布局（组件卡片 + 图标位置）。
         // 旧实现只删 desk-layout 并按隐藏池就地回位，有三处漏洞导致多次复现「没恢复」：
@@ -6700,7 +6707,7 @@ try {
         let dels = [];
         try {
           store.remove('desk-layout');
-          store.set('desk-page-count', '3');
+          store.set('desk-page-count', '2');
           document.querySelectorAll('.app-grid').forEach(function (g) {
             if (g.dataset.app) store.remove('app-icon-order-' + g.dataset.app);
           });

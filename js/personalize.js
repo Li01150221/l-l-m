@@ -5104,7 +5104,7 @@ if (node && node.parentNode !== pool) pool.appendChild(node);
 const pagesVal = document.getElementById('desk-pages-val');
 const delPageRow = document.getElementById('row-desk-del-page');
 const pageBgsBox = document.getElementById('desk-page-bgs');
-const DESK_PAGE_MAX = 5;
+const DESK_PAGE_MAX = 2;
 const DESK_PAGE_MIN = 2;
 const deskPageCount = () => {
 const v = parseInt(store.get('desk-page-count'), 10);
@@ -5152,6 +5152,7 @@ const v = store.get('desk-layout');
 if (v) { const p = JSON.parse(v); if (Array.isArray(p)) a = p; }
 } catch (e) {}
 if (!a) return null;
+if (a.length > DESK_PAGE_MAX) a = a.slice(0, DESK_PAGE_MAX);
 const seen = {};
 const ok = a.length >= DESK_PAGE_MIN && a.length <= DESK_PAGE_MAX &&
 a.some(function (page) { return Array.isArray(page) && page.length > 0; }) &&
@@ -5288,7 +5289,7 @@ setTimeout(function () { if (window.ensureP3) window.ensureP3(); }, 50);
 const syncPagesUI = () => {
 const n = deskPageCount();
 if (pagesVal) pagesVal.textContent = '共 ' + n + ' 页';
-if (delPageRow) delPageRow.hidden = n <= 1;
+if (delPageRow) delPageRow.hidden = true;
 if (!pageBgsBox) return;
 pageBgsBox.innerHTML = '';
 for (let i = 0; i < n; i++) {
@@ -5383,12 +5384,12 @@ buildDeskPages();
 const resetDeskRow = document.getElementById('row-desk-reset');
 if (resetDeskRow) {
 resetDeskRow.addEventListener('click', () => {
-const ctl = window.openModal('恢复默认桌面', '将恢复桌面卡片布局与页数，桌面恢复为默认三页（每页已设置的背景图与图标不受影响）。确定继续？', (v) => {
+const ctl = window.openModal('恢复默认桌面', '将恢复桌面卡片布局与页数，桌面恢复为默认两页（每页已设置的背景图与图标不受影响）。确定继续？', (v) => {
 if (v !== '1') return;
 let dels = [];
 try {
 store.remove('desk-layout');
-store.set('desk-page-count', '3');
+store.set('desk-page-count', '2');
 document.querySelectorAll('.app-grid').forEach(function (g) {
 if (g.dataset.app) store.remove('app-icon-order-' + g.dataset.app);
 });

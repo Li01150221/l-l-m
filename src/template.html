@@ -550,7 +550,7 @@
           </div>
         </div>
 
-<!-- 第二页补充：每周日程（填空白区）；今日备忘/今天的心情已移第三页经期卡下方 -->
+<!-- 第二页补充：每周日程（填空白区）；今日备忘/今天的心情现常驻隐藏池，可从装修库加回 -->
 <div class="week-card glass" data-desk-widget="week" data-card-bg="week">
 <div class="mc-top">本周日常</div>
 <div class="week-days" id="week-days"></div>
@@ -567,7 +567,7 @@
 </div>
 
 <!-- 第二页功能：两排图标（第一排 音乐/聊天统计/提问记录/寻踪；第二排 此间/同频(注入)/伸手(注入)；
-     喝水已移至第三页 p3-grid（p2-features 注入）），整组移到摸鱼组件（周末倒计时）下面 -->
+     喝水/吃什么/存钱罐/番茄钟等注入隐藏池的 p3-grid，装修库可加回），整组移到摸鱼组件（周末倒计时）下面 -->
 <div class="app-grid p2-grid" data-app="p2" data-desk-widget="p2apps">
 <div class="app" data-app="music" data-desk-widget="app-music">
 <div class="app-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
@@ -593,52 +593,8 @@
 </div>
       </div><!-- /page-slide 第二页 -->
 
-      <!-- 第三页：经期记录等健康记录 -->
-      <div class="page-slide third">
-<div class="desk-period glass" data-desk-widget="desk-period" data-card-bg="desk-period">
-  <div class="dpd-inner">
-    <div class="dpd-label" id="dpd-label">经期</div>
-    <div class="dpd-days" id="dpd-days">—</div>
-    <div class="dpd-sub" id="dpd-sub">未记录</div>
-  </div>
-</div>
-<!-- v3.13.x：今日备忘 + 今天的心情（自第二页移入，放经期卡下方） -->
-<div class="mini-row" data-desk-widget="memo-row">
-<div class="mini-card glass memo-card" data-card-bg="memo">
-<div class="mc-top">今日备忘</div>
-<div class="mc-b" id="memo-text" title="点击记录">点这里记一句话</div>
-</div>
-<div class="mini-card glass mood-card" data-card-bg="mood">
-<div class="mc-top">今天的心情</div>
-<div class="mc-b" id="today-mood-text">点一下选心情</div>
-</div>
-</div>
-<div class="app-grid p3-grid" data-app="p3" data-desk-widget="p3apps">
-<div class="app" data-app="period" data-desk-widget="app-period">
-<div class="app-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.2C12 3.2 6 9.2 6 14.2a6 6 0 0 0 12 0c0-5-6-11-6-11z"/><path d="M12 16.4c0 0-2.3-1.4-2.3-2.9a1.25 1.25 0 0 1 2.3-.9 1.25 1.25 0 0 1 2.3.9c0 1.5-2.3 2.9-2.3 2.9z"/></svg></div>
-<div class="app-name">经期记录</div>
-</div>
-<div class="app" data-app="accounting" data-desk-widget="app-accounting">
-<div class="app-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="3" width="15" height="18" rx="2"/><path d="M4.5 8h15"/><path d="M10 13l2-2 2 2"/><path d="M12 11v6"/><path d="M10.5 14h3"/></svg></div>
-<div class="app-name">记账</div>
-</div>
-<div class="app" data-app="memo-arc" data-desk-widget="app-memo-arc">
-<div class="app-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 6.5h5L10 4.5h9a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-12z"/><path d="M12 7.6l1.2 2.7 2.7 1.2-2.7 1.2L12 15.4l-1.2-2.7-2.7-1.2 2.7-1.2z"/></svg></div>
-<div class="app-name">梦角档案</div>
-</div>
-<!-- v3.16.x：我的档案（认识自己；与梦角档案互为镜像）桌面第三页入口，紧邻梦角档案右侧 -->
-<div class="app" data-app="my-arc" data-desk-widget="app-my-arc">
-<div class="app-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 6.5h5L10 4.5h9a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-12z"/><circle cx="12" cy="9.5" r="1.9"/><path d="M8.4 15.6c.6-1.6 2-2.4 3.6-2.4s3 .8 3.6 2.4"/></svg></div>
-<div class="app-name">我的档案</div>
-</div>
-<!-- v3.15.x：房间（双人小屋）桌面第三页入口——聊天「更多功能」同款页面，从桌面进入返回桌面 -->
-<div class="app" data-app="room" data-desk-widget="app-room">
-<div class="app-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 11L12 4l8.5 7"/><path d="M5.8 9.6V20h12.4V9.6"/><path d="M10 20v-5.4h4V20"/></svg></div>
-<div class="app-name">房间</div>
-</div>
-<!-- 本页动态注入 喝水/吃什么/存钱罐/番茄钟（p2-features.js，喝水排在本页静态图标之后） -->
-</div>
-      </div><!-- /page-slide 第三页 -->
+      <!-- v3.2x：桌面固定两页——原「第三页」整体移除。经期倒计时卡 / 今日备忘·心情行 /
+           第三页功能图标组（p3apps）随下方隐藏池常驻，可从装修模式组件库「添加到本页」找回。 -->
       </div><!-- /desktop-pages -->
 
       <!-- 桌面小组件隐藏池：被移除/未添加的组件暂存于此（display:none）。
@@ -669,6 +625,49 @@
           <div class="da-label">距下一个纪念日</div>
           <div class="da-days" id="da-days">—</div>
           <div class="da-name" id="da-name">未设置</div>
+        </div>
+
+        <!-- v3.2x：原第三页移除的组件——经期倒计时卡 / 今日备忘·心情行 / 第三页功能图标组，
+             常驻隐藏池；用户从装修模式组件库「添加到本页」即可放回任意页。 -->
+        <div class="desk-period glass" data-desk-widget="desk-period" data-card-bg="desk-period">
+          <div class="dpd-inner">
+            <div class="dpd-label" id="dpd-label">经期</div>
+            <div class="dpd-days" id="dpd-days">—</div>
+            <div class="dpd-sub" id="dpd-sub">未记录</div>
+          </div>
+        </div>
+        <div class="mini-row" data-desk-widget="memo-row">
+          <div class="mini-card glass memo-card" data-card-bg="memo">
+            <div class="mc-top">今日备忘</div>
+            <div class="mc-b" id="memo-text" title="点击记录">点这里记一句话</div>
+          </div>
+          <div class="mini-card glass mood-card" data-card-bg="mood">
+            <div class="mc-top">今天的心情</div>
+            <div class="mc-b" id="today-mood-text">点一下选心情</div>
+          </div>
+        </div>
+        <div class="app-grid p3-grid" data-app="p3" data-desk-widget="p3apps">
+          <div class="app" data-app="period" data-desk-widget="app-period">
+            <div class="app-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.2C12 3.2 6 9.2 6 14.2a6 6 0 0 0 12 0c0-5-6-11-6-11z"/><path d="M12 16.4c0 0-2.3-1.4-2.3-2.9a1.25 1.25 0 0 1 2.3-.9 1.25 1.25 0 0 1 2.3.9c0 1.5-2.3 2.9-2.3 2.9z"/></svg></div>
+            <div class="app-name">经期记录</div>
+          </div>
+          <div class="app" data-app="accounting" data-desk-widget="app-accounting">
+            <div class="app-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="3" width="15" height="18" rx="2"/><path d="M4.5 8h15"/><path d="M10 13l2-2 2 2"/><path d="M12 11v6"/><path d="M10.5 14h3"/></svg></div>
+            <div class="app-name">记账</div>
+          </div>
+          <div class="app" data-app="memo-arc" data-desk-widget="app-memo-arc">
+            <div class="app-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 6.5h5L10 4.5h9a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-12z"/><path d="M12 7.6l1.2 2.7 2.7 1.2-2.7 1.2L12 15.4l-1.2-2.7-2.7-1.2 2.7-1.2z"/></svg></div>
+            <div class="app-name">梦角档案</div>
+          </div>
+          <div class="app" data-app="my-arc" data-desk-widget="app-my-arc">
+            <div class="app-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 6.5h5L10 4.5h9a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-12z"/><circle cx="12" cy="9.5" r="1.9"/><path d="M8.4 15.6c.6-1.6 2-2.4 3.6-2.4s3 .8 3.6 2.4"/></svg></div>
+            <div class="app-name">我的档案</div>
+          </div>
+          <div class="app" data-app="room" data-desk-widget="app-room">
+            <div class="app-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 11L12 4l8.5 7"/><path d="M5.8 9.6V20h12.4V9.6"/><path d="M10 20v-5.4h4V20"/></svg></div>
+            <div class="app-name">房间</div>
+          </div>
+          <!-- 本组内动态注入 喝水/吃什么/存钱罐/番茄钟/备忘录（p2-features.js、gift-shop.js、memo-app.js） -->
         </div>
 
       </div>
@@ -2279,9 +2278,9 @@
           <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.6M12 18.4V21M3 12h2.6M18.4 12H21" stroke-linecap="round"/></svg></div>
           <div class="txt">调整图标图片位置<span class="sub">上传图片后单独调缩放/水平/垂直位置，即时生效 · 点图标即可调</span></div>
         </div>
-        <div class="set-row" id="row-desk-add-page">
+        <div class="set-row" id="row-desk-add-page" hidden>
           <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 8v8M8 12h8"/></svg></div>
-          <div class="txt">新增桌面页<span class="sub">最多 5 页 · 新页空白可放卡片/图片</span></div>
+          <div class="txt">桌面页数<span class="sub">固定两页 · 桌面不可增减</span></div>
           <div class="val" id="desk-pages-val">共 2 页</div>
         </div>
         <div class="set-row" id="row-desk-del-page" hidden>
@@ -2559,7 +2558,7 @@
           <details class="lic-grp">
             <summary><span class="lg-num">07</span><span class="lg-name">手机桌面</span><span class="lg-count">18</span></summary>
             <div class="lg-body">
-          <div class="lic-li">桌面多页滑动（scroll-snap，最多 5 页），指示器圆点点击切换，支持动态新增 / 删除页面</div>
+          <div class="lic-li">桌面固定两页滑动（scroll-snap），指示器圆点点击切换；原第三页的组件（经期卡 / 备忘心情行 / 第三页图标组）已收进装修库，可从组件库随时找回</div>
           <div class="lic-li">组件隐藏池自由添加：时钟 / 月历 / 计时器 / 纪念日倒计时 / 图片组件 / 文字组件</div>
           <div class="lic-li">时钟、日历、备忘录、今日心情、离周末还有几天</div>
           <div class="lic-li">桌面组件【今日情话】为联系人每日随机刷新想对你说的话（可在字卡库自定义添加）</div>
@@ -2567,7 +2566,7 @@
           <div class="lic-li">和 TA 一起摸鱼打卡：摸鱼值 / 工作值双方随机增长，打卡横幅统计摸鱼天数，摸鱼抓包彩蛋涨值翻倍</div>
           <div class="lic-li">第一页图标：聊天、群聊（开启群聊模式后显示）、主页、信箱、朋友圈、日历、纪念、占卜（开启群聊模式期间收起，改用 设置 → 工具 → 占卜 打开）、收藏</div>
           <div class="lic-li">第二页：音乐播放器卡、本周日常、周末倒计时；图标——音乐、聊天统计、提问记录、寻踪、此间、同频、伸手</div>
-          <div class="lic-li">第三页：经期倒计时大卡、今日备忘 / 今天的心情、备忘录状态横幅；图标——经期记录、记账、梦角档案、我的档案、房间、备忘录、喝水、吃什么、存钱罐、番茄钟</div>
+          <div class="lic-li">装修库组件：经期倒计时大卡、今日备忘 / 今天的心情、第三页功能图标组（经期记录、记账、梦角档案、我的档案、房间、备忘录、喝水、吃什么、存钱罐、番茄钟）；第三页图标同样动态注入</div>
           <div class="lic-li">心意市集 / 心意柜图标成组自动注入桌面</div>
           <div class="lic-li">装修模式：编辑布局、添加卡片、点图标换图、卡片设背景、长按拖拽跨页摆放、恢复图标</div>
           <div class="lic-li">手机桌面美化：主题色、桌面字号、卡片大小、组件圆角、内置壁纸预设、背景模糊遮罩、每页独立背景图</div>
