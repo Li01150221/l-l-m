@@ -106,6 +106,13 @@ html { margin:0; padding:0; }
    visibility:visible 显式覆写，子元素不会把继承的 hidden 顶掉。零机型分支：任何内核都只是
    少画一层被完全盖住的内容，安卓/桌面浏览器行为一致，不认这条选择器的老内核退回现状。 */
 .splash:not(.hide) ~ .phone { visibility:hidden; }
+/* v3.x「隐形加载」批（用户 2026-10-18「干脆把开屏删掉」）：开屏整屏不再显示——
+   #splash 视觉隐藏但保留在 DOM 中，继续充当「数据闸」：上面 #541 的
+   .splash:not(.hide) ~ .phone 依然命中，桌面在数据回填完成（clock.js 自动进入 →
+   hide() 加 .hide）前保持隐藏，避免删掉开屏后「没加载完就进空桌面」的老 bug 复发。
+   开屏原有的二级验证密码解锁口改由 设置 → 系统 →「字卡锁（二级验证密码）」行承担
+   （template.html #row-cardlock-unlock），不再依赖开屏可见。 */
+#splash { display:none !important; }
 /* v3.8.x：开屏即公告1页。v3.8.y：整页一体滚动——logo/标题/署名/原作信息+公告全部在此容器内滚动 */
 .splash-box {
   flex:1; min-height:0; width:100%; overflow-y:auto;

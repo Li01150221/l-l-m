@@ -100,6 +100,7 @@ function run() {
 ensureSettings();
 ensureBulletin();
 setupCardLockCard();
+setupCardLockRow();
 }
 function cardLockStateKnown() {
 try { return typeof window.cardLockOpen === 'function' ? !!window.cardLockOpen() : false; } catch (e) { return false; }
@@ -220,10 +221,33 @@ const ctl2 = window.openModal('解锁成功 · 字卡使用提醒', '', function
 }, { noInput: true, big: true, warn: true, lock: true, staticText: '系统内置字卡已解锁，聊天与各功能可以正常取用。\n\n' + sizeTip });
 if (ctl2 && ctl2.okText) ctl2.okText('知道了');
 }
-}, { inputmode: 'numeric', placeholder: '输入二级验证密码', staticText: '密码一共 6 位数字：前两位是 99，后 4 位是 mochi 字卡生日的字面数字（把生日日期原样写成 4 位数），生日就在开屏第一页的章节目录里（点开顶部的「目录」逐章翻一下就能找到）——第一页的章节目录里和第二页最顶那张时间线卡都写着——日期一直是很简单的字面意思，不是隐藏答案；开屏最底下的部署时间不算（那只是用来判断有没有更新到新版本）。解开密码请勿二传（不要告诉别人），一旦有人二传，密码就会被重新设置。这个密码与开屏问答页的「暗号」是同一个（同一串 6 位数字）：在开屏问答页点「输暗号跳过问答」用的也是它。' });
+}, { inputmode: 'numeric', placeholder: '输入二级验证密码', staticText: '密码一共 6 位数字：前两位是 99，后 4 位是 mochi 字卡生日的字面数字（把生日日期原样写成 4 位数），mochi 字卡的生日是 8 月 15 日（原样写成 0815）——日期一直是很简单的字面意思，不是隐藏答案。（原写着这句话的开屏公告已改为自动进入、整屏不再显示，生日提示就直接写在这里。）解开密码请勿二传（不要告诉别人），一旦有人二传，密码就会被重新设置。这个密码与开屏问答页的「暗号」是同一个（同一串 6 位数字）：在开屏问答页点「输暗号跳过问答」用的也是它。' });
+}
+function setupCardLockRow() {
+const row = document.getElementById('row-cardlock-unlock');
+if (!row) return;
+const val = row.querySelector('.val');
+const open = cardLockStateKnown();
+if (val) val.textContent = open ? '已解锁 · 点此重新上锁' : '已锁定 · 点此输密码解锁';
+if (row.dataset.cardlockBound) return; // 只绑一次；重复调用仅刷新状态文案（幂等）
+row.dataset.cardlockBound = '1';
+cardLockTap(row, function () {
+const val2 = row.querySelector('.val');
+if (cardLockStateKnown()) {
+window.cardLockRelock();
+if (val2) val2.textContent = '已重新上锁，页面即将刷新…';
+const goReload = function () { setTimeout(function () { location.reload(); }, 300); };
+if (window.cardLockConfirmPersisted) window.cardLockConfirmPersisted('locked', goReload);
+else setTimeout(function () { location.reload(); }, 900);
+} else {
+promptCardUnlock(val2);
+}
+});
 }
 document.addEventListener('mochi-cardlock-open', setupCardLockCard);
 document.addEventListener('mochi-cardlock-locked', setupCardLockCard);
+document.addEventListener('mochi-cardlock-open', setupCardLockRow);
+document.addEventListener('mochi-cardlock-locked', setupCardLockRow);
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
 else run();
 fetch(OFFICIAL_NOTICE, { cache: 'no-store' })

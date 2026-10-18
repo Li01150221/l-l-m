@@ -125,6 +125,7 @@
     ensureSettings();
     ensureBulletin();
     setupCardLockCard();
+    setupCardLockRow();
   }
   // ===== #1273 开屏解锁入口的三件地基（零机型／零 UA 分支，判据只取「组件在不在场」与事件形态）=====
   // ① cardLockStateKnown：锁卡状态问得到才算数，问不到按默认锁定态渲染（见 setupCardLockCard）。
@@ -291,18 +292,50 @@
         }, { noInput: true, big: true, warn: true, lock: true, staticText: '系统内置字卡已解锁，聊天与各功能可以正常取用。\n\n' + sizeTip });
         if (ctl2 && ctl2.okText) ctl2.okText('知道了');
       }
-    }, { inputmode: 'numeric', placeholder: '输入二级验证密码', staticText: '密码一共 6 位数字：前两位是 99，后 4 位是 mochi 字卡生日的字面数字（把生日日期原样写成 4 位数），生日就在开屏第一页的章节目录里（点开顶部的「目录」逐章翻一下就能找到）——第一页的章节目录里和第二页最顶那张时间线卡都写着——日期一直是很简单的字面意思，不是隐藏答案；开屏最底下的部署时间不算（那只是用来判断有没有更新到新版本）。解开密码请勿二传（不要告诉别人），一旦有人二传，密码就会被重新设置。这个密码与开屏问答页的「暗号」是同一个（同一串 6 位数字）：在开屏问答页点「输暗号跳过问答」用的也是它。' });
+    }, { inputmode: 'numeric', placeholder: '输入二级验证密码', staticText: '密码一共 6 位数字：前两位是 99，后 4 位是 mochi 字卡生日的字面数字（把生日日期原样写成 4 位数），mochi 字卡的生日是 8 月 15 日（原样写成 0815）——日期一直是很简单的字面意思，不是隐藏答案。（原写着这句话的开屏公告已改为自动进入、整屏不再显示，生日提示就直接写在这里。）解开密码请勿二传（不要告诉别人），一旦有人二传，密码就会被重新设置。这个密码与开屏问答页的「暗号」是同一个（同一串 6 位数字）：在开屏问答页点「输暗号跳过问答」用的也是它。' });
+  }
+  // ===== v3.x「隐形加载」批：字卡锁（二级验证密码）解锁口迁到设置 =====
+  // 开屏改「隐形加载」后整屏不可见（base.css #splash { display:none }），原开屏锁卡
+  // #splash-cardlock-actions 再点不到了——把入口迁到 设置 → 系统 的 #row-cardlock-unlock：
+  // 锁定态点开输密码解锁、已解锁态点开可重新上锁。复用同一解锁流程 promptCardUnlock（与
+  // 开屏那条完全一致，含输错节流/解锁成功弹「字卡体量提醒」）与 window.cardLockRelock()，
+  // 不新增任何校验逻辑；行内 .val 随 mochi-cardlock-open/-locked 事件重渲状态。
+  function setupCardLockRow() {
+    const row = document.getElementById('row-cardlock-unlock');
+    if (!row) return;
+    const val = row.querySelector('.val');
+    const open = cardLockStateKnown();
+    if (val) val.textContent = open ? '已解锁 · 点此重新上锁' : '已锁定 · 点此输密码解锁';
+    if (row.dataset.cardlockBound) return; // 只绑一次；重复调用仅刷新状态文案（幂等）
+    row.dataset.cardlockBound = '1';
+    cardLockTap(row, function () {
+      const val2 = row.querySelector('.val');
+      if (cardLockStateKnown()) {
+        // 已解锁：点按＝重新上锁（与开屏锁卡同款：等 'locked' 落进 IDB 再刷新，防重锁丢失）
+        window.cardLockRelock();
+        if (val2) val2.textContent = '已重新上锁，页面即将刷新…';
+        const goReload = function () { setTimeout(function () { location.reload(); }, 300); };
+        if (window.cardLockConfirmPersisted) window.cardLockConfirmPersisted('locked', goReload);
+        else setTimeout(function () { location.reload(); }, 900);
+      } else {
+        promptCardUnlock(val2);
+      }
+    });
   }
   // #1498（2026-09-30 作者口径「二级密码不要弹窗啊，就放在开屏爱点不点」）：进入应用的强制
   //   提醒弹窗（含其长文案与测试钩）整段摘除。
-  //   二级密码唯一解锁入口＝开屏公告区那张锁卡（自愿点击）；锁定只影响系统预设字卡可用与否，
-  //   不弹窗不打扰。会话闸见 card-lock.js（每次加载从锁定开始）。
+  //   v3.x「隐形加载」批后：二级密码解锁口＝设置 → 系统 →「字卡锁（二级验证密码）」行
+  //   （#row-cardlock-unlock，自愿点击；开屏那张锁卡仍在 DOM 但不可见）；锁定只影响系统预设
+  //   字卡可用与否，不弹窗不打扰。会话闸见 card-lock.js（每次加载从锁定开始）。
   // FIX 2026-09-13 #389：解锁态可能「晚到」——card-lock.js 走 xyStore 后，杀进程回滚的
   // 解锁状态由 wrj 自愈链（mochi-wrj-heal）异步修回并补发 mochi-cardlock-open/-locked。
   // 开屏锁卡此前只在首屏渲染一次，晚到的解锁会一直显示「输入密码解锁」假象，这里监听
   // 两个状态事件整卡重渲染（setupCardLockCard 幂等，重复触发安全）。
   document.addEventListener('mochi-cardlock-open', setupCardLockCard);
   document.addEventListener('mochi-cardlock-locked', setupCardLockCard);
+  // v3.x「隐形加载」批：设置行同口径随锁定/解锁事件重渲状态文案（幂等）
+  document.addEventListener('mochi-cardlock-open', setupCardLockRow);
+  document.addEventListener('mochi-cardlock-locked', setupCardLockRow);
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
   else run();
   // 可选官方远程源：失败（离线/被墙/CORS）不阻塞，保留本地兜底；权威文案有变才强刷

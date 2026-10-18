@@ -79,6 +79,7 @@ transition:opacity .4s ease;
 }
 .splash.hide { opacity:0; pointer-events:none; display:none; }
 .splash:not(.hide) ~ .phone { visibility:hidden; }
+#splash { display:none !important; }
 .splash-box {
 flex:1; min-height:0; width:100%; overflow-y:auto;
 display:flex; flex-direction:column; align-items:center;
@@ -10284,7 +10285,7 @@ font-family:inherit; padding:4px 2px; cursor:pointer; -webkit-tap-highlight-colo
            （名称+版号 / 部署时间+实时秒 / 版本检测行）收成一行；检测行随 ver-check.js 退役删除。
            data-build-ts / data-version 两属性保留：device.js 诊断、bg-keep 自检、pwa.js 旧包检测
            仍只读属性（诊断版本号走 data-version 兜底，device.js 两处缓存原生支持）。 -->
-      <div class="splash-ver" id="splash-ver" data-build-ts="1792329161265" data-version="v8.0">
+      <div class="splash-ver" id="splash-ver" data-build-ts="1792333319162" data-version="v8.0">
         <span class="sv-app">Mochi 字卡传讯 已完结停更</span>
       </div>
       <!-- v3.5.120：数据（IndexedDB 回填）加载完成前不显示「点击进入」按钮，
@@ -11516,6 +11517,19 @@ font-family:inherit; padding:4px 2px; cursor:pointer; -webkit-tap-highlight-colo
           <label class="toggle"><input type="checkbox" id="applock-qa-en"><span class="tk"></span></label>
         </div>
         <div class="gs-sub" id="applock-qa-sub">纯本地功能：<b>默认开启</b>——首次答对问答题后本机永久放行（不再重复询问），可单独使用；关掉即彻底不问。锁屏时也可输暗号直接永久跳过问答层。</div>
+      </div>
+      <!-- v3.x「隐形加载」批（用户 2026-10-18「干脆把开屏删掉」）：开屏改「隐形加载」后整屏不可见，
+           原开屏锁卡（#319 防未成年人·系统内置字卡锁定）是二级验证密码的唯一解锁口——把入口迁到本行：
+           锁定态点开输密码解锁、已解锁态点开可重新上锁。逻辑仍走 clock.js promptCardUnlock /
+           card-lock.js cardLockRelock，不新增校验逻辑；状态随 mochi-cardlock-open/-locked 事件重渲
+           （clock.js setupCardLockRow）。 -->
+      <div class="set-group glass">
+        <div class="set-row" id="row-cardlock-unlock">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 018 0v3"/><circle cx="12" cy="15.5" r="1.5" fill="#111111"/><path d="M12 17v1.5"/></svg></div>
+          <div class="txt">字卡锁（二级验证密码）<span class="sub">防未成年人：系统内置字卡默认全锁，输密码解锁 / 已解锁可重新上锁。密码＝99 ＋ mochi 字卡生日的 4 位数（生日 8 月 15 日 → 0815）</span></div>
+          <div class="val" id="cardlock-unlock-val">已锁定 · 点此输密码解锁</div>
+          <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>
+        </div>
       </div>
       <div class="set-group glass">
         <div class="gs-row"><span>后台保活</span><label class="toggle"><input type="checkbox" id="bg-keepalive"><span class="tk"></span></label></div>
@@ -21974,4 +21988,4 @@ window.__mochiBootRetry = function () { try { location.reload(); } catch (e) {} 
 </body>
 </html>
 
-<!-- __MOCHI_EOF__ mvdui7u9 -->
+<!-- __MOCHI_EOF__ mvdwzc3e -->
