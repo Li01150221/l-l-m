@@ -603,8 +603,7 @@ function neaSetUser(v) { if (NEA.gStore) { if (v) NEA.gStore.set(NEA.keyUser, JS
 function neaNormBase(s) {
 let b = String(s || '').trim();
 if (!b) return '';
-if (/^https?:\/\//i.test(b)) b = b.replace(/^http:\/\//i, 'https://');
-else b = 'https://' + b;
+if (!/^https?:\/\//i.test(b)) b = 'https://' + b;
 return b.replace(/\/+$/, '');
 }
 function neaFetch(path, cb) {
@@ -613,6 +612,29 @@ if (!base) { cb && cb(null, '未配置后端地址'); return; }
 const sep = path.indexOf('?') >= 0 ? '&' : '?';
 const cookie = encodeURIComponent(neaCookie());
 const url = base + path + sep + 'cookie=' + cookie;
+const NativeXHR = (window.plus && window.plus.net && window.plus.net.XMLHttpRequest) ? window.plus.net.XMLHttpRequest : null;
+if (NativeXHR) {
+let xhr = null;
+try { xhr = new NativeXHR(); } catch (e) { xhr = null; }
+if (xhr) {
+let done = false;
+const finish = (j, err) => { if (done) return; done = true; cb && cb(j, err); };
+xhr.open('GET', url);
+try { xhr.timeout = 15000; } catch (e) {}
+xhr.onreadystatechange = () => {
+if (xhr.readyState !== 4) return;
+if (xhr.status >= 200 && xhr.status < 300) {
+let j = null;
+try { j = JSON.parse(xhr.responseText); } catch (e) { finish(null, '返回内容无法解析'); return; }
+finish(j, null);
+} else { finish(null, 'HTTP ' + xhr.status); }
+};
+xhr.ontimeout = () => finish(null, '连接超时');
+xhr.onerror = () => finish(null, '网络错误');
+try { xhr.send(); } catch (e) { finish(null, String(e && e.message || e)); }
+return;
+}
+}
 let controller;
 try { controller = new AbortController(); } catch (e) { controller = null; }
 const timer = setTimeout(() => { try { controller && controller.abort(); } catch (e) {} }, 15000);

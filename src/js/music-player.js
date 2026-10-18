@@ -791,12 +791,12 @@
     try { const v = JSON.parse(NEA.gStore.get(NEA.keyUser) || 'null'); return v && typeof v === 'object' ? v : null; } catch (e) { return null; }
   }
   function neaSetUser(v) { if (NEA.gStore) { if (v) NEA.gStore.set(NEA.keyUser, JSON.stringify(v)); else NEA.gStore.remove(NEA.keyUser); } }
-  // 归一化后端地址：去尾斜杠、强制 https（http 页面混合内容会被拦）
+  // 归一化后端地址：去尾斜杠。显式写了协议就按用户写的走（自建后端常只有 http://IP:端口，
+  // 强改成 https 会打到不存在的端口），没写协议才默认补 https://。
   function neaNormBase(s) {
     let b = String(s || '').trim();
     if (!b) return '';
-    if (/^https?:\/\//i.test(b)) b = b.replace(/^http:\/\//i, 'https://');
-    else b = 'https://' + b;
+    if (!/^https?:\/\//i.test(b)) b = 'https://' + b;
     return b.replace(/\/+$/, '');
   }
   // 调后端接口：自动带 Cookie（query 形式，NeteaseCloudMusicApi 支持）
@@ -806,6 +806,32 @@
     const sep = path.indexOf('?') >= 0 ? '&' : '?';
     const cookie = encodeURIComponent(neaCookie());
     const url = base + path + sep + 'cookie=' + cookie;
+    // 套壳(5+)环境优先走原生请求：原生 XHR 不受浏览器跨域限制，也不受 https 页面请求
+    // http 后端（混合内容）的限制——自建后端常是 http://IP:端口，用普通 fetch 必被拦。
+    // 拿不到 plus.net 时（纯浏览器/PWA）继续走下面的 fetch。
+    const NativeXHR = (window.plus && window.plus.net && window.plus.net.XMLHttpRequest) ? window.plus.net.XMLHttpRequest : null;
+    if (NativeXHR) {
+      let xhr = null;
+      try { xhr = new NativeXHR(); } catch (e) { xhr = null; }
+      if (xhr) {
+        let done = false;
+        const finish = (j, err) => { if (done) return; done = true; cb && cb(j, err); };
+        xhr.open('GET', url);
+        try { xhr.timeout = 15000; } catch (e) {}
+        xhr.onreadystatechange = () => {
+          if (xhr.readyState !== 4) return;
+          if (xhr.status >= 200 && xhr.status < 300) {
+            let j = null;
+            try { j = JSON.parse(xhr.responseText); } catch (e) { finish(null, '返回内容无法解析'); return; }
+            finish(j, null);
+          } else { finish(null, 'HTTP ' + xhr.status); }
+        };
+        xhr.ontimeout = () => finish(null, '连接超时');
+        xhr.onerror = () => finish(null, '网络错误');
+        try { xhr.send(); } catch (e) { finish(null, String(e && e.message || e)); }
+        return;
+      }
+    }
     let controller;
     try { controller = new AbortController(); } catch (e) { controller = null; }
     const timer = setTimeout(() => { try { controller && controller.abort(); } catch (e) {} }, 15000);
