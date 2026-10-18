@@ -949,16 +949,20 @@
         if (stop) return;
         if (cerr || !cj || !cj.data || !cj.data.qrimg) { onUpdate && onUpdate({ phase: 'err', msg: cerr || '生成二维码失败' }); return; }
         onUpdate && onUpdate({ phase: 'qr', qrimg: cj.data.qrimg });
-        // 轮询扫码状态（NeteaseCloudMusicApi: 800 未扫 / 801 已扫待确认 / 802 成功 / 803 过期）
+        // 轮询扫码状态。码值就是网易原始码（/login/qr/check 透传，实测 801 的 message
+        // 即「等待扫码」）：800 过期/不存在 / 801 等待扫码 / 802 已扫待确认 / 803 授权成功。
+        // 旧版这套映射整体错了一位（801 当「已扫码」、802 当「成功」、803 当「过期」），
+        // 表现就是「扫了、也确认了，界面却纹丝不动/一确认就说过期」。
         const poll = () => {
           if (stop) return;
           neaFetch('/login/qr/check?key=' + encodeURIComponent(key), (ch, cherr) => {
             if (stop) return;
             if (cherr) { pollTimer = setTimeout(poll, 2000); return; }
             const code = ch && ch.code;
-            if (code === 800) { onUpdate && onUpdate({ phase: 'wait' }); pollTimer = setTimeout(poll, 2000); }
-            else if (code === 801) { onUpdate && onUpdate({ phase: 'scanned' }); pollTimer = setTimeout(poll, 2000); }
-            else if (code === 802) {
+            if (code === 800) { onUpdate && onUpdate({ phase: 'expired' }); }
+            else if (code === 801) { onUpdate && onUpdate({ phase: 'wait' }); pollTimer = setTimeout(poll, 2000); }
+            else if (code === 802) { onUpdate && onUpdate({ phase: 'scanned' }); pollTimer = setTimeout(poll, 2000); }
+            else if (code === 803) {
               // 成功：ch.cookie 是登录 cookie
               const ck = (ch && ch.cookie) || '';
               if (!ck) { onUpdate && onUpdate({ phase: 'err', msg: '登录成功但未取到 cookie' }); return; }
@@ -970,7 +974,6 @@
                 onUpdate && onUpdate({ phase: 'ok', user: u });
               });
             }
-            else if (code === 803) { onUpdate && onUpdate({ phase: 'expired' }); }
             else { pollTimer = setTimeout(poll, 2000); }
           });
         };
@@ -1074,8 +1077,13 @@
       // 已登录时加载歌单
       if (user && neaLoadedPls === null) loadPlaylistsInto();
     };
+    // 记录当前二维码图（wait/scanned 阶段复用，避免扫码后二维码消失）。
+    // 换新 key 时必须清空——否则在「正在生成」的空档里会把上一张（对应旧 key）
+    // 的二维码继续显示出来：用户扫的是旧码、后端却轮询新 key，就会永远停在「等待扫码」。
+    let _curQr = '';
     const startQr = () => {
       if (neaPanelApi) { neaPanelApi.stop(); neaPanelApi = null; }
+      _curQr = '';
       render({ phase: 'qr', qrimg: '' });
       neaPanelApi = neaQrLogin((st) => {
         if (st.phase === 'qr') render({ phase: 'qr', qrimg: st.qrimg });
@@ -1086,8 +1094,6 @@
         else if (st.phase === 'err' || st.phase === 'expired') { neaPanelApi = null; render({ phase: st.phase, msg: st.msg }); }
       });
     };
-    // 记录当前二维码图（wait/scanned 阶段复用，避免扫码后二维码消失）
-    let _curQr = '';
     const _origRender = render;
     // 包装 render 以缓存 qrimg
     function renderWrap(st) {

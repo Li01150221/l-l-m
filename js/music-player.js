@@ -748,9 +748,10 @@ neaFetch('/login/qr/check?key=' + encodeURIComponent(key), (ch, cherr) => {
 if (stop) return;
 if (cherr) { pollTimer = setTimeout(poll, 2000); return; }
 const code = ch && ch.code;
-if (code === 800) { onUpdate && onUpdate({ phase: 'wait' }); pollTimer = setTimeout(poll, 2000); }
-else if (code === 801) { onUpdate && onUpdate({ phase: 'scanned' }); pollTimer = setTimeout(poll, 2000); }
-else if (code === 802) {
+if (code === 800) { onUpdate && onUpdate({ phase: 'expired' }); }
+else if (code === 801) { onUpdate && onUpdate({ phase: 'wait' }); pollTimer = setTimeout(poll, 2000); }
+else if (code === 802) { onUpdate && onUpdate({ phase: 'scanned' }); pollTimer = setTimeout(poll, 2000); }
+else if (code === 803) {
 const ck = (ch && ch.cookie) || '';
 if (!ck) { onUpdate && onUpdate({ phase: 'err', msg: '登录成功但未取到 cookie' }); return; }
 neaSetCookie(ck);
@@ -761,7 +762,6 @@ neaSetUser(u);
 onUpdate && onUpdate({ phase: 'ok', user: u });
 });
 }
-else if (code === 803) { onUpdate && onUpdate({ phase: 'expired' }); }
 else { pollTimer = setTimeout(poll, 2000); }
 });
 };
@@ -852,8 +852,10 @@ toast('已退出登录');
 bind('nea-import-liked', () => { importLiked(); });
 if (user && neaLoadedPls === null) loadPlaylistsInto();
 };
+let _curQr = '';
 const startQr = () => {
 if (neaPanelApi) { neaPanelApi.stop(); neaPanelApi = null; }
+_curQr = '';
 render({ phase: 'qr', qrimg: '' });
 neaPanelApi = neaQrLogin((st) => {
 if (st.phase === 'qr') render({ phase: 'qr', qrimg: st.qrimg });
@@ -863,7 +865,6 @@ else if (st.phase === 'ok') { neaPanelApi = null; render({ phase: 'loggedin' });
 else if (st.phase === 'err' || st.phase === 'expired') { neaPanelApi = null; render({ phase: st.phase, msg: st.msg }); }
 });
 };
-let _curQr = '';
 const _origRender = render;
 function renderWrap(st) {
 if (st && st.qrimg) _curQr = st.qrimg;
