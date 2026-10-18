@@ -713,6 +713,67 @@ if (err || !j || !Array.isArray(j.playlist)) { cb && cb(null, err || '接口未�
 cb && cb(j.playlist, null);
 });
 }
+let roamActive = false;
+let fmRefilling = false;
+function neaLoadFmTracks(cb) {
+neaFetch('/personal_fm', (j, err) => {
+if (err || !j || !Array.isArray(j.data)) { cb && cb(null, err || '接口未返回推荐歌曲'); return; }
+cb && cb(neaTracksFromSongs(j.data), null);
+});
+}
+function addFmTracksToQueue(tracks) {
+const cur = findTrack(currentId);
+library = library.filter(m => m.playlistId !== 'fm' || (cur && m.id === cur.id));
+const now = Date.now();
+const newIds = [];
+(tracks || []).forEach((t, i) => {
+if (t.neteaseId && library.some(m => m.neteaseId === t.neteaseId)) return;
+if (t.fee === 1 || t.fee === 4) return; // VIP/付费歌网页外链播不了，跳过
+const nid = 'sm_fm_' + now + '_' + i + '_' + Math.random().toString(36).substr(2, 4);
+library.push({ id: nid, neteaseId: t.neteaseId, name: t.name || '网易云音乐-' + (t.neteaseId || i), artist: t.artist || '', cover: t.cover || '', url: t.url, source: 'url', duration: t.duration || 0, playlistId: 'fm', addedAt: now });
+newIds.push(nid);
+});
+if (newIds.length) { saveLibrary(); try { renderPage(); } catch (e) {} }
+return newIds;
+}
+function refillFmQueue() {
+if (!roamActive || fmRefilling) return;
+fmRefilling = true;
+neaLoadFmTracks((tracks, err) => {
+fmRefilling = false;
+if (err || !tracks || !tracks.length) return;
+const ids = addFmTracksToQueue(tracks);
+ids.forEach(id => playQueue.push(id));
+try { renderQueueBadge(); } catch (e) {}
+});
+}
+function startRoamMode() {
+if (!neaBase()) { toast('请先在「网易云账号」里配置后端地址'); try { openNeteaseAccount(); } catch (e) {} return; }
+if (!neaCookie()) { toast('请先登录网易云账号'); try { openNeteaseAccount(); } catch (e) {} return; }
+roamActive = true;
+playQueue = [];
+fmRefilling = false;
+neaLoadFmTracks((tracks, err) => {
+if (err || !tracks || !tracks.length) { toast(err || '没有获取到推荐歌曲'); roamActive = false; return; }
+const ids = addFmTracksToQueue(tracks);
+ids.forEach(id => playQueue.push(id));
+try { renderPage(); renderQueueBadge(); } catch (e) {}
+if (playQueue.length) {
+toast('漫游模式已开启');
+const first = playQueue.shift();
+playTrack(first);
+} else {
+toast('本批推荐全是 VIP 歌曲，已自动跳过，再试一次');
+roamActive = false;
+}
+});
+}
+function stopRoamMode() {
+if (!roamActive) return;
+roamActive = false;
+playQueue = [];
+try { renderQueueBadge(); } catch (e) {}
+}
 function neaFetchUserProfile(cb) {
 neaFetch('/login/status', (j, err) => {
 if (err || !j || !j.data) { cb && cb(null, err || '未取到登录状态'); return; }
@@ -2738,6 +2799,7 @@ function playTrack(id, fromWidget) {
 const m = findTrack(id);
 if (!m) return;
 markFloatSource(fromWidget);
+if (roamActive && m.playlistId !== 'fm') stopRoamMode();
 cancelTaPause();
 if (m) m._httpsRetried = false;
 currentId = id;
@@ -3133,7 +3195,10 @@ function next(fromWidget) {
 markFloatSource(fromWidget);
 while (playQueue.length) {
 const qid = playQueue.shift();
-if (findTrack(qid)) { playTrack(qid); return; }
+if (findTrack(qid)) {
+if (roamActive && playQueue.length < 2) refillFmQueue();
+playTrack(qid); return;
+}
 }
 renderQueueBadge();
 const list = playableList();
@@ -4324,6 +4389,8 @@ const vipClean = document.getElementById('music-vip-clean');
 if (vipClean) vipClean.addEventListener('click', openVipClean);
 const neaBtn = document.getElementById('music-netease-account');
 if (neaBtn) neaBtn.addEventListener('click', openNeteaseAccount);
+const roamBtn = document.getElementById('music-roam');
+if (roamBtn) roamBtn.addEventListener('click', startRoamMode);
 const setBtn = document.getElementById('music-set');
 if (setBtn) setBtn.addEventListener('click', openSettings);
 const playBtn = document.getElementById('sm-play');

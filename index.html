@@ -10284,7 +10284,7 @@ font-family:inherit; padding:4px 2px; cursor:pointer; -webkit-tap-highlight-colo
            （名称+版号 / 部署时间+实时秒 / 版本检测行）收成一行；检测行随 ver-check.js 退役删除。
            data-build-ts / data-version 两属性保留：device.js 诊断、bg-keep 自检、pwa.js 旧包检测
            仍只读属性（诊断版本号走 data-version 兜底，device.js 两处缓存原生支持）。 -->
-      <div class="splash-ver" id="splash-ver" data-build-ts="1792316514597" data-version="v8.1">
+      <div class="splash-ver" id="splash-ver" data-build-ts="1792318031155" data-version="v8.1">
         <span class="sv-app">Mochi 字卡传讯 已完结停更</span>
       </div>
       <!-- v3.5.120：数据（IndexedDB 回填）加载完成前不显示「点击进入」按钮，
@@ -14380,6 +14380,11 @@ font-family:inherit; padding:4px 2px; cursor:pointer; -webkit-tap-highlight-colo
                  需用户自行部署 NeteaseCloudMusicApi 后端（免费，Vercel 一键部署），登录态/后端地址全局存储。 -->
             <button class="sm-tool" id="music-netease-account">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>网易云账号
+            </button>
+            <!-- v3.x：漫游模式——调网易云 /personal_fm 拉个性化推荐曲目，流式播放，播完自动续拉。
+                 需已配置后端并登录网易云账号。 -->
+            <button class="sm-tool" id="music-roam">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 000 20 14.5 14.5 0 000-20"/><path d="M2 12h20"/></svg>开启漫游
             </button>
           </div>
           <div class="music-lib-filter" id="music-lib-filter"></div>
@@ -21978,4 +21983,4 @@ window.__mochiBootRetry = function () { try { location.reload(); } catch (e) {} 
 </body>
 </html>
 
-<!-- __MOCHI_EOF__ mvdmz5lx -->
+<!-- __MOCHI_EOF__ mvdnvnsj -->

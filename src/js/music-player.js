@@ -917,6 +917,72 @@
       cb && cb(j.playlist, null);
     });
   }
+  // ================= 网易云私人 FM（漫游模式）=================
+  // 用已登录的 cookie 调 /personal_fm 拉个性化推荐曲目，喂给现有播放器。
+  // FM 曲目以 playlistId='fm' 入库；roamActive 期间播放队列由 FM 曲目填充，
+  // 播到队列末尾自动续拉，保持流不断。用户切到非 FM 歌曲时自动退出漫游模式。
+  let roamActive = false;
+  let fmRefilling = false;
+  function neaLoadFmTracks(cb) {
+    neaFetch('/personal_fm', (j, err) => {
+      if (err || !j || !Array.isArray(j.data)) { cb && cb(null, err || '接口未返回推荐歌曲'); return; }
+      cb && cb(neaTracksFromSongs(j.data), null);
+    });
+  }
+  // 把一批 FM 曲目入库并追加到播放队列；清理旧 FM 曲目（保留当前正在播的），避免库无限增长。
+  function addFmTracksToQueue(tracks) {
+    const cur = findTrack(currentId);
+    library = library.filter(m => m.playlistId !== 'fm' || (cur && m.id === cur.id));
+    const now = Date.now();
+    const newIds = [];
+    (tracks || []).forEach((t, i) => {
+      if (t.neteaseId && library.some(m => m.neteaseId === t.neteaseId)) return;
+      if (t.fee === 1 || t.fee === 4) return; // VIP/付费歌网页外链播不了，跳过
+      const nid = 'sm_fm_' + now + '_' + i + '_' + Math.random().toString(36).substr(2, 4);
+      library.push({ id: nid, neteaseId: t.neteaseId, name: t.name || '网易云音乐-' + (t.neteaseId || i), artist: t.artist || '', cover: t.cover || '', url: t.url, source: 'url', duration: t.duration || 0, playlistId: 'fm', addedAt: now });
+      newIds.push(nid);
+    });
+    if (newIds.length) { saveLibrary(); try { renderPage(); } catch (e) {} }
+    return newIds;
+  }
+  function refillFmQueue() {
+    if (!roamActive || fmRefilling) return;
+    fmRefilling = true;
+    neaLoadFmTracks((tracks, err) => {
+      fmRefilling = false;
+      if (err || !tracks || !tracks.length) return;
+      const ids = addFmTracksToQueue(tracks);
+      ids.forEach(id => playQueue.push(id));
+      try { renderQueueBadge(); } catch (e) {}
+    });
+  }
+  function startRoamMode() {
+    if (!neaBase()) { toast('请先在「网易云账号」里配置后端地址'); try { openNeteaseAccount(); } catch (e) {} return; }
+    if (!neaCookie()) { toast('请先登录网易云账号'); try { openNeteaseAccount(); } catch (e) {} return; }
+    roamActive = true;
+    playQueue = [];
+    fmRefilling = false;
+    neaLoadFmTracks((tracks, err) => {
+      if (err || !tracks || !tracks.length) { toast(err || '没有获取到推荐歌曲'); roamActive = false; return; }
+      const ids = addFmTracksToQueue(tracks);
+      ids.forEach(id => playQueue.push(id));
+      try { renderPage(); renderQueueBadge(); } catch (e) {}
+      if (playQueue.length) {
+        toast('漫游模式已开启');
+        const first = playQueue.shift();
+        playTrack(first);
+      } else {
+        toast('本批推荐全是 VIP 歌曲，已自动跳过，再试一次');
+        roamActive = false;
+      }
+    });
+  }
+  function stopRoamMode() {
+    if (!roamActive) return;
+    roamActive = false;
+    playQueue = [];
+    try { renderQueueBadge(); } catch (e) {}
+  }
   // 用 cookie 取用户资料（登录成功后调用，拿 uid/昵称/头像）
   function neaFetchUserProfile(cb) {
     neaFetch('/login/status', (j, err) => {
@@ -3418,6 +3484,8 @@
     const m = findTrack(id);
     if (!m) return;
     markFloatSource(fromWidget);
+    // 漫游模式：用户手动点了非 FM 歌曲 → 退出漫游，清空 FM 队列
+    if (roamActive && m.playlistId !== 'fm') stopRoamMode();
     // v3.27.x：用户切歌取消 TA 暂停互动（未触发的计划 / 进行中的恢复一并作废）
     cancelTaPause();
     // v3.6.x：重置 https 重试标记——_httpsRetried 在 retryWithHttpsUrl 里设 true 后
@@ -3895,7 +3963,11 @@
     // 才回到按播放模式切歌。队列里的歌被删则跳过继续取下一首。
     while (playQueue.length) {
       const qid = playQueue.shift();
-      if (findTrack(qid)) { playTrack(qid); return; }
+      if (findTrack(qid)) {
+        // 漫游模式：队列剩不到 2 首时异步续拉下一批 FM 推荐，保持流不断
+        if (roamActive && playQueue.length < 2) refillFmQueue();
+        playTrack(qid); return;
+      }
     }
     renderQueueBadge();
     const list = playableList();
@@ -5309,6 +5381,8 @@
   if (vipClean) vipClean.addEventListener('click', openVipClean);
   const neaBtn = document.getElementById('music-netease-account');
   if (neaBtn) neaBtn.addEventListener('click', openNeteaseAccount);
+  const roamBtn = document.getElementById('music-roam');
+  if (roamBtn) roamBtn.addEventListener('click', startRoamMode);
   const setBtn = document.getElementById('music-set');
   if (setBtn) setBtn.addEventListener('click', openSettings);
   // 播放器控制
