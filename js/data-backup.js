@@ -679,7 +679,58 @@ doneText, '仍未触发下载。请重新点击「导出数据」并确认保存
 toast('备份已打包（' + sizeStr + '），请重新点击「导出数据」触发下载并保存文件（唯一备份）');
 }
 }
+function saveViaPlusPublicDir(blob, fname) {
+return new Promise((resolve) => {
+try {
+const plus = window.plus;
+if (!plus || !plus.io) { resolve('skip'); return; }
+const io = plus.io;
+const tryDir = (which) => new Promise((innerResolve) => {
+try {
+io.requestFileSystem(which, (fs) => {
+fs.root.getFile(fname, { create: true, exclusive: false }, (fe) => {
+fe.createWriter((writer) => {
+let done = false;
+const finish = (ok, path) => { if (done) return; done = true; innerResolve({ ok: ok, path: path || '' }); };
+let op = 'truncate';
+writer.onwriteend = () => {
+if (op === 'truncate') {
+op = 'write';
+try { writer.write(blob); } catch (e) { finish(false); }
+} else {
+let p = '';
+try { p = (fe.toLocalURL ? fe.toLocalURL() : fe.fullPath) || ''; } catch (e) {}
+finish(true, p);
+}
+};
+writer.onerror = () => finish(false);
+try { writer.truncate(0); } catch (e) { finish(false); }
+}, () => innerResolve({ ok: false }));
+}, () => innerResolve({ ok: false }));
+}, () => innerResolve({ ok: false }));
+} catch (e) { innerResolve({ ok: false }); }
+});
+const a = io.PUBLIC_DOWNLOADS;
+const b = io.PUBLIC_DOCUMENTS;
+tryDir(a).then((r) => {
+if (r.ok) { resolve(r); return; }
+if (b !== undefined && b !== a) {
+tryDir(b).then((r2) => resolve(r2.ok ? r2 : { ok: false }));
+} else resolve({ ok: false });
+});
+} catch (e) { resolve({ ok: false }); }
+});
+}
 async function saveBackupFile(blob, fname, shareTitle, saveTypes) {
+if (window.plus && window.plus.io) {
+impShow('正在导出…', '正在保存到下载目录…', 95);
+const r = await saveViaPlusPublicDir(blob, fname);
+if (r.ok) {
+const where = r.path ? ('（' + r.path + '）') : '（系统下载目录）';
+toast('已保存到下载' + where + '：' + fname);
+return 'ok';
+}
+}
 const file = new File([blob], fname, { type: blob.type || 'application/json;charset=utf-8' });
 const brokenFileShare = !!((window.mochiDevice || {}).env || {}).brokenFileShare;
 const shareMax = 50 * 1024 * 1024;

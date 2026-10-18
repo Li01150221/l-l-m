@@ -956,12 +956,71 @@
     }
   }
 
+  // 套壳 App（HBuilderX 5+）：把文件直接写到系统公共「下载」目录——
+  // 这样卸载 App 不会连带删掉备份（应用私有目录 _doc/ 卸载即清空）。
+  // 用 plus.io 的 PUBLIC_DOWNLOADS（系统 Download 目录）；失败退回 PUBLIC_DOCUMENTS。
+  // Android 10+ 公共目录走 MediaStore，无需存储权限；旧版本若缺权限会失败 → 交给外层网页下载兜底。
+  function saveViaPlusPublicDir(blob, fname) {
+    return new Promise((resolve) => {
+      try {
+        const plus = window.plus;
+        if (!plus || !plus.io) { resolve('skip'); return; }
+        const io = plus.io;
+        // 单目录尝试：requestFileSystem(公共目录) → getFile(create) → createWriter → truncate → write
+        const tryDir = (which) => new Promise((innerResolve) => {
+          try {
+            io.requestFileSystem(which, (fs) => {
+              fs.root.getFile(fname, { create: true, exclusive: false }, (fe) => {
+                fe.createWriter((writer) => {
+                  let done = false;
+                  const finish = (ok, path) => { if (done) return; done = true; innerResolve({ ok: ok, path: path || '' }); };
+                  let op = 'truncate';
+                  writer.onwriteend = () => {
+                    if (op === 'truncate') {
+                      op = 'write';
+                      try { writer.write(blob); } catch (e) { finish(false); }
+                    } else {
+                      let p = '';
+                      try { p = (fe.toLocalURL ? fe.toLocalURL() : fe.fullPath) || ''; } catch (e) {}
+                      finish(true, p);
+                    }
+                  };
+                  writer.onerror = () => finish(false);
+                  try { writer.truncate(0); } catch (e) { finish(false); }
+                }, () => innerResolve({ ok: false }));
+              }, () => innerResolve({ ok: false }));
+            }, () => innerResolve({ ok: false }));
+          } catch (e) { innerResolve({ ok: false }); }
+        });
+        const a = io.PUBLIC_DOWNLOADS;
+        const b = io.PUBLIC_DOCUMENTS;
+        tryDir(a).then((r) => {
+          if (r.ok) { resolve(r); return; }
+          if (b !== undefined && b !== a) {
+            tryDir(b).then((r2) => resolve(r2.ok ? r2 : { ok: false }));
+          } else resolve({ ok: false });
+        });
+      } catch (e) { resolve({ ok: false }); }
+    });
+  }
+
   // v3.9.x：保存备份文件——返回 'ok'（已分享/已保存）/ 'cancel'（用户取消）/ 其他（被拦截或无法确认）。
   // 必须在用户手势（点击）触发链上调用：navigator.share / showSaveFilePicker 都要求用户激活，
   // async 数据收集超过激活窗口后第一次可能被拒，所以调用方失败后会给用户弹窗再点一次重试。
   // FIX 2026-09-11 #333：参数化分享标题/文件 MIME/保存框类型——诊断 docx 导出复用本链路
   // （设备.js buildDocxBlob 产物），不再只能分享「JSON 备份」。默认值保持原行为零变化。
   async function saveBackupFile(blob, fname, shareTitle, saveTypes) {
+    // 套壳 App（HBuilderX 5+）：优先写到系统公共「下载」目录——卸载 App 不会连带删备份。
+    if (window.plus && window.plus.io) {
+      impShow('正在导出…', '正在保存到下载目录…', 95);
+      const r = await saveViaPlusPublicDir(blob, fname);
+      if (r.ok) {
+        const where = r.path ? ('（' + r.path + '）') : '（系统下载目录）';
+        toast('已保存到下载' + where + '：' + fname);
+        return 'ok';
+      }
+      // 公共目录不可用（权限/版本）→ 走下面的网页下载兜底，行为与旧版一致
+    }
     const file = new File([blob], fname, { type: blob.type || 'application/json;charset=utf-8' });
     // ① 系统分享面板
     // v3.9.x：华为（Mate20 默认浏览器）与夸克对 navigator.share({files}) 支持不稳定——
