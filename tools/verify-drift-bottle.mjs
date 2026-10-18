@@ -1,4 +1,4 @@
-// ===== 专项验证：漂流瓶（drift-bottle.js，聊天更多功能【互动】入口）=====
+// ===== 专项验证：漂流瓶（drift-bottle.js，聊天更多功能【工具】入口）=====
 // 用法：node tools/verify-drift-bottle.mjs
 // 注意：不依赖仓库根目录的构建产物——本脚本从当前 src/ 临时组装页面（镜像
 // build.mjs 的拼接顺序，含 drift-bottle.css/js 注册），避免与并行会话的官方构建互相干扰。
@@ -20,7 +20,7 @@ function check(desc, ok, detail) {
 
 // ---- A. 静态断言（源码级） ----
 const tpl = read('template.html');
-check('A1 更多面板有 more-drift 按钮且归【互动】分类', /id="more-drift"[^>]*data-mcat="chat"/.test(tpl));
+check('A1 更多面板有 more-drift 按钮且归【工具】分类', /id="more-drift"[^>]*data-mcat="tool"/.test(tpl));
 check('A2 page-drift 页面锚点齐全（back/pick/put/open/list/stats/info）',
   ['id="page-drift"', 'id="drift-back"', 'id="drift-pick"', 'id="d-put"', 'id="d-open"', 'id="d-list"', 'id="d-stats"', 'id="drift-info-btn"'].every(s => tpl.includes(s)));
 const bld = readFileSync(join(root, 'build.mjs'), 'utf8');
